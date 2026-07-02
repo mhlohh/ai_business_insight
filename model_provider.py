@@ -6,12 +6,12 @@ from google.adk.runners import InMemoryRunner
 from google.adk.models.lite_llm import LiteLlm
 from google.genai import types
 
-load_dotenv()
+load_dotenv(override=True)
 from aggregator import score_to_status, STATUS_NEEDS_ATTENTION
 
 # Configuration parameters for LM Studio / LiteLLM local models
 LOCAL_MODEL_NAME = os.getenv("LOCAL_MODEL_NAME", "openai/qwen2.5-coder-7b-instruct-mlx")
-LOCAL_PARALLEL_MODEL_NAME = os.getenv("LOCAL_PARALLEL_MODEL_NAME", LOCAL_MODEL_NAME)
+LOCAL_PARALLEL_MODEL_NAME = os.getenv("LOCAL_PARALLEL_MODEL_NAME", "openai/qwen2.5-coder-3b-instruct-mlx")
 LMSTUDIO_API_BASE = os.getenv("LMSTUDIO_API_BASE", "http://localhost:1234/v1")
 LMSTUDIO_API_KEY = os.getenv("LMSTUDIO_API_KEY", "lm-studio")
 
@@ -298,5 +298,5 @@ Important: Your response must be ONLY a valid JSON array and nothing else. No ma
         
     except Exception as e:
         print(f"❌ Error communicating with local model provider: {e}")
-        print(f"👉 Please ensure that your local LM Studio server is running and listening on {OPENAI_API_BASE}")
+        print(f"👉 Please ensure that your local LM Studio server is running and listening on {LMSTUDIO_API_BASE}")
         raise e
