@@ -56,10 +56,11 @@ Splits the unstructured text block into smaller, manageable chunks of reviews (e
 The system dynamically instantiates $N$ sub-agents (one per chunk of reviews) running in parallel using `google.adk.agents.ParallelAgent`. Each sub-agent extracts key business-relevant insights, representative quotes, confidence levels, and categories.
 
 ### 4. Synthesis & Aggregator Agent
-The `AggregatorAgent` receives the output from all sub-agents and processes it through a 5-stage pipeline:
+The `AggregatorAgent` receives the output from all sub-agents and processes it through a 6-stage pipeline:
 1. **Collect**: Gather all raw insights.
 2. **Deduplicate**: Merge highly similar or duplicate insights, incrementing frequency counters and selecting representative quotes.
-3. **Score/Rank**: Calculate a priority score using:
+3. **Resolve Conflicts**: If insights on the same topic contradict each other (e.g., 'good battery' vs 'bad battery'), merge them into a single 'Mixed Feedback' insight, sum their frequencies, and average their confidences. This ensures highly debated topics bubble up as high priority.
+4. **Score/Rank**: Calculate a priority score using:
    $$\text{score} = \text{frequency} \times \text{confidence} \times \text{category\_weight}$$
    Where category weights are:
    - `quality`: 1.5
@@ -67,8 +68,8 @@ The `AggregatorAgent` receives the output from all sub-agents and processes it t
    - `usability`: 1.3
    - `price`: 1.0
    - `other`: 1.0
-4. **Quality Filter**: Drop low-frequency, low-confidence, or irrelevant items.
-5. **Format**: Structure the output as a valid JSON array.
+5. **Quality Filter**: Drop low-frequency, low-confidence, or irrelevant items.
+6. **Format**: Structure the output as a valid JSON array.
 
 ### 5. Caching Layer (SQLite3)
 Ensures that if the same product reviews are requested twice, the pipeline does not re-run, saving hardware resources and eliminating latency.
