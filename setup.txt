@@ -12,13 +12,18 @@ Run Setup Guide
 4. Configure Environment (.env)
     Configure the following variables:
       - LOCAL_MODEL_NAME: Main aggregator model (e.g. openai/qwen2.5-coder-7b-instruct-mlx)
-      - LOCAL_PARALLEL_MODEL_NAME: Model for parallel sub-agents (e.g. openai/llama-3.2-3b-instruct)
+      - LOCAL_PARALLEL_MODEL_NAME: Model for parallel sub-agents (e.g. openai/qwen2.5-coder-3b-instruct-mlx)
       - LMSTUDIO_API_BASE: Local server port (e.g. http://localhost:1234/v1)
       - LMSTUDIO_API_KEY: lm-studio
 
 5. Start Local LLM Server
     Open LM Studio and start the Local Server on port 1234.
     
+    Install Models 
+      -  qwen2.5-coder-7b-instruct-mlx (highly recommended and for Apple Silicon Users use MLX Version Ohters USE GGUF) 
+      -  qwen2.5-coder-3b-instruct-mlx (highly recommended and for Apple Silicon Users use MLX Version Ohters USE GGUF) 
+
+
     IMPORTANT - Context Length Setup:
     To ensure the models can process long reviews and complex JSON without getting cut off, adjust the Context Length:
       1. In LM Studio, select your model and look at the right-side configuration panel.
@@ -27,8 +32,8 @@ Run Setup Guide
       4. Apply this setting for both the main aggregator model and the parallel sub-agent model.
 
     Load the models you want to use. For local performance optimization, you can run a lightweight model for the parallel extraction sub-agents:
-      - Qwen-2.5-1.5B-Instruct / Qwen-2.5-3B-Instruct (highly recommended)
-      - Llama-3.2-3B-Instruct / Llama-3.2-1B-Instruct
+      - qwen2.5-coder-7b-instruct-mlx (highly recommended and for Apple Silicon Users use MLX Version Ohters USE GGUF) 
+      - qwen2.5-coder-3b-instruct-mlx (highly recommended and for Apple Silicon Users use MLX Version Ohters USE GGUF) 
       
     Load the models in LM Studio or using the CLI:
       lms load qwen2.5-coder-7b-instruct-mlx
