@@ -12,12 +12,12 @@ from aggregator import score_to_status, STATUS_NEEDS_ATTENTION
 # Configuration parameters for LM Studio / LiteLLM local models
 LOCAL_MODEL_NAME = os.getenv("LOCAL_MODEL_NAME", "openai/qwen2.5-coder-7b-instruct-mlx")
 LOCAL_PARALLEL_MODEL_NAME = os.getenv("LOCAL_PARALLEL_MODEL_NAME", LOCAL_MODEL_NAME)
-OPENAI_API_BASE = os.getenv("OPENAI_API_BASE", "http://localhost:1234/v1")
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "lm-studio")
+LMSTUDIO_API_BASE = os.getenv("LMSTUDIO_API_BASE", "http://localhost:1234/v1")
+LMSTUDIO_API_KEY = os.getenv("LMSTUDIO_API_KEY", "lm-studio")
 
 # LiteLLM/LM Studio configuration
-os.environ["OPENAI_API_BASE"] = OPENAI_API_BASE
-os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
+os.environ["OPENAI_API_BASE"] = LMSTUDIO_API_BASE
+os.environ["OPENAI_API_KEY"] = LMSTUDIO_API_KEY
 
 # Concurrency limit for local model provider to prevent LM Studio compute/OOM errors under concurrent load
 CONCURRENCY_LIMIT = int(os.getenv("LOCAL_CONCURRENCY_LIMIT", "1"))

@@ -13,8 +13,8 @@ Run Setup Guide
     Configure the following variables:
       - LOCAL_MODEL_NAME: Main aggregator model (e.g. openai/qwen2.5-coder-7b-instruct-mlx)
       - LOCAL_PARALLEL_MODEL_NAME: Model for parallel sub-agents (e.g. openai/llama-3.2-3b-instruct)
-      - OPENAI_API_BASE: Local server port (e.g. http://localhost:1234/v1)
-      - OPENAI_API_KEY: lm-studio
+      - LMSTUDIO_API_BASE: Local server port (e.g. http://localhost:1234/v1)
+      - LMSTUDIO_API_KEY: lm-studio
 
 5. Start Local LLM Server
     Open LM Studio and start the Local Server on port 1234.
