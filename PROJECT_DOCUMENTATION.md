@@ -1,6 +1,6 @@
-# litmus7 — Product Review Intelligence Platform
+# Product Review Intelligence Platform
 
-This document provides comprehensive technical documentation for the **litmus7** project. It details the problem statement, the system architecture, component details, the updated tech stack, and setup instructions.
+This document provides comprehensive technical documentation for the project. It details the problem statement, the system architecture, component details, the updated tech stack, and setup instructions.
 
 ---
 
@@ -10,7 +10,7 @@ This document provides comprehensive technical documentation for the **litmus7**
 The massive volume of unstructured customer reviews makes manual analysis inefficient for businesses trying to extract actionable insights. Large Language Models (LLMs) struggle to analyze thousands of reviews simultaneously due to input context limits, potential hallucinations, and high API token costs.
 
 ### The Solution
-litmus7 resolves this using a **divide-and-conquer AI agent pipeline**. Instead of sending all reviews to an LLM at once, the system chunks reviews (e.g., into blocks of 10–100 reviews), distributes them across parallel sub-agents to extract localized business-related insights, and runs a centralized Aggregator Agent to synthesize, deduplicate, score, and rank the findings.
+Our Team resolves this using a **divide-and-conquer AI based pipeline**. Instead of sending all reviews to an LLM at once, the system chunks reviews (e.g., into blocks of 10–100 reviews), distributes them across parallel sub-agents to extract localized business-related insights, and runs a centralized Aggregator Model to synthesize, deduplicate, score, and rank the findings.
 
 ---
 
@@ -30,7 +30,7 @@ graph TD
     E --> sub_agent_0
     E --> sub_agent_1
     E --> sub_agent_n
-    sub_agent_0 -->|Extract Local Insights| F[Aggregator Agent]
+    sub_agent_0 -->|Extract Local Insights| F[Aggregator Model]
     sub_agent_1 -->|Extract Local Insights| F
     sub_agent_n -->|Extract Local Insights| F
     F -->|Collect, Deduplicate, Score, Filter| G[Post-Processing & Clean JSON Parsing]
@@ -53,10 +53,10 @@ Splits the unstructured text block into smaller, manageable chunks of reviews (e
 - $> 100$ reviews: Chunk size = 100
 
 ### 3. Parallel Research Agents (Google ADK)
-The system dynamically instantiates $N$ sub-agents (one per chunk of reviews) running in parallel using `google.adk.agents.ParallelAgent`. Each sub-agent extracts key business-relevant insights, representative quotes, confidence levels, and categories.
+The system dynamically instantiates $1 - 4$ sub-agents (one per chunk of reviews) running in parallel using `google.adk.agents.ParallelAgent`. Each sub-agent extracts key business-relevant insights, representative quotes, confidence levels, and categories.
 
-### 4. Synthesis & Aggregator Agent
-The `AggregatorAgent` receives the output from all sub-agents and processes it through a 6-stage pipeline:
+### 4. Synthesis & Aggregator Model
+The `AggregatorModel` receives the output from all sub-models and processes it through a 6-stage pipeline:
 1. **Collect**: Gather all raw insights.
 2. **Deduplicate**: Merge highly similar or duplicate insights, incrementing frequency counters and selecting representative quotes.
 3. **Resolve Conflicts**: If insights on the same topic contradict each other (e.g., 'good battery' vs 'bad battery'), merge them into a single 'Mixed Feedback' insight, sum their frequencies, and average their confidences. This ensures highly debated topics bubble up as high priority.
