@@ -127,9 +127,9 @@ To run the project locally with the updated local LLM provider configuration:
 
 ## 6. Team Members & Roles
 
-- **Muhsil NR** — AI Integration & Architecture
-- **Adwaith S Dileep** — Backend Delivery
-- **Vigin PV** — Streamlit Frontend & Integration
-- **Afeefa CS** — Database Management
-- **Ranjana NR** — Data Chunking & Pre-processing
-- **SifaMol M N** — Quality Analysis & Testing
+- **Muhsil NR** 
+- **Adwaith S Dileep**
+- **Vigin PV** 
+- **Afeefa CS** 
+- **Ranjana NR** 
+- **SifaMol M N** 

@@ -12,7 +12,6 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
-
 # NEW database-connected review endpoints
 @app.get("/db/products")
 def get_database_products():
