@@ -14,7 +14,6 @@ DB_FILE = "data/litmus7.db"
 # Pre-defined Products
 DEFAULT_PRODUCTS = [
     {"id": 1, "asin": "B00F2SKPIM", "name": "Samsung Galaxy Note 3", "description": "Classic Samsung phablet with S-Pen.", "price": 299.0, "quantity": 15},
-    {"id": 2, "asin": "B00836Y6B2", "name": "Nokia Lumia 900", "description": "Classic Windows Phone with Zune integration.", "price": 149.0, "quantity": 25},
     {"id": 3, "asin": "B07FZH9BGV", "name": "Samsung Galaxy Note 9", "description": "Flagship smartphone with S-Pen and Bixby.", "price": 499.0, "quantity": 20}
 ]
 

@@ -104,9 +104,7 @@ st.markdown("""
 # API Endpoint Configurations
 API_BASE = "http://127.0.0.1:8000"
 
-st.markdown('<div class="main-title">litmus7</div>', unsafe_allow_html=True)
-st.markdown('<div class="subtitle">Divide-and-Conquer Product Review Intelligence Platform</div>', unsafe_allow_html=True)
-
+st.markdown('<div class="main-title">Product Review Intelligence Platform</div>', unsafe_allow_html=True)
 # Helper function to fetch products from backend
 @st.cache_data(show_spinner=False)
 def fetch_products():
@@ -119,7 +117,6 @@ def fetch_products():
     # Fallback to local default list if backend is not started
     return [
         {"id": 1, "asin": "B00F2SKPIM", "name": "Samsung Galaxy Note 3", "description": "Classic Samsung phablet with S-Pen."},
-        {"id": 2, "asin": "B00836Y6B2", "name": "Nokia Lumia 900", "description": "Classic Windows Phone with Zune integration."},
         {"id": 3, "asin": "B07FZH9BGV", "name": "Samsung Galaxy Note 9", "description": "Flagship smartphone with S-Pen and Bixby."}
     ]
 
