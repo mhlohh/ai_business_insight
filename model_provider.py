@@ -143,6 +143,76 @@ def parse_fallback_insights(text: str) -> list[dict]:
         
     return insights
 
+def extract_insights_json(text: str) -> list | None:
+    """
+    Robustly extracts the final JSON insights array from the model response text,
+    skipping any echoed example templates or parsing artifacts.
+    """
+    import json
+    import re
+    blocks = []
+
+    # 1. Try extracting from ```json blocks (in reverse order, processing last first)
+    if "```json" in text:
+        parts = text.split("```json")
+        for part in reversed(parts[1:]):
+            block = part.split("```")[0].strip()
+            try:
+                data = json.loads(block)
+                if isinstance(data, list) and len(data) > 0:
+                    if not (len(data) == 1 and data[0].get("insight") == "Description of the insight"):
+                        return data
+                    else:
+                        blocks.append(data)
+            except Exception:
+                pass
+
+    # 2. Try extracting from generic ``` blocks (in reverse order)
+    if "```" in text:
+        parts = text.split("```")
+        for i in reversed(range(1, len(parts), 2)):
+            block = parts[i].strip()
+            if block.lower().startswith("json"):
+                block = block[4:].strip()
+            try:
+                data = json.loads(block)
+                if isinstance(data, list) and len(data) > 0:
+                    if not (len(data) == 1 and data[0].get("insight") == "Description of the insight"):
+                        return data
+                    else:
+                        blocks.append(data)
+            except Exception:
+                pass
+
+    # 3. Try finding any [...] array block using bracket matching from the end
+    start_positions = [m.start() for m in re.finditer(r'\[', text)]
+    for start_idx in reversed(start_positions):
+        bracket_count = 0
+        end_idx = -1
+        for i in range(start_idx, len(text)):
+            if text[i] == '[':
+                bracket_count += 1
+            elif text[i] == ']':
+                bracket_count -= 1
+                if bracket_count == 0:
+                    end_idx = i
+                    break
+        if end_idx != -1:
+            candidate = text[start_idx:end_idx + 1]
+            try:
+                data = json.loads(candidate)
+                if isinstance(data, list) and len(data) > 0:
+                    if not (len(data) == 1 and data[0].get("insight") == "Description of the insight"):
+                        return data
+                    else:
+                        blocks.append(data)
+            except Exception:
+                pass
+
+    if blocks:
+        return blocks[0]
+    return None
+
 async def ask(prompt: str) -> str:
     """
     Core function called by FastAPI `/ask` endpoint.
@@ -269,55 +339,40 @@ Important: Your response must be ONLY a valid JSON array and nothing else. No ma
                             response_text += part.text
                             
         # Post-process response to extract only the JSON array if available
-        import json
-        cleaned_text = response_text.strip()
-        if "```json" in cleaned_text:
-            cleaned_text = cleaned_text.split("```json")[1].split("```")[0].strip()
-        elif "```" in cleaned_text:
-            cleaned_text = cleaned_text.split("```")[1].split("```")[0].strip()
-            
-        start_idx = cleaned_text.find('[')
-        end_idx = cleaned_text.rfind(']')
-        if start_idx != -1 and end_idx != -1 and end_idx > start_idx:
-            json_str = cleaned_text[start_idx:end_idx + 1]
-            try:
-                # Validate and return parsed JSON list directly
-                data = json.loads(json_str)
-                if isinstance(data, list):
-                    category_weights = {
-                        "quality": 1.5,
-                        "support": 1.2,
-                        "usability": 1.3,
-                        "price": 1.0,
-                    }
-                    for item in data:
-                        if isinstance(item, dict):
-                            # Recalculate score and status programmatically to ensure accuracy
-                            try:
-                                freq = float(item.get("frequency", item.get("count", 1)))
-                                conf = float(item.get("confidence", item.get("confidence_level", 0.8)))
-                                cat = str(item.get("category", "other")).lower().strip()
-                                weight = category_weights.get(cat, 1.0)
-                                calculated_score = freq * conf * weight
-                                item["score"] = round(calculated_score, 2)
-                                
-                                # Normalize keys for frontend
-                                if "example_quote" not in item and "quote" in item:
-                                    item["example_quote"] = item["quote"]
-                                if "confidence" not in item:
-                                    item["confidence"] = conf
-                                if "frequency" not in item:
-                                    item["frequency"] = freq
-                            except (ValueError, TypeError):
-                                pass
-                            
-                            try:
-                                item["status"] = score_to_status(float(item["score"]))
-                            except (ValueError, TypeError):
-                                item["status"] = STATUS_NEEDS_ATTENTION
-                    return data
-            except Exception:
-                pass
+        data = extract_insights_json(response_text)
+        if data is not None and isinstance(data, list):
+            category_weights = {
+                "quality": 1.5,
+                "support": 1.2,
+                "usability": 1.3,
+                "price": 1.0,
+            }
+            for item in data:
+                if isinstance(item, dict):
+                    # Recalculate score and status programmatically to ensure accuracy
+                    try:
+                        freq = float(item.get("frequency", item.get("count", 1)))
+                        conf = float(item.get("confidence", item.get("confidence_level", 0.8)))
+                        cat = str(item.get("category", "other")).lower().strip()
+                        weight = category_weights.get(cat, 1.0)
+                        calculated_score = freq * conf * weight
+                        item["score"] = round(calculated_score, 2)
+                        
+                        # Normalize keys for frontend
+                        if "example_quote" not in item and "quote" in item:
+                            item["example_quote"] = item["quote"]
+                        if "confidence" not in item:
+                            item["confidence"] = conf
+                        if "frequency" not in item:
+                            item["frequency"] = freq
+                    except (ValueError, TypeError):
+                        pass
+                    
+                    try:
+                        item["status"] = score_to_status(float(item["score"]))
+                    except (ValueError, TypeError):
+                        item["status"] = STATUS_NEEDS_ATTENTION
+            return data
                 
         # Fallback parsing for raw text explanation
         print("⚠️ [Parser Warning] Model returned raw text instead of a JSON array. Applying fallback text parser.")
