@@ -204,6 +204,7 @@ You must execute a 6-stage flow to synthesize the findings:
   {{
     "insight": "Description of the insight",
     "score": 4.5,
+    "confidence": 0.9,
     "status": "Working well",
     "frequency": 3,
     "example_quote": "Representative customer quote",
@@ -283,8 +284,33 @@ Important: Your response must be ONLY a valid JSON array and nothing else. No ma
                 # Validate and return parsed JSON list directly
                 data = json.loads(json_str)
                 if isinstance(data, list):
+                    category_weights = {
+                        "quality": 1.5,
+                        "support": 1.2,
+                        "usability": 1.3,
+                        "price": 1.0,
+                    }
                     for item in data:
-                        if isinstance(item, dict) and "score" in item:
+                        if isinstance(item, dict):
+                            # Recalculate score and status programmatically to ensure accuracy
+                            try:
+                                freq = float(item.get("frequency", item.get("count", 1)))
+                                conf = float(item.get("confidence", item.get("confidence_level", 0.8)))
+                                cat = str(item.get("category", "other")).lower().strip()
+                                weight = category_weights.get(cat, 1.0)
+                                calculated_score = freq * conf * weight
+                                item["score"] = round(calculated_score, 2)
+                                
+                                # Normalize keys for frontend
+                                if "example_quote" not in item and "quote" in item:
+                                    item["example_quote"] = item["quote"]
+                                if "confidence" not in item:
+                                    item["confidence"] = conf
+                                if "frequency" not in item:
+                                    item["frequency"] = freq
+                            except (ValueError, TypeError):
+                                pass
+                            
                             try:
                                 item["status"] = score_to_status(float(item["score"]))
                             except (ValueError, TypeError):
