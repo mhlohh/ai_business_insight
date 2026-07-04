@@ -7,7 +7,7 @@ from google.adk.models.lite_llm import LiteLlm
 from google.genai import types
 
 load_dotenv(override=True)
-from aggregator import score_to_status, STATUS_NEEDS_ATTENTION
+from app.services.aggregator import score_to_status, STATUS_NEEDS_ATTENTION
 
 # Configuration parameters for LM Studio / LiteLLM local models
 LOCAL_MODEL_NAME = os.getenv("LOCAL_MODEL_NAME", "openai/qwen2.5-coder-7b-instruct-mlx")
