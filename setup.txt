@@ -40,8 +40,8 @@ Run Setup Guide
       lms load qwen2.5-coder-3b-instruct-mlx
 
 6. Run the FastAPI Backend
-    uvicorn main:app --reload
+    uvicorn app.main:app --reload
 
 7. Run the Streamlit Frontend
-    streamlit run app.py
+    streamlit run streamlit_app.py
 

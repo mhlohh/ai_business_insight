@@ -61,7 +61,7 @@ def initialize_database():
     conn.commit()
     
     # Check if database is already populated
-    cursor.execute("SELECT COUNT(*) FROM products")
+    cursor.execute("SELECT COUNT(*) FROM reviews")
     if cursor.fetchone()[0] > 0:
         print("💾 Database already populated in SQLite. Skipping initialization.")
         conn.close()
@@ -72,7 +72,7 @@ def initialize_database():
     # Populate Default Products
     for p in DEFAULT_PRODUCTS:
         cursor.execute(
-            "INSERT INTO products (id, asin, name, description, price, quantity) VALUES (?, ?, ?, ?, ?, ?)",
+            "INSERT OR IGNORE INTO products (id, asin, name, description, price, quantity) VALUES (?, ?, ?, ?, ?, ?)",
             (p["id"], p["asin"], p["name"], p["description"], p["price"], p["quantity"])
         )
     conn.commit()

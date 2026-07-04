@@ -1,59 +1,12 @@
-import os
-import asyncio
-from dotenv import load_dotenv
-from google.adk.agents import Agent, ParallelAgent, SequentialAgent
+from google.adk.agents import SequentialAgent
 from google.adk.runners import InMemoryRunner
-from google.adk.models.lite_llm import LiteLlm
 from google.genai import types
 
-load_dotenv(override=True)
+from app.services.llm_config import model_obj, parallel_model_obj, LMSTUDIO_API_BASE
+from app.services.parallel_agent import chunk_reviews, create_parallel_team
+from app.services.aggregator_agent import create_aggregator_agent
+from app.services.parser import extract_insights_json, parse_fallback_insights
 from app.services.aggregator import score_to_status, STATUS_NEEDS_ATTENTION
-
-# Configuration parameters for LM Studio / LiteLLM local models
-LOCAL_MODEL_NAME = os.getenv("LOCAL_MODEL_NAME", "openai/qwen2.5-coder-7b-instruct-mlx")
-LOCAL_PARALLEL_MODEL_NAME = os.getenv("LOCAL_PARALLEL_MODEL_NAME", "openai/qwen2.5-coder-3b-instruct-mlx")
-LMSTUDIO_API_BASE = os.getenv("LMSTUDIO_API_BASE", "http://localhost:1234/v1")
-LMSTUDIO_API_KEY = os.getenv("LMSTUDIO_API_KEY", "lm-studio")
-
-# LiteLLM/LM Studio configuration
-os.environ["OPENAI_API_BASE"] = LMSTUDIO_API_BASE
-os.environ["OPENAI_API_KEY"] = LMSTUDIO_API_KEY
-
-# Concurrency limit for local model provider to prevent LM Studio compute/OOM errors under concurrent load
-CONCURRENCY_LIMIT = int(os.getenv("LOCAL_CONCURRENCY_LIMIT", "1"))
-concurrency_semaphore = asyncio.Semaphore(CONCURRENCY_LIMIT)
-
-# Monkeypatch LiteLlm.generate_content_async to enforce the concurrency limit
-_original_generate_content_async = LiteLlm.generate_content_async
-
-async def _semaphore_generate_content_async(self, *args, **kwargs):
-    async with concurrency_semaphore:
-        try:
-            async for response in _original_generate_content_async(self, *args, **kwargs):
-                yield response
-        except Exception as e:
-            is_parallel_model = (getattr(self, 'model', None) == LOCAL_PARALLEL_MODEL_NAME)
-            if is_parallel_model and LOCAL_PARALLEL_MODEL_NAME != LOCAL_MODEL_NAME:
-                print(f"⚠️ Warning: Model '{self.model}' failed with error: {e}")
-                print(f"👉 Falling back to aggregator model '{LOCAL_MODEL_NAME}' to process this step...")
-                old_model = self.model
-                self.model = LOCAL_MODEL_NAME
-                try:
-                    async for response in _original_generate_content_async(self, *args, **kwargs):
-                        yield response
-                finally:
-                    self.model = old_model
-            else:
-                raise e
-
-LiteLlm.generate_content_async = _semaphore_generate_content_async
-
-# Instantiate model objects
-model_obj = LiteLlm(model=LOCAL_MODEL_NAME)
-parallel_model_obj = LiteLlm(model=LOCAL_PARALLEL_MODEL_NAME)
-
-print(f"✅ Aggregator Model: {LOCAL_MODEL_NAME}")
-print(f"✅ Parallel Sub-agents Model: {LOCAL_PARALLEL_MODEL_NAME}")
 
 async def setup():
     """
@@ -63,234 +16,19 @@ async def setup():
     """
     pass
 
-def chunk_reviews(prompt: str) -> list[list[str]]:
-    """
-    Helper to chunk a large block of reviews (each review on a separate line)
-    into smaller sub-lists of reviews.
-    """
-    lines = [line.strip() for line in prompt.split('\n') if line.strip()]
-    if not lines:
-        return [["No reviews provided."]]
-    
-    # Cap total reviews to analyze for performance and context limits of local models
-    max_reviews = int(os.getenv("MAX_REVIEWS_TO_ANALYZE", "100"))
-    lines = lines[:max_reviews]
-    
-    # Dynamically select a chunk size based on input size
-    if len(lines) < 10:
-        chunk_size = 3
-    elif len(lines) < 100:
-        chunk_size = 10
-    else:
-        chunk_size = 20  # 5 chunks of 20 reviews for max 100
-        
-    chunks = []
-    for i in range(0, len(lines), chunk_size):
-        chunks.append(lines[i:i + chunk_size])
-    return chunks
-
-def parse_fallback_insights(text: str) -> list[dict]:
-    import re
-    insights = []
-    lines = [l.strip() for l in text.split("\n") if l.strip()]
-    
-    for line in lines:
-        if line.lower().startswith(("here is", "sure", "ok", "based on", "the analysis", "overall", "i analyzed")):
-            continue
-            
-        cleaned = re.sub(r'^[\d\-\*\.\)\s\•]+', '', line).strip()
-        if not cleaned or len(cleaned) < 15:
-            continue
-            
-        score_match = re.search(r'(?:score|rating)[\s:]*([\d\.]+)', cleaned, re.IGNORECASE)
-        score = 5.0
-        if score_match:
-            try:
-                score = float(score_match.group(1))
-            except ValueError:
-                pass
-                
-        category_match = re.search(r'category[\s:]*([a-zA-Z]+)', cleaned, re.IGNORECASE)
-        category = "Other"
-        if category_match:
-            category = category_match.group(1)
-            
-        status = score_to_status(score)
-        
-        cleaned_insight = re.sub(r'[\(\[\{][^\)\]\}]*(?:score|rating|category)[^\)\]\}]*[\)\]\}]', '', cleaned, flags=re.IGNORECASE).strip()
-        cleaned_insight = re.sub(r'\s+', ' ', cleaned_insight).strip()
-        cleaned_insight = cleaned_insight.rstrip(",;:- ")
-        
-        if cleaned_insight:
-            insights.append({
-                "insight": cleaned_insight,
-                "score": score,
-                "status": status,
-                "frequency": 1,
-                "example_quote": "Extracted from text report.",
-                "category": category.lower()
-            })
-            
-    if not insights and text.strip():
-        insights.append({
-            "insight": text.strip()[:250] + "..." if len(text.strip()) > 250 else text.strip(),
-            "score": 5.0,
-            "status": "Worth watching",
-            "frequency": 1,
-            "example_quote": "Refer to raw output for details.",
-            "category": "other"
-        })
-        
-    return insights
-
-def extract_insights_json(text: str) -> list | None:
-    """
-    Robustly extracts the final JSON insights array from the model response text,
-    skipping any echoed example templates or parsing artifacts.
-    """
-    import json
-    import re
-    blocks = []
-
-    # 1. Try extracting from ```json blocks (in reverse order, processing last first)
-    if "```json" in text:
-        parts = text.split("```json")
-        for part in reversed(parts[1:]):
-            block = part.split("```")[0].strip()
-            try:
-                data = json.loads(block)
-                if isinstance(data, list) and len(data) > 0:
-                    if not (len(data) == 1 and data[0].get("insight") == "Description of the insight"):
-                        return data
-                    else:
-                        blocks.append(data)
-            except Exception:
-                pass
-
-    # 2. Try extracting from generic ``` blocks (in reverse order)
-    if "```" in text:
-        parts = text.split("```")
-        for i in reversed(range(1, len(parts), 2)):
-            block = parts[i].strip()
-            if block.lower().startswith("json"):
-                block = block[4:].strip()
-            try:
-                data = json.loads(block)
-                if isinstance(data, list) and len(data) > 0:
-                    if not (len(data) == 1 and data[0].get("insight") == "Description of the insight"):
-                        return data
-                    else:
-                        blocks.append(data)
-            except Exception:
-                pass
-
-    # 3. Try finding any [...] array block using bracket matching from the end
-    start_positions = [m.start() for m in re.finditer(r'\[', text)]
-    for start_idx in reversed(start_positions):
-        bracket_count = 0
-        end_idx = -1
-        for i in range(start_idx, len(text)):
-            if text[i] == '[':
-                bracket_count += 1
-            elif text[i] == ']':
-                bracket_count -= 1
-                if bracket_count == 0:
-                    end_idx = i
-                    break
-        if end_idx != -1:
-            candidate = text[start_idx:end_idx + 1]
-            try:
-                data = json.loads(candidate)
-                if isinstance(data, list) and len(data) > 0:
-                    if not (len(data) == 1 and data[0].get("insight") == "Description of the insight"):
-                        return data
-                    else:
-                        blocks.append(data)
-            except Exception:
-                pass
-
-    if blocks:
-        return blocks[0]
-    return None
-
-async def ask(prompt: str) -> str:
+async def ask(prompt: str) -> str | list:
     """
     Core function called by FastAPI `/ask` endpoint.
     Dynamically constructs a parallel review processing pipeline, runs it,
     and returns the aggregated result.
     """
     chunks = chunk_reviews(prompt)
-    sub_agents = []
     
     # 1. Create Parallel Sub-agents for each chunk using the parallel model object
-    for i, chunk in enumerate(chunks):
-        chunk_text = "\n".join(chunk)
-        sub_agent = Agent(
-            name=f"ReviewResearcher_{i}",
-            model=parallel_model_obj,
-            instruction=f"""Analyze the following product reviews, extract key business-relevant insights, issues, or features, and output a list of distinct insights.
-For each insight, include:
-- The insight description
-- A representative quote
-- A confidence level (between 0.0 and 1.0)
-- The category of the insight (e.g., quality, support, price, usability, etc.)
-
-Reviews:
-{chunk_text}""",
-            output_key=f"insights_{i}"
-        )
-        sub_agents.append(sub_agent)
-        
-    parallel_reviews_team = ParallelAgent(
-        name="ParallelReviewsTeam",
-        sub_agents=sub_agents
-    )
+    parallel_reviews_team, input_vars = create_parallel_team(chunks, parallel_model_obj)
     
     # 2. Formulate Aggregator Prompt using the output keys from sub-agents
-    input_vars = ""
-    for i in range(len(chunks)):
-        input_vars += f"\n**Chunk {i} Insights:**\n{{insights_{i}}}\n"
-        
-    aggregator_instruction = f"""Combine and aggregate all the extracted insights from the parallel review analysis chunks below:
-
-{input_vars}
-
-You must execute a 6-stage flow to synthesize the findings:
-1. **Collect**: Gather all raw insights from all chunks.
-2. **Deduplicate**: Merge highly similar or duplicate insights. If two insights are nearly identical, group them, increment the frequency count, and choose the most representative quote as the example quote.
-3. **Resolve Conflicts**: If insights on the same topic directly contradict each other (e.g., 'good battery' vs 'bad battery'), merge them into a single 'Mixed Feedback' insight. Sum their frequencies, average their confidences, and provide a quote that highlights the mixed consensus.
-4. **Score/Rank**: Calculate a score for each unique insight using the formula:
-   score = frequency * confidence * category_weight
-   Use the following category weights:
-   - quality: 1.5
-   - support: 1.2
-   - price: 1.0
-   - usability: 1.3
-   - other: 1.0
-   (Assume confidence is the average confidence of the merged insights, and frequency is the number of times it was mentioned or merged.)
-5. **Quality Filter**: Keep all valid product feedback, positive reviews, issues, and features. Do not filter out insights unless they are completely blank, unrelated to the product, or gibberish.
-6. **Format**: Output the final ranked list of insights as a valid JSON array of objects conforming to this schema:
-[
-  {{
-    "insight": "Description of the insight",
-    "score": 4.5,
-    "confidence": 0.9,
-    "status": "Working well",
-    "frequency": 3,
-    "example_quote": "Representative customer quote",
-    "category": "quality"
-  }}
-]
-
-Important: Your response must be ONLY a valid JSON array and nothing else. No markdown wrappers like ```json or trailing text.
-"""
-
-    aggregator_agent = Agent(
-        name="AggregatorAgent",
-        model=model_obj,
-        instruction=aggregator_instruction,
-        output_key="executive_summary"
-    )
+    aggregator_agent = create_aggregator_agent(input_vars, model_obj)
     
     # 3. Create the root Sequential Agent and InMemoryRunner
     root_agent = SequentialAgent(
