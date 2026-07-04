@@ -6,6 +6,7 @@ STATUS_WORKING_WELL = "Working well"
 STATUS_WORTH_WATCHING = "Worth watching"
 STATUS_NEEDS_ATTENTION = "Needs attention"
 
+
 def score_to_status(score: float) -> str:
     """
     Buckets a priority score into a business-readable plain-language status.

@@ -8,13 +8,15 @@ from app.services.aggregator_agent import create_aggregator_agent
 from app.services.parser import extract_insights_json, parse_fallback_insights
 from app.services.aggregator import score_to_status, STATUS_NEEDS_ATTENTION
 
+
 async def setup():
     """
     Setup function mapping to main.py lifespan contract.
-    No global runner is built here as the pipeline is dynamically constructed 
+    No global runner is built here as the pipeline is dynamically constructed
     per request based on the size of the reviews list.
     """
     pass
+
 
 async def ask(prompt: str) -> str | list:
     """
@@ -23,47 +25,47 @@ async def ask(prompt: str) -> str | list:
     and returns the aggregated result.
     """
     chunks = chunk_reviews(prompt)
-    
+
     # 1. Create Parallel Sub-agents for each chunk using the parallel model object
     parallel_reviews_team, input_vars = create_parallel_team(chunks, parallel_model_obj)
-    
+
     # 2. Formulate Aggregator Prompt using the output keys from sub-agents
     aggregator_agent = create_aggregator_agent(input_vars, model_obj)
-    
+
     # 3. Create the root Sequential Agent and InMemoryRunner
     root_agent = SequentialAgent(
         name="ReviewsAnalysisSystem",
-        sub_agents=[parallel_reviews_team, aggregator_agent]
+        sub_agents=[parallel_reviews_team, aggregator_agent],
     )
-    
+
     runner = InMemoryRunner(agent=root_agent)
-    
+
     try:
         session = await runner.session_service.create_session(
             app_name=runner.app_name,
             user_id="user",
         )
-        
+
         response_text = ""
         async for event in runner.run_async(
             user_id="user",
             session_id=session.id,
             new_message=types.Content(
                 role="user",
-                parts=[types.Part(text="Run the product review aggregation pipeline.")]
-            )
+                parts=[types.Part(text="Run the product review aggregation pipeline.")],
+            ),
         ):
             # Print execution logs for parallel agents, aggregator, and root agent
             node_path = event.node_info.path if event.node_info else "unknown"
             author = event.author or "System"
-            
+
             # Print intermediate agent trace if not partial/stream chunks
             if not event.partial:
                 print(f"🔄 [Agent Event] Author: {author} | Node Path: {node_path}")
                 if event.content and event.content.parts:
                     for part in event.content.parts:
                         if part.text:
-                            snippet = part.text.strip().replace('\n', ' ')
+                            snippet = part.text.strip().replace("\n", " ")
                             if len(snippet) > 100:
                                 snippet = snippet[:100] + "..."
                             print(f"   ├─ Output Text: {snippet}")
@@ -75,7 +77,7 @@ async def ask(prompt: str) -> str | list:
                     for part in event.content.parts:
                         if part.text:
                             response_text += part.text
-                            
+
         # Post-process response to extract only the JSON array if available
         data = extract_insights_json(response_text)
         if data is not None and isinstance(data, list):
@@ -90,12 +92,14 @@ async def ask(prompt: str) -> str | list:
                     # Recalculate score and status programmatically to ensure accuracy
                     try:
                         freq = float(item.get("frequency", item.get("count", 1)))
-                        conf = float(item.get("confidence", item.get("confidence_level", 0.8)))
+                        conf = float(
+                            item.get("confidence", item.get("confidence_level", 0.8))
+                        )
                         cat = str(item.get("category", "other")).lower().strip()
                         weight = category_weights.get(cat, 1.0)
                         calculated_score = freq * conf * weight
                         item["score"] = round(calculated_score, 2)
-                        
+
                         # Normalize keys for frontend
                         if "example_quote" not in item and "quote" in item:
                             item["example_quote"] = item["quote"]
@@ -105,18 +109,22 @@ async def ask(prompt: str) -> str | list:
                             item["frequency"] = freq
                     except (ValueError, TypeError):
                         pass
-                    
+
                     try:
                         item["status"] = score_to_status(float(item["score"]))
                     except (ValueError, TypeError):
                         item["status"] = STATUS_NEEDS_ATTENTION
             return data
-                
+
         # Fallback parsing for raw text explanation
-        print("⚠️ [Parser Warning] Model returned raw text instead of a JSON array. Applying fallback text parser.")
+        print(
+            "⚠️ [Parser Warning] Model returned raw text instead of a JSON array. Applying fallback text parser."
+        )
         return parse_fallback_insights(response_text)
-        
+
     except Exception as e:
         print(f"❌ Error communicating with local model provider: {e}")
-        print(f"👉 Please ensure that your local LM Studio server is running and listening on {LMSTUDIO_API_BASE}")
+        print(
+            f"👉 Please ensure that your local LM Studio server is running and listening on {LMSTUDIO_API_BASE}"
+        )
         raise e

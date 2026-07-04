@@ -1,5 +1,6 @@
 from google.adk.agents import Agent
 
+
 def create_aggregator_agent(input_vars: str, model_obj) -> Agent:
     """
     Creates the aggregator agent that combines the chunks from the parallel team.
@@ -42,7 +43,7 @@ Important: Your response must be ONLY a valid JSON array and nothing else. No ma
         name="AggregatorAgent",
         model=model_obj,
         instruction=aggregator_instruction,
-        output_key="executive_summary"
+        output_key="executive_summary",
     )
-    
+
     return aggregator_agent
