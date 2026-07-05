@@ -31,3 +31,6 @@ data/
 
 # OS metadata
 .DS_Store
+
+#logs
+logs/
