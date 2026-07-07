@@ -3,10 +3,11 @@ from google.adk.runners import InMemoryRunner
 from google.genai import types
 
 from app.services.llm_config import model_obj, parallel_model_obj, LMSTUDIO_API_BASE
-from app.services.parallel_agent import chunk_reviews, create_parallel_team
+from app.services.parallel_agent import create_parallel_team
 from app.services.aggregator_agent import create_aggregator_agent
 from app.services.parser import extract_insights_json, parse_fallback_insights
 from app.services.aggregator import score_to_status, STATUS_NEEDS_ATTENTION
+from app.services.chunker import chunk_reviews
 
 
 async def setup():
