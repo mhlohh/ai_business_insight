@@ -1,6 +1,6 @@
 import re
 import json
-from app.services.aggregator_agent import score_to_status
+from app.services.aggregator import score_to_status
 
 
 def parse_fallback_insights(text: str) -> list[dict]:

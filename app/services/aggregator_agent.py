@@ -1,6 +1,7 @@
 import logging
 from pydantic import BaseModel, Field, ValidationError, field_validator
 from google.adk.agents import Agent
+from app.services.aggregator import score_to_status
 
 
 def create_aggregator_agent(input_vars: str, model_obj) -> Agent:
@@ -41,21 +42,6 @@ Important: Your response must be ONLY a valid JSON array and nothing else. No ma
     return aggregator_agent
 
 logger = logging.getLogger(__name__)
-
-STATUS_WORKING_WELL = "Working well"
-STATUS_MONITOR = "Worth watching"
-STATUS_NEEDS_ATTENTION = "Needs Attention"
-STATUS_CRITICAL = "Critical Issue"
-
-def score_to_status(score: float) -> str:
-    if score >= 4.0:
-        return STATUS_WORKING_WELL
-    elif score >= 2.5:
-        return STATUS_MONITOR
-    elif score >= 1.5:
-        return STATUS_NEEDS_ATTENTION
-    else:
-        return STATUS_CRITICAL
 
 VALID_CATEGORIES = {"quality", "support", "price", "usability", "other"}
 
