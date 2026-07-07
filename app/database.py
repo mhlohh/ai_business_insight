@@ -15,19 +15,19 @@ DB_FILE = "data/litmus7.db"
 DEFAULT_PRODUCTS = [
     {
         "id": 1,
-        "asin": "B00F2SKPIM",
-        "name": "Samsung Galaxy S26 Ultra",
-        "description": "Samsung Galaxy S26 Ultra 5G (Sky Blue, 12GB RAM, 512GB Storage)|Next-gen flagship with Snapdragon 8 Elite Gen 5 and advanced Galaxy AI.|139999.0|100",
-        "price": 299.0,
-        "quantity": 15,
+        "asin": "B018Y229OU",
+        "name": "Fire Tablet, 7 Display, Wi-Fi, 8 GB",
+        "description": "Amazon Fire Tablet with 7-inch display, Wi-Fi, 8 GB storage.",
+        "price": 49.99,
+        "quantity": 100,
     },
     {
-        "id": 3,
-        "asin": "B07FZH9BGV",
-        "name": "Apple iPhone 17 Pro Max",
-        "description": "(1 TB, Cosmic Orange)|The ultimate iPhone with A19 Pro chip and Pro Fusion camera system.|179900.0|100",
-        "price": 499.0,
-        "quantity": 20,
+        "id": 2,
+        "asin": "B00L9EPT8O",
+        "name": "Amazon Echo (White)",
+        "description": "Amazon Echo smart speaker with Alexa.",
+        "price": 89.99,
+        "quantity": 50,
     },
 ]
 
@@ -43,13 +43,14 @@ def get_connection():
 def initialize_database():
     """
     Creates SQLite3 tables and populates them with initial products and Amazon reviews.
-    Augments the dataset to 1000+ reviews per product to simulate scale.
+    Uses the 1429_1.csv Kaggle dataset if available.
     """
     conn = get_connection()
     cursor = conn.cursor()
 
     # 1. Create Schema
-    cursor.execute("""
+    cursor.execute(
+        """
         CREATE TABLE IF NOT EXISTS products (
             id INTEGER PRIMARY KEY,
             asin TEXT NOT NULL,
@@ -58,22 +59,27 @@ def initialize_database():
             price REAL,
             quantity INTEGER
         )
-    """)
-    cursor.execute("""
+    """
+    )
+    cursor.execute(
+        """
         CREATE TABLE IF NOT EXISTS reviews (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             product_id INTEGER NOT NULL,
             body TEXT NOT NULL,
             FOREIGN KEY (product_id) REFERENCES products(id)
         )
-    """)
-    cursor.execute("""
+    """
+    )
+    cursor.execute(
+        """
         CREATE TABLE IF NOT EXISTS analysis_cache (
             product_id INTEGER PRIMARY KEY,
             analysis TEXT NOT NULL,
             FOREIGN KEY (product_id) REFERENCES products(id)
         )
-    """)
+    """
+    )
     conn.commit()
 
     # Check if database is already populated
@@ -83,102 +89,63 @@ def initialize_database():
         conn.close()
         return
 
-    print("🚀 Initializing database with products and reviews...")
+    print("🚀 Initializing database with products and reviews from 1429_1.csv...")
 
-    # Populate Default Products
-    for p in DEFAULT_PRODUCTS:
-        cursor.execute(
-            "INSERT OR IGNORE INTO products (id, asin, name, description, price, quantity) VALUES (?, ?, ?, ?, ?, ?)",
-            (
-                p["id"],
-                p["asin"],
-                p["name"],
-                p["description"],
-                p["price"],
-                p["quantity"],
-            ),
-        )
-    conn.commit()
-
-    local_cache_dir = "data"
-    local_cache_file = os.path.join(local_cache_dir, "reviews_dataset.csv")
-    dataset_url = "https://raw.githubusercontent.com/vamshikallem/Text-Analytics-on-Amazon-Cell-Reviews-and-Ratings/master/20191226-reviews.csv"
-
-    df = None
-
-    # Check if we have a local cache file
-    if os.path.exists(local_cache_file):
+    csv_path = "1429_1.csv"
+    if not os.path.exists(csv_path):
         print(
-            f"📖 Loading Amazon reviews dataset from local cache: {local_cache_file}..."
+            f"⚠️ {csv_path} not found. Ensure the dataset is downloaded to use auto-initialization."
         )
-        try:
-            df = pd.read_csv(local_cache_file)
-            print(f"✅ Loaded dataset locally containing {len(df)} rows.")
-        except Exception as e:
-            print(f"⚠️ Error reading local cache: {e}. Will attempt download.")
+        conn.close()
+        return
 
-    if df is None:
-        print(f"📥 Downloading Amazon reviews dataset from {dataset_url}...")
-        try:
-            df = pd.read_csv(dataset_url)
-            print(f"✅ Loaded dataset containing {len(df)} rows.")
-
-            # Save to local cache
-            os.makedirs(local_cache_dir, exist_ok=True)
-            df.to_csv(local_cache_file, index=False)
-            print(f"💾 Saved dataset to local cache file: {local_cache_file}")
-        except Exception as e:
-            print(f"❌ Error downloading dataset: {e}")
-
-    # Populate products and reviews
     try:
-        if df is None:
-            raise ValueError("No dataset loaded.")
+        print(f"Reading {csv_path}...")
+        df = pd.read_csv(csv_path, low_memory=False)
 
-        for product in DEFAULT_PRODUCTS:
-            product_id = product["id"]
-            asin = product["asin"]
+        # Drop rows without ASIN or review text
+        df = df.dropna(subset=["asins", "reviews.text", "name"])
 
-            # Filter reviews for this product's ASIN
-            prod_reviews = df[df["asin"] == asin]["body"].dropna().tolist()
-            print(
-                f"🔍 Found {len(prod_reviews)} real reviews for {product['name']} (ASIN: {asin})"
+        # Get first ASIN for each row
+        df["primary_asin"] = df["asins"].apply(lambda x: str(x).split(",")[0].strip())
+
+        unique_products = df.drop_duplicates(subset=["primary_asin"])
+
+        # Insert products
+        for _, row in unique_products.iterrows():
+            cursor.execute(
+                "INSERT OR IGNORE INTO products (asin, name, description, price, quantity) VALUES (?, ?, ?, ?, ?)",
+                (
+                    row["primary_asin"],
+                    row["name"],
+                    str(row.get("categories", "")),
+                    0.0,
+                    0,
+                ),
             )
+        conn.commit()
 
-            print(f"📈 Found {len(prod_reviews)} reviews for {product['name']}")
+        # Now fetch product IDs
+        cursor.execute("SELECT asin, id FROM products")
+        asin_to_id = {r["asin"]: r["id"] for r in cursor.fetchall()}
 
-            # Save reviews
-            cursor.executemany(
-                "INSERT INTO reviews (product_id, body) VALUES (?, ?)",
-                [(product_id, body) for body in prod_reviews],
-            )
-            print(
-                f"💾 Saved {len(prod_reviews)} reviews for '{product['name']}' to database."
-            )
+        # Insert reviews
+        reviews_to_insert = []
+        for _, row in df.iterrows():
+            asin = row["primary_asin"]
+            product_id = asin_to_id.get(asin)
+            body = row["reviews.text"]
 
+            if product_id and pd.notna(body):
+                reviews_to_insert.append((product_id, str(body)))
+
+        cursor.executemany(
+            "INSERT INTO reviews (product_id, body) VALUES (?, ?)", reviews_to_insert
+        )
         conn.commit()
         print("🎉 Database Initialization Completed Successfully!")
     except Exception as e:
         print(f"❌ Error populating dataset: {e}")
-        # Fallback to local stub reviews if error occurs
-        print("👉 Populating database with stub local reviews...")
-        for product in DEFAULT_PRODUCTS:
-            product_id = product["id"]
-            stub_reviews = [
-                f"Amazing {product['name']}! Best purchase I've made all year.",
-                f"The {product['name']} has some issues with battery life but performs well.",
-                f"Terrible quality, screen broke instantly.",
-                f"Great value for money, highly recommend the {product['name']}.",
-            ]
-
-            cursor.executemany(
-                "INSERT INTO reviews (product_id, body) VALUES (?, ?)",
-                [(product_id, body) for body in stub_reviews],
-            )
-            print(
-                f"💾 Saved {len(stub_reviews)} stub reviews for '{product['name']}' to database."
-            )
-        conn.commit()
     finally:
         conn.close()
 

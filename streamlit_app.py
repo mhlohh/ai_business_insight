@@ -128,15 +128,15 @@ def fetch_products():
     return [
         {
             "id": 1,
-            "asin": "B00F2SKPIM",
-            "name": "Samsung Galaxy Note 3",
-            "description": "Classic Samsung phablet with S-Pen.",
+            "asin": "B018Y229OU",
+            "name": "Fire Tablet, 7 Display, Wi-Fi, 8 GB",
+            "description": "Amazon Fire Tablet with 7-inch display, Wi-Fi, 8 GB storage.",
         },
         {
-            "id": 3,
-            "asin": "B07FZH9BGV",
-            "name": "Samsung Galaxy Note 9",
-            "description": "Flagship smartphone with S-Pen and Bixby.",
+            "id": 2,
+            "asin": "B00L9EPT8O",
+            "name": "Amazon Echo (White)",
+            "description": "Amazon Echo smart speaker with Alexa.",
         },
     ]
 

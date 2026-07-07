@@ -2,9 +2,9 @@ from google.adk.agents import Agent
 
 
 def create_aggregator_agent(input_vars: str, model_obj) -> Agent:
-    """
-    Creates the aggregator agent that combines the chunks from the parallel team.
-    """
+
+    # Creates the aggregator agent that combines the chunks from the parallel team.
+
     aggregator_instruction = f"""Combine and aggregate all the extracted insights from the parallel review analysis chunks below:
 
 {input_vars}
