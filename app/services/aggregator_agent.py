@@ -42,6 +42,21 @@ Important: Your response must be ONLY a valid JSON array and nothing else. No ma
 
 logger = logging.getLogger(__name__)
 
+STATUS_WORKING_WELL = "Working well"
+STATUS_MONITOR = "Worth watching"
+STATUS_NEEDS_ATTENTION = "Needs Attention"
+STATUS_CRITICAL = "Critical Issue"
+
+def score_to_status(score: float) -> str:
+    if score >= 4.0:
+        return STATUS_WORKING_WELL
+    elif score >= 2.5:
+        return STATUS_MONITOR
+    elif score >= 1.5:
+        return STATUS_NEEDS_ATTENTION
+    else:
+        return STATUS_CRITICAL
+
 VALID_CATEGORIES = {"quality", "support", "price", "usability", "other"}
 
 # Defined here so Python can handle the math reliably
@@ -94,7 +109,7 @@ def validate_insights(data: list) -> list:
             insight_obj.score = round(insight_obj.frequency * insight_obj.confidence * weight, 2)
             
             # 3. Assign your pipeline status
-            insight_obj.status = "Working well"
+            insight_obj.status = score_to_status(insight_obj.score)
 
             validated.append(insight_obj.model_dump())
 

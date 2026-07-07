@@ -4,10 +4,8 @@ from google.genai import types
 
 from app.services.llm_config import model_obj, parallel_model_obj, LMSTUDIO_API_BASE
 from app.services.parallel_agent import create_parallel_team
-from app.services.aggregator_agent import create_aggregator_agent
+from app.services.aggregator_agent import create_aggregator_agent, score_to_status, STATUS_NEEDS_ATTENTION
 from app.services.parser import extract_insights_json, parse_fallback_insights
-from app.services.aggregator import score_to_status, STATUS_NEEDS_ATTENTION
-from app.services.chunker import chunk_reviews
 
 
 async def setup():
@@ -19,13 +17,12 @@ async def setup():
     pass
 
 
-async def ask(prompt: str) -> str | list:
+async def ask(chunks: list[list[str]]) -> str | list:
     """
     Core function called by FastAPI `/ask` endpoint.
     Dynamically constructs a parallel review processing pipeline, runs it,
     and returns the aggregated result.
     """
-    chunks = chunk_reviews(prompt)
 
     # 1. Create Parallel Sub-agents for each chunk using the parallel model object
     parallel_reviews_team, input_vars = create_parallel_team(chunks, parallel_model_obj)
