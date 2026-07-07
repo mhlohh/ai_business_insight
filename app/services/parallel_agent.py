@@ -2,7 +2,8 @@ import os
 from google.adk.agents import Agent, ParallelAgent
 from app.services.chunker import chunk_reviews
 
-#B
+
+# B
 def create_parallel_team(
     chunks: list[list[str]], parallel_model_obj
 ) -> tuple[ParallelAgent, str]:
@@ -12,7 +13,7 @@ def create_parallel_team(
 
     for i, chunk in enumerate(chunks):
         chunk_text = "\n".join(chunk)
-        #Build by afeefa
+        # Build by afeefa
         sub_agent = Agent(
             name=f"ReviewResearcher_{i}",
             model=parallel_model_obj,
@@ -20,6 +21,7 @@ def create_parallel_team(
 For each insight, include:
 - The insight description
 - A representative quote
+- A confidence level (between 0.0 and 1.0)
 - The category of the insight (e.g., quality, support, price, usability, etc.)
 
 Reviews:
