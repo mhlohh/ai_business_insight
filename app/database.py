@@ -151,14 +151,7 @@ def initialize_database():
                 f"🔍 Found {len(prod_reviews)} real reviews for {product['name']} (ASIN: {asin})"
             )
 
-            # Ensure we have 1000+ reviews by duplicating/augmenting
-            target_count = 1005
-            while len(prod_reviews) < target_count:
-                shortage = target_count - len(prod_reviews)
-                prod_reviews.extend(prod_reviews[:shortage])
-
-            prod_reviews = prod_reviews[:target_count]
-            print(f"📈 Scaled {product['name']} reviews count to {len(prod_reviews)}")
+            print(f"📈 Found {len(prod_reviews)} reviews for {product['name']}")
 
             # Save reviews
             cursor.executemany(
@@ -182,8 +175,7 @@ def initialize_database():
                 f"The {product['name']} has some issues with battery life but performs well.",
                 f"Terrible quality, screen broke instantly.",
                 f"Great value for money, highly recommend the {product['name']}.",
-            ] * 260
-            stub_reviews = stub_reviews[:1005]
+            ]
 
             cursor.executemany(
                 "INSERT INTO reviews (product_id, body) VALUES (?, ?)",

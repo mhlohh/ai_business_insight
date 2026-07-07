@@ -6,9 +6,9 @@ from google.adk.models.lite_llm import LiteLlm
 load_dotenv(override=True)
 
 # Configuration parameters for LM Studio / LiteLLM local models
-LOCAL_MODEL_NAME = os.getenv("LOCAL_MODEL_NAME", "openai/qwen2.5-coder-7b-instruct-mlx")
+LOCAL_MODEL_NAME = os.getenv("LOCAL_MODEL_NAME", "openai/google/gemma-4-e4b")
 LOCAL_PARALLEL_MODEL_NAME = os.getenv(
-    "LOCAL_PARALLEL_MODEL_NAME", "openai/qwen2.5-coder-3b-instruct-mlx"
+    "LOCAL_PARALLEL_MODEL_NAME", "openai/google/gemma-4-e4b"
 )
 LMSTUDIO_API_BASE = os.getenv("LMSTUDIO_API_BASE", "http://localhost:1234/v1")
 LMSTUDIO_API_KEY = os.getenv("LMSTUDIO_API_KEY", "lm-studio")
@@ -41,15 +41,13 @@ async def _semaphore_generate_content_async(self, *args, **kwargs):
                 print(
                     f"👉 Falling back to aggregator model '{LOCAL_MODEL_NAME}' to process this step..."
                 )
-                old_model = self.model
-                self.model = LOCAL_MODEL_NAME
-                try:
-                    async for response in _original_generate_content_async(
-                        self, *args, **kwargs
-                    ):
-                        yield response
-                finally:
-                    self.model = old_model
+
+                fallback_model = LiteLlm(model=LOCAL_MODEL_NAME)
+                # Call original to avoid double semaphore acquisition
+                async for response in _original_generate_content_async(
+                    fallback_model, *args, **kwargs
+                ):
+                    yield response
             else:
                 raise e
 

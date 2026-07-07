@@ -34,3 +34,6 @@ data/
 
 #logs
 logs/
+
+#test
+scratch_test.py
