@@ -49,8 +49,7 @@ def initialize_database():
     cursor = conn.cursor()
 
     # 1. Create Schema
-    cursor.execute(
-        """
+    cursor.execute("""
         CREATE TABLE IF NOT EXISTS products (
             id INTEGER PRIMARY KEY,
             asin TEXT NOT NULL,
@@ -59,27 +58,22 @@ def initialize_database():
             price REAL,
             quantity INTEGER
         )
-    """
-    )
-    cursor.execute(
-        """
+    """)
+    cursor.execute("""
         CREATE TABLE IF NOT EXISTS reviews (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             product_id INTEGER NOT NULL,
             body TEXT NOT NULL,
             FOREIGN KEY (product_id) REFERENCES products(id)
         )
-    """
-    )
-    cursor.execute(
-        """
+    """)
+    cursor.execute("""
         CREATE TABLE IF NOT EXISTS analysis_cache (
             product_id INTEGER PRIMARY KEY,
             analysis TEXT NOT NULL,
             FOREIGN KEY (product_id) REFERENCES products(id)
         )
-    """
-    )
+    """)
     conn.commit()
 
     # Check if database is already populated

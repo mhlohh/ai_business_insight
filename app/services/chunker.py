@@ -1,5 +1,6 @@
 import os
 
+
 def chunk_reviews(prompt: str) -> list[list[str]]:
     """
     Helper to chunk a large block of reviews (each review on a separate line)
