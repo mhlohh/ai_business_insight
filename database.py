@@ -24,7 +24,7 @@ def check_insights(product_id: int):
 def get_raw_reviews(product_id: int):
     with sqlite3.connect(DB_NAME) as conn:
         cur = conn.cursor()
-        cur.execute("SELECT review_text FROM Reviews WHERE product_id = ?", (product_id,))
+        cur.execute("SELECT body FROM reviews WHERE product_id = ?", (product_id,))
         rows = cur.fetchall()
         return [row[0] for row in rows]
 
@@ -32,9 +32,23 @@ def save_insights(product_id: int, insight_text: str):
     with sqlite3.connect(DB_NAME) as conn:
         cur = conn.cursor()
         cur.execute(
-            "INSERT INTO Insights (product_id, insight_text) VALUES (?, ?)", 
+            "INSERT INTO analysis_cache (product_id, analysis) VALUES (?, ?)", 
             (product_id, insight_text)
         )
-        conn.commit()
+def clear_all_insights(product_id: int):
+    """One single function to handle the web request AND wipe the database."""
+    
+    # 1. Open the database
+    with sqlite3.connect(DB_NAME) as conn:
+        cur = conn.cursor()
+        
+        # 2. Delete the data
+        cur.execute("DELETE FROM analysis_cache WHERE product_id = ?", (product_id,))
+        
+    # 3. Send the success message back to the internet/browser
+    return {"status": "success", "message": "All AI insights have been permanently deleted."}
+    
+    conn.commit()
+
 print(all_products())
 print(check_insights(1))
