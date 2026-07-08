@@ -15,5 +15,5 @@ class AI_Insight(BaseModel):
 
 class InsightResponse(BaseModel):
     status: str    
-    data: AI_Insight 
+    data: list[AI_Insight]
 
