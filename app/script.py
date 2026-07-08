@@ -9,7 +9,7 @@ cursor = conn.cursor()
 # -------------------------------
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS products (
-    id TEXT PRIMARY KEY,
+    id INTEGER PRIMARY KEY,
     asin TEXT NOT NULL,
     name TEXT NOT NULL,
     description TEXT,
@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS reviews (
 # -------------------------------
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS analysis_cache (
-    product_id TEXT PRIMARY KEY,
+    product_id INTEGER PRIMARY KEY,
     analysis TEXT NOT NULL,
     FOREIGN KEY (product_id) REFERENCES products(id)
 )
