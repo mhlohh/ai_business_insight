@@ -6,9 +6,12 @@ class Product(BaseModel):
 
   
 class AI_Insight(BaseModel):
-    summary: str
-    pros: list[str]
-    cons: list[str]
+    insight: str
+    score: float
+    status: str
+    frequency: int
+    example_quote: str
+    category: str
 
 class InsightResponse(BaseModel):
     status: str    
