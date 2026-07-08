@@ -1,6 +1,5 @@
 import os
 from google.adk.agents import Agent, ParallelAgent
-from app.services.chunker import chunk_reviews
 
 
 # B
