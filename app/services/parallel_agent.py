@@ -36,3 +36,4 @@ Reviews:
     parallel_reviews_team = ParallelAgent(
         name="ParallelReviewsTeam", sub_agents=sub_agents
     )
+    return parallel_reviews_team, input_vars
