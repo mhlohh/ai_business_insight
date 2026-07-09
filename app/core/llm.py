@@ -1,8 +1,33 @@
 import os
+import asyncio
+import litellm
 from dotenv import load_dotenv
 from google.adk.models.lite_llm import LiteLlm
 
 load_dotenv(override=True)
+
+# Configure LiteLLM to automatically retry on rate limits
+litellm.num_retries = 3
+try:
+    litellm.retry_policy = litellm.RetryPolicy(
+        RateLimitErrorRetries=5,
+        TimeoutErrorRetries=3
+    )
+except AttributeError:
+    pass
+
+# Concurrency limit to prevent Groq API rate limits (TPM)
+CONCURRENCY_LIMIT = int(os.getenv("LOCAL_CONCURRENCY_LIMIT", "4"))
+concurrency_semaphore = asyncio.Semaphore(CONCURRENCY_LIMIT)
+
+_original_generate_content_async = LiteLlm.generate_content_async
+
+async def _semaphore_generate_content_async(self, *args, **kwargs):
+    async with concurrency_semaphore:
+        async for response in _original_generate_content_async(self, *args, **kwargs):
+            yield response
+
+LiteLlm.generate_content_async = _semaphore_generate_content_async
 
 # Configuration parameters for Groq models
 LOCAL_MODEL_NAME = os.getenv("LOCAL_MODEL_NAME", "groq/meta-llama/llama-4-scout-17b-16e-instruct")

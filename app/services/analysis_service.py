@@ -53,33 +53,42 @@ def chunk_reviews(prompt: str) -> list[list[str]]:
 
 def _log_agent_event(event, author: str, node_path: str):
     """Logs the agent event in a clean, descriptive format."""
+    # ANSI color codes
+    BLUE = "\033[94m"
+    CYAN = "\033[96m"
+    MAGENTA = "\033[95m"
+    YELLOW = "\033[93m"
+    GREEN = "\033[92m"
+    RED = "\033[91m"
+    RESET = "\033[0m"
+
     if author == "System":
-        print(f"🟢 [System] Routing or pipeline event. Path: {node_path}")
+        print(f"{BLUE}[System]{RESET} Routing or pipeline event. Path: {node_path}")
     elif "ReviewResearcher" in author:
         print(
-            f"🔬 [Parallel Analysis] {author} successfully processed its review chunk."
+            f"{CYAN}[Parallel Analysis]{RESET} {author} successfully processed its review chunk."
         )
     elif "AggregatorAgent" in author:
         print(
-            f"📊 [Pipeline Synthesis] {author} successfully aggregated all sub-agent findings."
+            f"{MAGENTA}[Pipeline Synthesis]{RESET} {author} successfully aggregated all sub-agent findings."
         )
     else:
-        print(f"🤖 [Agent Operation] {author} completed task on node: {node_path}")
+        print(f"{YELLOW}[Agent Operation]{RESET} {author} completed task on node: {node_path}")
 
     if event.content and event.content.parts:
         for part in event.content.parts:
             if part.text:
-                print(f"   ├─ 📝 Generated {len(part.text)} characters of text.")
+                print(f"   ├─ Generated {len(part.text)} characters of text.")
 
     if event.output is not None:
         try:
             items_count = len(_extract_output_data(event.output) or [])
             if items_count > 0:
-                print(f"   ├─ 💡 Extracted {items_count} structured insights.")
+                print(f"   ├─ {GREEN}Extracted {items_count} structured insights.{RESET}")
             else:
-                print("   ├─ ⚠️ Structured output parsed, but no insights list found.")
+                print(f"   ├─ {RED}Structured output parsed, but no insights list found.{RESET}")
         except Exception:
-            print("   ├─ ✅ Structured output parsed successfully.")
+            print(f"   ├─ {GREEN}Structured output parsed successfully.{RESET}")
 
 
 def _extract_output_data(output) -> list | None:
