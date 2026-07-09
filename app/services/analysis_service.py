@@ -1,7 +1,5 @@
 import os
 import json
-import re
-from datetime import datetime
 from google.adk.agents import Agent, ParallelAgent, SequentialAgent
 from google.adk.runners import InMemoryRunner
 from google.genai import types
@@ -11,24 +9,6 @@ from app.core.llm import model_obj, parallel_model_obj
 from app.schemas.insights import InsightsList
 from app.services.parallel_agent import create_parallel_team
 from app.services.aggregator_agent import create_aggregator_agent
-
-# Setup logging
-PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-LOG_DIR = os.path.join(PROJECT_ROOT, "logs")
-os.makedirs(LOG_DIR, exist_ok=True)
-LOG_FILE = os.path.join(LOG_DIR, "pipeline.log")
-
-def _log_message(message: str):
-    """Prints to console and appends plain text to a log file."""
-    print(message)
-    
-    # Strip ANSI color codes for the file
-    ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
-    clean_message = ansi_escape.sub('', message)
-    
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    with open(LOG_FILE, "a", encoding="utf-8") as f:
-        f.write(f"[{timestamp}] {clean_message}\n")
 
 # Status thresholds and values for priority score bucketing
 STATUS_THRESHOLD_HIGH = 8.0
@@ -51,23 +31,23 @@ def score_to_status(score: float) -> str:
 
 def chunk_reviews(prompt: str) -> list[list[str]]:
     """Helper to chunk a large block of reviews into smaller sub-lists."""
-    # Assuming each line is a review, or parsing a JSON list if provided
-    try:
-        import json
-        parsed = json.loads(prompt)
-        if isinstance(parsed, list):
-            reviews = [json.dumps(r) if isinstance(r, dict) else str(r) for r in parsed]
-        else:
-            reviews = [line.strip() for line in prompt.split("\n") if line.strip()]
-    except Exception:
-        reviews = [line.strip() for line in prompt.split("\n") if line.strip()]
-
-    if not reviews:
+    lines = [line.strip() for line in prompt.split("\n") if line.strip()]
+    if not lines:
         return [["No reviews provided."]]
 
-    # User Request: 100 reviews = 1 chunk
-    chunk_size = 100
-    chunks = [reviews[i : i + chunk_size] for i in range(0, len(reviews), chunk_size)]
+    # Cap total reviews to analyze for performance and context limits
+    max_reviews = int(os.getenv("MAX_REVIEWS_TO_ANALYZE", "100"))
+    lines = lines[:max_reviews]
+
+    # Dynamically select a chunk size based on input size
+    if len(lines) < 10:
+        chunk_size = 3
+    elif len(lines) < 100:
+        chunk_size = 10
+    else:
+        chunk_size = 20  # 5 chunks of 20 reviews for max 100
+
+    chunks = [lines[i : i + chunk_size] for i in range(0, len(lines), chunk_size)]
     return chunks
 
 
@@ -83,32 +63,32 @@ def _log_agent_event(event, author: str, node_path: str):
     RESET = "\033[0m"
 
     if author == "System":
-        _log_message(f"{BLUE}[System]{RESET} Routing or pipeline event. Path: {node_path}")
+        print(f"{BLUE}[System]{RESET} Routing or pipeline event. Path: {node_path}")
     elif "ReviewResearcher" in author:
-        _log_message(
+        print(
             f"{CYAN}[Parallel Analysis]{RESET} {author} successfully processed its review chunk."
         )
     elif "AggregatorAgent" in author:
-        _log_message(
+        print(
             f"{MAGENTA}[Pipeline Synthesis]{RESET} {author} successfully aggregated all sub-agent findings."
         )
     else:
-        _log_message(f"{YELLOW}[Agent Operation]{RESET} {author} completed task on node: {node_path}")
+        print(f"{YELLOW}[Agent Operation]{RESET} {author} completed task on node: {node_path}")
 
     if event.content and event.content.parts:
         for part in event.content.parts:
             if part.text:
-                _log_message(f"   ├─ Generated {len(part.text)} characters of text.")
+                print(f"   ├─ Generated {len(part.text)} characters of text.")
 
     if event.output is not None:
         try:
             items_count = len(_extract_output_data(event.output) or [])
             if items_count > 0:
-                _log_message(f"   ├─ {GREEN}Extracted {items_count} structured insights.{RESET}")
+                print(f"   ├─ {GREEN}Extracted {items_count} structured insights.{RESET}")
             else:
-                _log_message(f"   ├─ {RED}Structured output parsed, but no insights list found.{RESET}")
+                print(f"   ├─ {RED}Structured output parsed, but no insights list found.{RESET}")
         except Exception:
-            _log_message(f"   ├─ {GREEN}Structured output parsed successfully.{RESET}")
+            print(f"   ├─ {GREEN}Structured output parsed successfully.{RESET}")
 
 
 def _extract_output_data(output) -> list | None:
@@ -265,7 +245,7 @@ async def ask(prompt: str) -> str | list:
         if data is None and response_text:
             data = _extract_json_fallback(response_text)
             if data is None:
-                _log_message("⚠️ Failed to parse raw JSON string or no JSON block found.")
+                print("⚠️ Failed to parse raw JSON string or no JSON block found.")
 
         if data is None:
             raise ValueError(
@@ -278,12 +258,27 @@ async def ask(prompt: str) -> str | list:
         raise ValueError("Model output was not a valid list.")
 
     except Exception as e:
-        error_str = str(e)
-        if "RateLimitError" in error_str or "rate limit reached" in error_str.lower() or "429" in error_str:
-            _log_message("\033[93m⏳ [Rate Limit Exceeded]\033[0m You have hit the Groq API rate limit (Tokens Per Minute).")
-            _log_message("👉 The system tried to back off and retry automatically, but the queue was too large.")
-            _log_message("💡 Consider reducing MAX_REVIEWS_TO_ANALYZE in your .env file, or upgrade your Groq tier.")
+        error_msg = str(e)
+        RED = "\033[91m"
+        RESET = "\033[0m"
+        
+        # Save the raw error to a log file for debugging
+        try:
+            import datetime
+            timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            with open("llm_error.log", "a", encoding="utf-8") as f:
+                f.write(f"[{timestamp}] LLM Exception: {error_msg}\n")
+        except Exception:
+            pass
+
+        if "RateLimitError" in error_msg or "rate limit" in error_msg.lower() or "tokens per minute" in error_msg.lower():
+            print(f"{RED}❌ [RATE LIMIT EXCEEDED] Groq API tokens-per-minute (TPM) limit reached.{RESET}")
+            print("👉 The parallel chunk queue processed too many tokens too fast.")
+            print("👉 Fix: Lower 'LOCAL_CONCURRENCY_LIMIT' or 'MAX_REVIEWS_TO_ANALYZE' in your .env file.")
+            print("📝 The full error details have been saved to 'llm_error.log'.")
         else:
-            _log_message(f"\033[91m❌ Error communicating with LLM provider (Groq):\033[0m {e}")
-            _log_message("👉 Please ensure that your GROQ_API_KEY is correctly set in your .env file.")
+            print(f"{RED}❌ Error communicating with LLM provider (Groq):{RESET} {error_msg}")
+            print("👉 Please ensure that your GROQ_API_KEY is correctly set in your .env file.")
+            print("📝 The full error details have been saved to 'llm_error.log'.")
+            
         raise e
