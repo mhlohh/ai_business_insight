@@ -31,23 +31,23 @@ def score_to_status(score: float) -> str:
 
 def chunk_reviews(prompt: str) -> list[list[str]]:
     """Helper to chunk a large block of reviews into smaller sub-lists."""
-    lines = [line.strip() for line in prompt.split("\n") if line.strip()]
-    if not lines:
+    # Assuming each line is a review, or parsing a JSON list if provided
+    try:
+        import json
+        parsed = json.loads(prompt)
+        if isinstance(parsed, list):
+            reviews = [json.dumps(r) if isinstance(r, dict) else str(r) for r in parsed]
+        else:
+            reviews = [line.strip() for line in prompt.split("\n") if line.strip()]
+    except Exception:
+        reviews = [line.strip() for line in prompt.split("\n") if line.strip()]
+
+    if not reviews:
         return [["No reviews provided."]]
 
-    # Cap total reviews to analyze for performance and context limits
-    max_reviews = int(os.getenv("MAX_REVIEWS_TO_ANALYZE", "100"))
-    lines = lines[:max_reviews]
-
-    # Dynamically select a chunk size based on input size
-    if len(lines) < 10:
-        chunk_size = 3
-    elif len(lines) < 100:
-        chunk_size = 10
-    else:
-        chunk_size = 20  # 5 chunks of 20 reviews for max 100
-
-    chunks = [lines[i : i + chunk_size] for i in range(0, len(lines), chunk_size)]
+    # User Request: 100 reviews = 1 chunk
+    chunk_size = 100
+    chunks = [reviews[i : i + chunk_size] for i in range(0, len(reviews), chunk_size)]
     return chunks
 
 
