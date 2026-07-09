@@ -1,4 +1,5 @@
 import os
+import json
 from google.adk.agents import Agent, ParallelAgent, SequentialAgent
 from google.adk.runners import InMemoryRunner
 from google.genai import types
@@ -19,9 +20,7 @@ STATUS_NEEDS_ATTENTION = "Needs attention"
 
 
 def score_to_status(score: float) -> str:
-    """
-    Buckets a priority score into a business-readable plain-language status.
-    """
+    """Buckets a priority score into a business-readable plain-language status."""
     if score >= STATUS_THRESHOLD_HIGH:
         return STATUS_NEEDS_ATTENTION
     elif score >= STATUS_THRESHOLD_MEDIUM:
@@ -31,15 +30,12 @@ def score_to_status(score: float) -> str:
 
 
 def chunk_reviews(prompt: str) -> list[list[str]]:
-    """
-    Helper to chunk a large block of reviews (each review on a separate line)
-    into smaller sub-lists of reviews.
-    """
+    """Helper to chunk a large block of reviews into smaller sub-lists."""
     lines = [line.strip() for line in prompt.split("\n") if line.strip()]
     if not lines:
         return [["No reviews provided."]]
 
-    # Cap total reviews to analyze for performance and context limits of local models
+    # Cap total reviews to analyze for performance and context limits
     max_reviews = int(os.getenv("MAX_REVIEWS_TO_ANALYZE", "100"))
     lines = lines[:max_reviews]
 
@@ -51,19 +47,132 @@ def chunk_reviews(prompt: str) -> list[list[str]]:
     else:
         chunk_size = 20  # 5 chunks of 20 reviews for max 100
 
-    chunks = []
-    for i in range(0, len(lines), chunk_size):
-        chunks.append(lines[i : i + chunk_size])
+    chunks = [lines[i : i + chunk_size] for i in range(0, len(lines), chunk_size)]
     return chunks
 
 
+def _log_agent_event(event, author: str, node_path: str):
+    """Logs the agent event in a clean, descriptive format."""
+    if author == "System":
+        print(f"🟢 [System] Routing or pipeline event. Path: {node_path}")
+    elif "ReviewResearcher" in author:
+        print(
+            f"🔬 [Parallel Analysis] {author} successfully processed its review chunk."
+        )
+    elif "AggregatorAgent" in author:
+        print(
+            f"📊 [Pipeline Synthesis] {author} successfully aggregated all sub-agent findings."
+        )
+    else:
+        print(f"🤖 [Agent Operation] {author} completed task on node: {node_path}")
 
+    if event.content and event.content.parts:
+        for part in event.content.parts:
+            if part.text:
+                print(f"   ├─ 📝 Generated {len(part.text)} characters of text.")
+
+    if event.output is not None:
+        try:
+            items_count = len(_extract_output_data(event.output) or [])
+            if items_count > 0:
+                print(f"   ├─ 💡 Extracted {items_count} structured insights.")
+            else:
+                print("   ├─ ⚠️ Structured output parsed, but no insights list found.")
+        except Exception:
+            print("   ├─ ✅ Structured output parsed successfully.")
+
+
+def _extract_output_data(output) -> list | None:
+    """Attempts to extract the insights list from various potential ADK output formats."""
+    if output is None:
+        return None
+    if hasattr(output, "model_dump"):
+        return output.model_dump().get("insights", [])
+    elif hasattr(output, "dict"):
+        return output.dict().get("insights", [])
+    elif isinstance(output, dict):
+        return output.get("insights", [])
+    elif isinstance(output, list):
+        return output
+    return None
+
+
+def _extract_json_fallback(response_text: str) -> list | None:
+    """Manually extracts JSON from raw text using brace counting if strict parsing failed."""
+    if not response_text:
+        return None
+
+    start = response_text.find("{")
+    if start == -1:
+        return None
+
+    brace_count = 0
+    in_string = False
+    escape = False
+
+    for i in range(start, len(response_text)):
+        char = response_text[i]
+        if escape:
+            escape = False
+            continue
+        if char == "\\":
+            escape = True
+            continue
+        if char == '"':
+            in_string = not in_string
+            continue
+        if not in_string:
+            if char == "{":
+                brace_count += 1
+            elif char == "}":
+                brace_count -= 1
+                if brace_count == 0:
+                    clean_json_str = response_text[start : i + 1]
+                    try:
+                        parsed = json.loads(clean_json_str)
+                        return parsed.get("insights", [])
+                    except json.JSONDecodeError:
+                        return None
+    return None
+
+
+def _enrich_insights_data(data: list) -> list:
+    """Calculates scores, standardizes fields, and assigns business statuses to insights."""
+    category_weights = {
+        "quality": 1.5,
+        "support": 1.2,
+        "usability": 1.3,
+        "price": 1.0,
+    }
+
+    for item in data:
+        if isinstance(item, dict):
+            try:
+                freq = float(item.get("frequency", item.get("count", 1)))
+                conf = float(item.get("confidence", item.get("confidence_level", 0.8)))
+                cat = str(item.get("category", "other")).lower().strip()
+                weight = category_weights.get(cat, 1.0)
+
+                calculated_score = freq * conf * weight
+                item["score"] = round(calculated_score, 2)
+
+                if "example_quote" not in item and "quote" in item:
+                    item["example_quote"] = item["quote"]
+                if "confidence" not in item:
+                    item["confidence"] = conf
+                if "frequency" not in item:
+                    item["frequency"] = freq
+
+                item["status"] = score_to_status(float(item["score"]))
+
+            except (ValueError, TypeError):
+                item["status"] = STATUS_NEEDS_ATTENTION
+
+    return data
 
 
 async def setup():
-    """
-    Setup function mapping to main.py lifespan contract.
-    """
+    """Setup function mapping to main.py lifespan contract."""
     pass
 
 
@@ -110,27 +219,11 @@ async def ask(prompt: str) -> str | list:
             author = event.author or "System"
 
             if not event.partial:
-                print(f"🔄 [Agent Event] Author: {author} | Node Path: {node_path}")
-                if event.content and event.content.parts:
-                    for part in event.content.parts:
-                        if part.text:
-                            snippet = part.text.strip().replace("\n", " ")
-                            if len(snippet) > 100:
-                                snippet = snippet[:100] + "..."
-                            print(f"   ├─ Output Text: {snippet}")
-                if event.output is not None:
-                    print(f"   ├─ Output Data: {event.output}")
+                _log_agent_event(event, author, node_path)
 
             if event.is_final_response():
                 if event.output is not None:
-                    if hasattr(event.output, "model_dump"):
-                        final_insights_data = event.output.model_dump().get("insights", [])
-                    elif hasattr(event.output, "dict"):
-                        final_insights_data = event.output.dict().get("insights", [])
-                    elif isinstance(event.output, dict):
-                        final_insights_data = event.output.get("insights", [])
-                    elif isinstance(event.output, list):
-                        final_insights_data = event.output
+                    final_insights_data = _extract_output_data(event.output)
 
                 if event.content and event.content.parts:
                     for part in event.content.parts:
@@ -139,83 +232,19 @@ async def ask(prompt: str) -> str | list:
 
         data = final_insights_data
 
-        # Fallback: if ADK did not auto-parse into event.output, parse the raw JSON text manually
+        # Fallback manual extraction if ADK failed to auto-parse
         if data is None and response_text:
-            try:
-                import json
-                
-                def extract_json_object(text: str) -> str:
-                    start = text.find('{')
-                    if start == -1: return ""
-                    brace_count = 0
-                    in_string = False
-                    escape = False
-                    for i in range(start, len(text)):
-                        char = text[i]
-                        if escape:
-                            escape = False
-                            continue
-                        if char == '\\':
-                            escape = True
-                            continue
-                        if char == '"':
-                            in_string = not in_string
-                            continue
-                        if not in_string:
-                            if char == '{':
-                                brace_count += 1
-                            elif char == '}':
-                                brace_count -= 1
-                                if brace_count == 0:
-                                    return text[start:i+1]
-                    return ""
-
-                # Surgically extract the JSON object using brace counting
-                clean_json_str = extract_json_object(response_text)
-                if clean_json_str:
-                    parsed_json = json.loads(clean_json_str)
-                    data = parsed_json.get("insights", [])
-                else:
-                    print("⚠️ No JSON block found in response.")
-            except Exception as e:
-                print(f"⚠️ Failed to parse raw JSON string: {e}")
+            data = _extract_json_fallback(response_text)
+            if data is None:
+                print("⚠️ Failed to parse raw JSON string or no JSON block found.")
 
         if data is None:
-            raise ValueError("Pydantic structured output not found. The model failed to conform to the required JSON schema.")
+            raise ValueError(
+                "Pydantic structured output not found. The model failed to conform to the required JSON schema."
+            )
 
-        if data is not None and isinstance(data, list):
-            category_weights = {
-                "quality": 1.5,
-                "support": 1.2,
-                "usability": 1.3,
-                "price": 1.0,
-            }
-            for item in data:
-                if isinstance(item, dict):
-                    try:
-                        freq = float(item.get("frequency", item.get("count", 1)))
-                        conf = float(
-                            item.get("confidence", item.get("confidence_level", 0.8))
-                        )
-                        cat = str(item.get("category", "other")).lower().strip()
-                        weight = category_weights.get(cat, 1.0)
-                        calculated_score = freq * conf * weight
-                        item["score"] = round(calculated_score, 2)
-
-                        if "example_quote" not in item and "quote" in item:
-                            item["example_quote"] = item["quote"]
-                        if "confidence" not in item:
-                            item["confidence"] = conf
-                        if "frequency" not in item:
-                            item["frequency"] = freq
-                    except (ValueError, TypeError):
-                        pass
-
-                    try:
-                        item["status"] = score_to_status(float(item["score"]))
-                    except (ValueError, TypeError):
-                        item["status"] = STATUS_NEEDS_ATTENTION
-            return data
+        if isinstance(data, list):
+            return _enrich_insights_data(data)
 
         raise ValueError("Model output was not a valid list.")
 
