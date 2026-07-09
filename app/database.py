@@ -150,7 +150,6 @@ def initialize_database():
         conn.close()
 
 
-
 # Database helper functions
 
 

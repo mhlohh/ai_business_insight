@@ -1,6 +1,7 @@
 from google.adk.agents import Agent, ParallelAgent
 from app.schemas.insights import InsightsList
 
+
 def create_parallel_team(
     chunks: list[list[str]], parallel_model_obj
 ) -> tuple[ParallelAgent, str]:
