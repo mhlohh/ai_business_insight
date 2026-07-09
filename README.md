@@ -31,45 +31,27 @@ pip install -r requirements.txt
 ```
 
 ### 4. Configure Environment (.env)
-Configure the following variables in a `.env` file:
-* `LOCAL_MODEL_NAME`: Main aggregator model (e.g., `openai/google/gemma-4-e4b`)
-* `LOCAL_PARALLEL_MODEL_NAME`: Model for parallel sub-agents (e.g., `openai/google/gemma-4-e4b`)
-* `LMSTUDIO_API_BASE`: Local server port (e.g., `http://localhost:1234/v1`)
-* `LMSTUDIO_API_KEY`: `lm-studio`
-* `MODEL_TEMPERATURE`: Optional temperature for the models (default: `0.0`)
-* `MODEL_SEED`: Optional random seed for reproducible outputs (default: `42`)
-* `MODEL_TOP_P`: Optional top_p sampling parameter (default: `1.0`)
-* `MODEL_TOP_K`: Optional top_k sampling parameter (not set by default)
+Configure the following variables in a `.env` file at the root of the project:
+* `GROQ_API_KEY`: Your Groq API key (required for cloud model execution).
+* `LOCAL_MODEL_NAME`: Main aggregator model (default: `groq/meta-llama/llama-4-scout-17b-16e-instruct`).
+* `LOCAL_PARALLEL_MODEL_NAME`: Model for parallel sub-agents (default: `groq/meta-llama/llama-4-scout-17b-16e-instruct`).
+* `LOCAL_CONCURRENCY_LIMIT`: Controls parallel API requests to prevent rate limits (default: `4`).
+* `MAX_REVIEWS_TO_ANALYZE`: Maximum number of reviews to process at once (default: `100`).
+* `MODEL_TEMPERATURE`: Optional temperature for the models (default: `0.0`).
+* `MODEL_SEED`: Optional random seed for reproducible outputs (default: `42`).
 
-### 5. Start Local LLM Server
-1. Open **LM Studio** and start the Local Server on port `1234`.
-2. Install/load the models:
-   * `google/gemma-4-e4b` (highly recommended for Apple Silicon users; others use GGUF)
-   * `google/gemma-4-e4b` (highly recommended for Apple Silicon users; others use GGUF)
-
-#### IMPORTANT - Context Length Setup:
-To ensure the models can process long reviews and complex JSON without getting cut off, adjust the Context Length:
-1. In LM Studio, select your model and look at the right-side configuration panel.
-2. Find **Context Length** (often under Advanced Configuration).
-3. Increase the Context Length to at least `8192` (or `16384` if your Mac supports it).
-4. Apply this setting for both the main aggregator model and the parallel sub-agent model.
-
-Load the models you want to use. For local performance optimization, you can run a lightweight model for the parallel extraction sub-agents:
-* `google/gemma-4-e4b`
-* `google/gemma-4-e4b`
-
-Load the models in LM Studio or using the CLI:
-```bash
-lms load google/gemma-4-e4b
-lms load google/gemma-4-e4b
-```
-
-### 6. Run the FastAPI Backend
+### 5. Start the FastAPI Backend
 ```bash
 uvicorn app.main:app --reload
 ```
 
-### 7. Run the Streamlit Frontend
+### 6. Start the Streamlit Frontend
 ```bash
 streamlit run streamlit_app.py
 ```
+
+### 🧠 Performance & Rate Limits
+This pipeline is designed for massive datasets (2000+ reviews). It includes built-in rate-limit protections:
+- **Concurrency Queues:** The `LOCAL_CONCURRENCY_LIMIT` ensures that only a set number of API requests run at exactly the same time, keeping you under Groq's Tokens-Per-Minute (TPM) limits.
+- **Auto-Retries:** The pipeline leverages LiteLLM's retry policies to automatically back off and retry up to 5 times if Groq rate limits are hit.
+- **Clean Error Logging:** If a catastrophic rate limit is hit, the massive JSON stack traces are hidden from the console and safely saved to a `llm_error.log` file in the root directory for debugging.
