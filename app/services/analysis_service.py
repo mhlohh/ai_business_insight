@@ -139,6 +139,47 @@ async def ask(prompt: str) -> str | list:
 
         data = final_insights_data
 
+        # Fallback: if ADK did not auto-parse into event.output, parse the raw JSON text manually
+        if data is None and response_text:
+            try:
+                import json
+                
+                def extract_json_object(text: str) -> str:
+                    start = text.find('{')
+                    if start == -1: return ""
+                    brace_count = 0
+                    in_string = False
+                    escape = False
+                    for i in range(start, len(text)):
+                        char = text[i]
+                        if escape:
+                            escape = False
+                            continue
+                        if char == '\\':
+                            escape = True
+                            continue
+                        if char == '"':
+                            in_string = not in_string
+                            continue
+                        if not in_string:
+                            if char == '{':
+                                brace_count += 1
+                            elif char == '}':
+                                brace_count -= 1
+                                if brace_count == 0:
+                                    return text[start:i+1]
+                    return ""
+
+                # Surgically extract the JSON object using brace counting
+                clean_json_str = extract_json_object(response_text)
+                if clean_json_str:
+                    parsed_json = json.loads(clean_json_str)
+                    data = parsed_json.get("insights", [])
+                else:
+                    print("⚠️ No JSON block found in response.")
+            except Exception as e:
+                print(f"⚠️ Failed to parse raw JSON string: {e}")
+
         if data is None:
             raise ValueError("Pydantic structured output not found. The model failed to conform to the required JSON schema.")
 

@@ -14,6 +14,8 @@ def create_parallel_team(
             model=parallel_model_obj,
             instruction=f"""Analyze the following product reviews, extract key business-relevant insights, issues, or features, and output a list of distinct insights.
 
+CRITICAL INSTRUCTION: You MUST output ONLY raw, valid JSON matching the requested schema. DO NOT output any reasoning. DO NOT use `<think>` tags.
+
 Reviews:
 {chunk_text}""",
             output_key=f"insights_{i}",

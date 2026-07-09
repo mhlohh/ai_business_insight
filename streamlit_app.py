@@ -116,15 +116,16 @@ st.markdown(
 
 
 # Helper function to fetch products from backend
-@st.cache_data(show_spinner=False)
 def fetch_products():
     try:
         response = requests.get(f"{API_BASE}/db/products")
         if response.status_code == 200:
-            return response.json()
+            data = response.json()
+            if data:  # Only return if the list is not empty
+                return data
     except Exception:
         pass
-    # Fallback to local default list if backend is not started
+    # Fallback to local default list if backend is not started or DB is empty
     return [
         {
             "id": 1,
@@ -148,6 +149,10 @@ product_names = [p["name"] for p in products_list]
 # Sidebar selection
 with st.sidebar:
     st.markdown("### 🛒 Product Selection")
+    if not product_names:
+        st.warning("No products found in the database. Please run `python init_db.py` to initialize it.")
+        st.stop()
+
     selected_product_name = st.selectbox(
         "Choose a product for review analysis:", product_names
     )

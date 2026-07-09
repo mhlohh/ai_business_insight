@@ -2,7 +2,9 @@ from google.adk.agents import Agent
 from app.schemas.insights import InsightsList
 
 def create_aggregator_agent(input_vars: str, model_obj) -> Agent:
-    aggregator_instruction = f"""Combine and aggregate all the extracted insights from the parallel review analysis chunks below:
+    aggregator_instruction = f"""Combine and aggregate all the extracted insights from the parallel review analysis chunks below.
+
+CRITICAL INSTRUCTION: You MUST output ONLY raw, valid JSON matching the requested schema. DO NOT output any reasoning. DO NOT use `<think>` tags.
 
 {input_vars}
 
