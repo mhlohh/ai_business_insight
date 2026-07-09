@@ -4,7 +4,7 @@ from google.adk.runners import InMemoryRunner
 from google.genai import types
 
 # New imports based on reorganized files
-from app.core.llm import model_obj, parallel_model_obj, LMSTUDIO_API_BASE
+from app.core.llm import model_obj, parallel_model_obj
 from app.schemas.insights import InsightsList
 from app.services.parallel_agent import create_parallel_team
 from app.services.aggregator_agent import create_aggregator_agent
@@ -220,8 +220,8 @@ async def ask(prompt: str) -> str | list:
         raise ValueError("Model output was not a valid list.")
 
     except Exception as e:
-        print(f"❌ Error communicating with local model provider: {e}")
+        print(f"❌ Error communicating with LLM provider (Groq): {e}")
         print(
-            f"👉 Please ensure that your local LM Studio server is running and listening on {LMSTUDIO_API_BASE}"
+            "👉 Please ensure that your GROQ_API_KEY is correctly set in your .env file."
         )
         raise e
