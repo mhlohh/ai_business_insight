@@ -1,5 +1,7 @@
 import os
 import json
+import re
+from datetime import datetime
 from google.adk.agents import Agent, ParallelAgent, SequentialAgent
 from google.adk.runners import InMemoryRunner
 from google.genai import types
@@ -9,6 +11,24 @@ from app.core.llm import model_obj, parallel_model_obj
 from app.schemas.insights import InsightsList
 from app.services.parallel_agent import create_parallel_team
 from app.services.aggregator_agent import create_aggregator_agent
+
+# Setup logging
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+LOG_DIR = os.path.join(PROJECT_ROOT, "logs")
+os.makedirs(LOG_DIR, exist_ok=True)
+LOG_FILE = os.path.join(LOG_DIR, "pipeline.log")
+
+def _log_message(message: str):
+    """Prints to console and appends plain text to a log file."""
+    print(message)
+    
+    # Strip ANSI color codes for the file
+    ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
+    clean_message = ansi_escape.sub('', message)
+    
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    with open(LOG_FILE, "a", encoding="utf-8") as f:
+        f.write(f"[{timestamp}] {clean_message}\n")
 
 # Status thresholds and values for priority score bucketing
 STATUS_THRESHOLD_HIGH = 8.0
@@ -63,32 +83,32 @@ def _log_agent_event(event, author: str, node_path: str):
     RESET = "\033[0m"
 
     if author == "System":
-        print(f"{BLUE}[System]{RESET} Routing or pipeline event. Path: {node_path}")
+        _log_message(f"{BLUE}[System]{RESET} Routing or pipeline event. Path: {node_path}")
     elif "ReviewResearcher" in author:
-        print(
+        _log_message(
             f"{CYAN}[Parallel Analysis]{RESET} {author} successfully processed its review chunk."
         )
     elif "AggregatorAgent" in author:
-        print(
+        _log_message(
             f"{MAGENTA}[Pipeline Synthesis]{RESET} {author} successfully aggregated all sub-agent findings."
         )
     else:
-        print(f"{YELLOW}[Agent Operation]{RESET} {author} completed task on node: {node_path}")
+        _log_message(f"{YELLOW}[Agent Operation]{RESET} {author} completed task on node: {node_path}")
 
     if event.content and event.content.parts:
         for part in event.content.parts:
             if part.text:
-                print(f"   ├─ Generated {len(part.text)} characters of text.")
+                _log_message(f"   ├─ Generated {len(part.text)} characters of text.")
 
     if event.output is not None:
         try:
             items_count = len(_extract_output_data(event.output) or [])
             if items_count > 0:
-                print(f"   ├─ {GREEN}Extracted {items_count} structured insights.{RESET}")
+                _log_message(f"   ├─ {GREEN}Extracted {items_count} structured insights.{RESET}")
             else:
-                print(f"   ├─ {RED}Structured output parsed, but no insights list found.{RESET}")
+                _log_message(f"   ├─ {RED}Structured output parsed, but no insights list found.{RESET}")
         except Exception:
-            print(f"   ├─ {GREEN}Structured output parsed successfully.{RESET}")
+            _log_message(f"   ├─ {GREEN}Structured output parsed successfully.{RESET}")
 
 
 def _extract_output_data(output) -> list | None:
@@ -245,7 +265,7 @@ async def ask(prompt: str) -> str | list:
         if data is None and response_text:
             data = _extract_json_fallback(response_text)
             if data is None:
-                print("⚠️ Failed to parse raw JSON string or no JSON block found.")
+                _log_message("⚠️ Failed to parse raw JSON string or no JSON block found.")
 
         if data is None:
             raise ValueError(
@@ -258,8 +278,12 @@ async def ask(prompt: str) -> str | list:
         raise ValueError("Model output was not a valid list.")
 
     except Exception as e:
-        print(f"❌ Error communicating with LLM provider (Groq): {e}")
-        print(
-            "👉 Please ensure that your GROQ_API_KEY is correctly set in your .env file."
-        )
+        error_str = str(e)
+        if "RateLimitError" in error_str or "rate limit reached" in error_str.lower() or "429" in error_str:
+            _log_message("\033[93m⏳ [Rate Limit Exceeded]\033[0m You have hit the Groq API rate limit (Tokens Per Minute).")
+            _log_message("👉 The system tried to back off and retry automatically, but the queue was too large.")
+            _log_message("💡 Consider reducing MAX_REVIEWS_TO_ANALYZE in your .env file, or upgrade your Groq tier.")
+        else:
+            _log_message(f"\033[91m❌ Error communicating with LLM provider (Groq):\033[0m {e}")
+            _log_message("👉 Please ensure that your GROQ_API_KEY is correctly set in your .env file.")
         raise e
