@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from app import database
-from app.services.model_provider import ask
+from app.services.analysis_service import ask
 import time
 
 router = APIRouter(prefix="/analyze", tags=["analyze"])

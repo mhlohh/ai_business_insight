@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
-from app.services.model_provider import setup
-from app.routers import products, reviews, analyze
+from app.services.analysis_service import setup
+from app.api.routes import products, reviews, analyze
 
 
 @asynccontextmanager

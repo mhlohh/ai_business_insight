@@ -105,6 +105,10 @@ To run the project locally with the updated local LLM provider configuration:
    LOCAL_PARALLEL_MODEL_NAME=openai/llama-3.2-3b-instruct
    OPENAI_API_BASE=http://localhost:1234/v1
    OPENAI_API_KEY=lm-studio
+   MODEL_TEMPERATURE=0.0
+   MODEL_SEED=42
+   MODEL_TOP_P=1.0
+   # MODEL_TOP_K=40 (optional)
    ```
 
 3. **Start the Local LLM**:

@@ -1,13 +1,9 @@
-import os
 from google.adk.agents import Agent, ParallelAgent
-from app.services.chunker import chunk_reviews
-
+from app.schemas.insights import InsightsList
 
 def create_parallel_team(
     chunks: list[list[str]], parallel_model_obj
 ) -> tuple[ParallelAgent, str]:
-    # Creates a ParallelAgent team based on chunks and returns it along with the aggregator input vars.
-
     sub_agents = []
     input_vars = ""
 
@@ -17,15 +13,11 @@ def create_parallel_team(
             name=f"ReviewResearcher_{i}",
             model=parallel_model_obj,
             instruction=f"""Analyze the following product reviews, extract key business-relevant insights, issues, or features, and output a list of distinct insights.
-For each insight, include:
-- The insight description
-- A representative quote
-- A confidence level (between 0.0 and 1.0)
-- The category of the insight (e.g., quality, support, price, usability, etc.)
 
 Reviews:
 {chunk_text}""",
             output_key=f"insights_{i}",
+            output_schema=InsightsList,
         )
         sub_agents.append(sub_agent)
 

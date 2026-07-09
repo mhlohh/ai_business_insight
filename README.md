@@ -36,6 +36,10 @@ Configure the following variables in a `.env` file:
 * `LOCAL_PARALLEL_MODEL_NAME`: Model for parallel sub-agents (e.g., `openai/google/gemma-4-e4b`)
 * `LMSTUDIO_API_BASE`: Local server port (e.g., `http://localhost:1234/v1`)
 * `LMSTUDIO_API_KEY`: `lm-studio`
+* `MODEL_TEMPERATURE`: Optional temperature for the models (default: `0.0`)
+* `MODEL_SEED`: Optional random seed for reproducible outputs (default: `42`)
+* `MODEL_TOP_P`: Optional top_p sampling parameter (default: `1.0`)
+* `MODEL_TOP_K`: Optional top_k sampling parameter (not set by default)
 
 ### 5. Start Local LLM Server
 1. Open **LM Studio** and start the Local Server on port `1234`.

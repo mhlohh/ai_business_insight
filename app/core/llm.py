@@ -13,6 +13,18 @@ LOCAL_PARALLEL_MODEL_NAME = os.getenv(
 LMSTUDIO_API_BASE = os.getenv("LMSTUDIO_API_BASE", "http://localhost:1234/v1")
 LMSTUDIO_API_KEY = os.getenv("LMSTUDIO_API_KEY", "lm-studio")
 
+# Generation configuration for consistent responses
+GENERATION_CONFIG = {
+    "temperature": float(os.getenv("MODEL_TEMPERATURE", "0.0")),
+    "seed": int(os.getenv("MODEL_SEED", "42")),
+    "top_p": float(os.getenv("MODEL_TOP_P", "1.0")),
+}
+
+# Only add top_k if it is explicitly configured in environment
+_top_k = os.getenv("MODEL_TOP_K")
+if _top_k is not None:
+    GENERATION_CONFIG["top_k"] = int(_top_k)
+
 # LiteLLM/LM Studio configuration
 os.environ["OPENAI_API_BASE"] = LMSTUDIO_API_BASE
 os.environ["OPENAI_API_KEY"] = LMSTUDIO_API_KEY
@@ -42,7 +54,10 @@ async def _semaphore_generate_content_async(self, *args, **kwargs):
                     f"👉 Falling back to aggregator model '{LOCAL_MODEL_NAME}' to process this step..."
                 )
 
-                fallback_model = LiteLlm(model=LOCAL_MODEL_NAME)
+                fallback_model = LiteLlm(
+                    model=LOCAL_MODEL_NAME,
+                    **GENERATION_CONFIG,
+                )
                 # Call original to avoid double semaphore acquisition
                 async for response in _original_generate_content_async(
                     fallback_model, *args, **kwargs
@@ -55,8 +70,14 @@ async def _semaphore_generate_content_async(self, *args, **kwargs):
 LiteLlm.generate_content_async = _semaphore_generate_content_async
 
 # Instantiate model objects
-model_obj = LiteLlm(model=LOCAL_MODEL_NAME)
-parallel_model_obj = LiteLlm(model=LOCAL_PARALLEL_MODEL_NAME)
+model_obj = LiteLlm(
+    model=LOCAL_MODEL_NAME,
+    **GENERATION_CONFIG,
+)
+parallel_model_obj = LiteLlm(
+    model=LOCAL_PARALLEL_MODEL_NAME,
+    **GENERATION_CONFIG,
+)
 
 print(f"✅ Aggregator Model: {LOCAL_MODEL_NAME}")
 print(f"✅ Parallel Sub-agents Model: {LOCAL_PARALLEL_MODEL_NAME}")
