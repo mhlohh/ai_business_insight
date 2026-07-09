@@ -150,8 +150,6 @@ def initialize_database():
         conn.close()
 
 
-# Run initialization upon import
-initialize_database()
 
 # Database helper functions
 
