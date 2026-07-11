@@ -56,22 +56,23 @@ Splits the unstructured text block into smaller, manageable chunks of reviews (e
 The system dynamically instantiates $1 - 4$ sub-agents (one per chunk of reviews) running in parallel using `google.adk.agents.ParallelAgent`. Each sub-agent extracts key business-relevant insights, representative quotes, confidence levels, and categories.
 
 ### 4. Synthesis & Aggregator Model
-The `AggregatorModel` receives the output from all sub-models and processes it through a 6-stage pipeline:
+The `AggregatorModel` receives the output from all sub-models and processes it to synthesize the findings via a 4-stage LLM prompt:
 1. **Collect**: Gather all raw insights.
 2. **Deduplicate**: Merge highly similar or duplicate insights, incrementing frequency counters and selecting representative quotes.
 3. **Resolve Conflicts**: If insights on the same topic contradict each other (e.g., 'good battery' vs 'bad battery'), merge them into a single 'Mixed Feedback' insight, sum their frequencies, and average their confidences. This ensures highly debated topics bubble up as high priority.
-4. **Score/Rank**: Calculate a priority score using:
-   $$\text{score} = \text{frequency} \times \text{confidence} \times \text{category\_weight}$$
-   Where category weights are:
-   - `quality`: 1.5
-   - `support`: 1.2
-   - `usability`: 1.3
-   - `price`: 1.0
-   - `other`: 1.0
-5. **Quality Filter**: Drop low-frequency, low-confidence, or irrelevant items.
-6. **Format**: Structure the output as a valid JSON array.
+4. **Quality Filter**: Drop low-frequency, low-confidence, or irrelevant items.
 
-### 5. Caching Layer (SQLite3)
+### 5. Backend Post-Processing & Scoring
+After the LLM generates the aggregated JSON list, the Python backend calculates a priority score and business status using:
+$$\text{score} = \text{frequency} \times \text{confidence} \times \text{category\_weight}$$
+Where category weights are:
+- `quality`: 1.5
+- `support`: 1.2
+- `usability`: 1.3
+- `price`: 1.0
+- `other`: 1.0
+
+### 6. Caching Layer (SQLite3)
 Ensures that if the same product reviews are requested twice, the pipeline does not re-run, saving hardware resources and eliminating latency.
 
 ---
@@ -80,8 +81,8 @@ Ensures that if the same product reviews are requested twice, the pipeline does 
 
 - **Backend Framework**: FastAPI & Uvicorn
 - **Orchestration Framework**: Google ADK (Agent Development Kit)
-- **Model Connector**: LiteLLM (for local offline LLMs)
-- **Local Model Provider**: LM Studio (defaulting to MLX-optimized local models like `qwen2.5-coder-7b-instruct-mlx` and lightweight extraction models like `llama-3.2-3b-instruct`)
+- **Model Connector**: LiteLLM (for routing and rate-limit auto-retries)
+- **LLM Provider**: Groq Cloud API (defaulting to fast, high-performance models like `meta-llama/llama-4-scout-17b-16e-instruct`)
 - **Database / Cache**: SQLite3
 - **Frontend**: Streamlit
 - **Hosting**: Render
@@ -90,37 +91,34 @@ Ensures that if the same product reviews are requested twice, the pipeline does 
 
 ## 5. Development Setup & Quickstart
 
-To run the project locally with the updated local LLM provider configuration:
+To run the project locally with the Groq cloud LLM provider:
 
-1. **Recreate the Python Environment**:
+1. **Create the Python Environment**:
    ```bash
    python3 -m venv .venv
    source .venv/bin/activate
-   pip install fastapi uvicorn python-dotenv google-adk litellm streamlit matplotlib pandas
+   pip install -r requirements.txt
    ```
 
 2. **Configure Environment Variables ([.env](file:///Users/muhsilnr/Library/Mobile%20Documents/com~apple%20CloudDocs/Documents/codespace/litmus7_project/.env))**:
    ```env
-   LOCAL_MODEL_NAME=openai/qwen2.5-coder-7b-instruct-mlx
-   LOCAL_PARALLEL_MODEL_NAME=openai/llama-3.2-3b-instruct
-   OPENAI_API_BASE=http://localhost:1234/v1
-   OPENAI_API_KEY=lm-studio
+   GROQ_API_KEY=your_groq_api_key
+   LOCAL_MODEL_NAME=groq/meta-llama/llama-4-scout-17b-16e-instruct
+   LOCAL_PARALLEL_MODEL_NAME=groq/meta-llama/llama-4-scout-17b-16e-instruct
+   LOCAL_CONCURRENCY_LIMIT=4
+   MAX_REVIEWS_TO_ANALYZE=100
+   MODEL_TEMPERATURE=0.0
+   MODEL_SEED=42
    ```
 
-3. **Start the Local LLM**:
-   - Open **LM Studio**.
-   - Download/load a model (e.g., `qwen2.5-coder-7b-instruct-mlx`).
-   - Start the local inference server (running on port `1234`).
-
-4. **Launch the FastAPI Server**:
+3. **Launch the FastAPI Server**:
    ```bash
-   uvicorn main:app --reload
+   uvicorn app.main:app --reload
    ```
 
-5. **Query the Endpoint**:
+4. **Launch the Streamlit Frontend**:
    ```bash
-   curl -G -s --data-urlencode "prompt=1. Great phone, battery life is excellent!
-   2. The screen cracked on the first day, fragile." "http://127.0.0.1:8000/ask"
+   streamlit run streamlit_app.py
    ```
 
 ---
