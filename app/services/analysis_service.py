@@ -30,7 +30,7 @@ def score_to_status(score: float) -> str:
 
 
 def chunk_reviews(prompt: str) -> list[list[str]]:
-    """Helper to chunk a large block of reviews into smaller sub-lists."""
+    # Helper to chunk a large block of reviews into smaller sub-lists.
     lines = [line.strip() for line in prompt.split("\n") if line.strip()]
     if not lines:
         return [["No reviews provided."]]
@@ -73,7 +73,9 @@ def _log_agent_event(event, author: str, node_path: str):
             f"{MAGENTA}[Pipeline Synthesis]{RESET} {author} successfully aggregated all sub-agent findings."
         )
     else:
-        print(f"{YELLOW}[Agent Operation]{RESET} {author} completed task on node: {node_path}")
+        print(
+            f"{YELLOW}[Agent Operation]{RESET} {author} completed task on node: {node_path}"
+        )
 
     if event.content and event.content.parts:
         for part in event.content.parts:
@@ -84,9 +86,13 @@ def _log_agent_event(event, author: str, node_path: str):
         try:
             items_count = len(_extract_output_data(event.output) or [])
             if items_count > 0:
-                print(f"   ├─ {GREEN}Extracted {items_count} structured insights.{RESET}")
+                print(
+                    f"   ├─ {GREEN}Extracted {items_count} structured insights.{RESET}"
+                )
             else:
-                print(f"   ├─ {RED}Structured output parsed, but no insights list found.{RESET}")
+                print(
+                    f"   ├─ {RED}Structured output parsed, but no insights list found.{RESET}"
+                )
         except Exception:
             print(f"   ├─ {GREEN}Structured output parsed successfully.{RESET}")
 
@@ -261,24 +267,37 @@ async def ask(prompt: str) -> str | list:
         error_msg = str(e)
         RED = "\033[91m"
         RESET = "\033[0m"
-        
+
         # Save the raw error to a log file for debugging
         try:
             import datetime
+
             timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             with open("llm_error.log", "a", encoding="utf-8") as f:
                 f.write(f"[{timestamp}] LLM Exception: {error_msg}\n")
         except Exception:
             pass
 
-        if "RateLimitError" in error_msg or "rate limit" in error_msg.lower() or "tokens per minute" in error_msg.lower():
-            print(f"{RED}❌ [RATE LIMIT EXCEEDED] Groq API tokens-per-minute (TPM) limit reached.{RESET}")
+        if (
+            "RateLimitError" in error_msg
+            or "rate limit" in error_msg.lower()
+            or "tokens per minute" in error_msg.lower()
+        ):
+            print(
+                f"{RED}❌ [RATE LIMIT EXCEEDED] Groq API tokens-per-minute (TPM) limit reached.{RESET}"
+            )
             print("👉 The parallel chunk queue processed too many tokens too fast.")
-            print("👉 Fix: Lower 'LOCAL_CONCURRENCY_LIMIT' or 'MAX_REVIEWS_TO_ANALYZE' in your .env file.")
+            print(
+                "👉 Fix: Lower 'LOCAL_CONCURRENCY_LIMIT' or 'MAX_REVIEWS_TO_ANALYZE' in your .env file."
+            )
             print("📝 The full error details have been saved to 'llm_error.log'.")
         else:
-            print(f"{RED}❌ Error communicating with LLM provider (Groq):{RESET} {error_msg}")
-            print("👉 Please ensure that your GROQ_API_KEY is correctly set in your .env file.")
+            print(
+                f"{RED}❌ Error communicating with LLM provider (Groq):{RESET} {error_msg}"
+            )
+            print(
+                "👉 Please ensure that your GROQ_API_KEY is correctly set in your .env file."
+            )
             print("📝 The full error details have been saved to 'llm_error.log'.")
-            
+
         raise e
