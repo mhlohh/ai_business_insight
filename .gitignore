@@ -24,11 +24,6 @@ __pycache__/
 .coverage
 htmlcov/
 
-# Local data & datasets
-data/
-*.db
-*.csv
-
 # OS metadata
 .DS_Store
 
