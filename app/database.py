@@ -55,7 +55,7 @@ def initialize_database():
 
         print("🚀 Initializing database with products and reviews from 1429_1.csv...")
 
-        csv_path = "1429_1.csv"
+        csv_path = "data/1429_1.csv"
         if not os.path.exists(csv_path):
             print(
                 f"⚠️ {csv_path} not found. Ensure the dataset is downloaded to use auto-initialization."
@@ -74,35 +74,44 @@ def initialize_database():
                 lambda x: str(x).split(",")[0].strip()
             )
 
-            unique_products = df.drop_duplicates(subset=["primary_asin"])
+            # Clean product names: take only the first line to remove CSV noise
+            df["clean_name"] = df["name"].apply(
+                lambda x: str(x).split("\r")[0].split("\n")[0].strip().rstrip(",")
+            )
 
-            # Insert products
+            unique_products = df.drop_duplicates(subset=["clean_name"])
+
+            # Insert products (deduplicated by cleaned name)
+            seen_asins = set()
             for _, row in unique_products.iterrows():
+                clean = row["clean_name"]
+                asin = row["primary_asin"]
                 existing = (
                     db.query(Product)
-                    .filter(Product.asin == row["primary_asin"])
+                    .filter(Product.name == clean)
                     .first()
                 )
-                if not existing:
+                if not existing and asin not in seen_asins:
                     new_prod = Product(
-                        asin=row["primary_asin"],
-                        name=row["name"],
+                        asin=asin,
+                        name=clean,
                         description=str(row.get("categories", "")),
                         price=0.0,
                         quantity=0,
                     )
                     db.add(new_prod)
+                    seen_asins.add(asin)
             db.commit()
 
-            # Now fetch product IDs
-            products = db.query(Product.id, Product.asin).all()
-            asin_to_id = {p.asin: p.id for p in products}
+            # Map product names to IDs (so all ASINs sharing a name resolve to one product)
+            products = db.query(Product.id, Product.name).all()
+            name_to_id = {p.name: p.id for p in products}
 
             # Insert reviews
             reviews_to_insert = []
             for _, row in df.iterrows():
-                asin = row["primary_asin"]
-                product_id = asin_to_id.get(asin)
+                product_name = row["clean_name"]
+                product_id = name_to_id.get(product_name)
                 body = row["reviews.text"]
 
                 if product_id and pd.notna(body):
