@@ -3,6 +3,7 @@ from sqlalchemy.orm import declarative_base, relationship
 
 Base = declarative_base()
 
+
 class Product(Base):
     __tablename__ = "products"
 
@@ -13,8 +14,15 @@ class Product(Base):
     price = Column(Float, default=0.0)
     quantity = Column(Integer, default=0)
 
-    reviews = relationship("Review", back_populates="product", cascade="all, delete-orphan")
-    analysis_cache = relationship("AnalysisCache", back_populates="product", uselist=False, cascade="all, delete-orphan")
+    reviews = relationship(
+        "Review", back_populates="product", cascade="all, delete-orphan"
+    )
+    analysis_cache = relationship(
+        "AnalysisCache",
+        back_populates="product",
+        uselist=False,
+        cascade="all, delete-orphan",
+    )
 
 
 class Review(Base):

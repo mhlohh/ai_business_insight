@@ -47,7 +47,7 @@ def initialize_database():
     Uses the 1429_1.csv Kaggle dataset if available.
     """
     Base.metadata.create_all(bind=engine)
-    
+
     with SessionLocal() as db:
         if db.query(Review).count() > 0:
             print("💾 Database already populated in SQLite. Skipping initialization.")
@@ -70,20 +70,26 @@ def initialize_database():
             df = df.dropna(subset=["asins", "reviews.text", "name"])
 
             # Get first ASIN for each row
-            df["primary_asin"] = df["asins"].apply(lambda x: str(x).split(",")[0].strip())
+            df["primary_asin"] = df["asins"].apply(
+                lambda x: str(x).split(",")[0].strip()
+            )
 
             unique_products = df.drop_duplicates(subset=["primary_asin"])
 
             # Insert products
             for _, row in unique_products.iterrows():
-                existing = db.query(Product).filter(Product.asin == row["primary_asin"]).first()
+                existing = (
+                    db.query(Product)
+                    .filter(Product.asin == row["primary_asin"])
+                    .first()
+                )
                 if not existing:
                     new_prod = Product(
                         asin=row["primary_asin"],
                         name=row["name"],
                         description=str(row.get("categories", "")),
                         price=0.0,
-                        quantity=0
+                        quantity=0,
                     )
                     db.add(new_prod)
             db.commit()
@@ -100,8 +106,10 @@ def initialize_database():
                 body = row["reviews.text"]
 
                 if product_id and pd.notna(body):
-                    reviews_to_insert.append(Review(product_id=product_id, body=str(body)))
-            
+                    reviews_to_insert.append(
+                        Review(product_id=product_id, body=str(body))
+                    )
+
             db.add_all(reviews_to_insert)
             db.commit()
             print("🎉 Database Initialization Completed Successfully!")
@@ -111,6 +119,7 @@ def initialize_database():
 
 
 # Database helper functions
+
 
 def get_products() -> list[dict]:
     with SessionLocal() as db:
@@ -122,8 +131,9 @@ def get_products() -> list[dict]:
                 "name": p.name,
                 "description": p.description,
                 "price": p.price,
-                "quantity": p.quantity
-            } for p in products
+                "quantity": p.quantity,
+            }
+            for p in products
         ]
 
 
@@ -137,7 +147,7 @@ def get_product(product_id: int) -> dict | None:
                 "name": p.name,
                 "description": p.description,
                 "price": p.price,
-                "quantity": p.quantity
+                "quantity": p.quantity,
             }
         return None
 
@@ -158,7 +168,11 @@ def add_review(product_id: int, review_text: str):
 
 def get_cached_analysis(product_id: int) -> list[dict] | None:
     with SessionLocal() as db:
-        cache = db.query(AnalysisCache).filter(AnalysisCache.product_id == product_id).first()
+        cache = (
+            db.query(AnalysisCache)
+            .filter(AnalysisCache.product_id == product_id)
+            .first()
+        )
         if cache:
             try:
                 return json.loads(cache.analysis)
@@ -169,7 +183,11 @@ def get_cached_analysis(product_id: int) -> list[dict] | None:
 
 def cache_analysis(product_id: int, analysis: list[dict]):
     with SessionLocal() as db:
-        cache = db.query(AnalysisCache).filter(AnalysisCache.product_id == product_id).first()
+        cache = (
+            db.query(AnalysisCache)
+            .filter(AnalysisCache.product_id == product_id)
+            .first()
+        )
         analysis_str = json.dumps(analysis)
         if cache:
             cache.analysis = analysis_str
