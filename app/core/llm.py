@@ -54,12 +54,6 @@ PARALLEL_GENERATION_CONFIG = {
     "max_tokens": int(os.getenv("PARALLEL_MODEL_MAX_TOKENS", "4096")),
 }
 
-# Only add top_k if it is explicitly configured in environment
-_top_k = os.getenv("MODEL_TOP_K")
-if _top_k is not None:
-    GENERATION_CONFIG["top_k"] = int(_top_k)
-    PARALLEL_GENERATION_CONFIG["top_k"] = int(_top_k)
-
 # Instantiate model objects
 model_obj = LiteLlm(
     model=LOCAL_MODEL_NAME,
