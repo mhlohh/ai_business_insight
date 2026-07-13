@@ -1,33 +1,15 @@
 import logging
 import json
 import os
-from typing import List, Optional, Dict, Any
-from pydantic import BaseModel, Field
-
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from typing import List, Dict, Any, Optional
+from schemas.Database_schema import Product, Review, AnalysisCache
+from sqlalchemy import create_engine, Column, Integer, String, Float, ForeignKey, Text
+from sqlalchemy.orm import declarative_base, sessionmaker, relationship
 from sqlalchemy.exc import OperationalError, SQLAlchemyError
-from sqlalchemy.pool import NullPool  # Used to totally disable pooling
-
-# Import your pre-defined project models directly
-from app.schemas.models import Base, Product, Review, AnalysisCache
+from sqlalchemy.pool import NullPool
 
 # ==========================================
-# 1. PYDANTIC APPLICATION SCHEMA (Validation)
-# ==========================================
-VALID_CATEGORIES = {"quality", "support", "price", "usability", "other"}
-
-CATEGORY_WEIGHTS = {
-    "quality": 1.5,
-    "support": 1.2,
-    "price": 1.0,
-    "usability": 1.3,
-    "other": 1.0
-}
-
-
-# ==========================================
-# 2. DATABASE CONFIGURATION (NullPool Enabled)
+# 1. DATABASE CONFIGURATION (NullPool Enabled)
 # ==========================================
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("DatabaseManager")
@@ -36,14 +18,18 @@ DB_FILE = "data/litmus7.db"
 os.makedirs(os.path.dirname(DB_FILE), exist_ok=True)
 DATABASE_URL = f"sqlite:///{DB_FILE}"
 
-# poolclass=NullPool guarantees no background connections are retained.
-# connect_args resolves multi-threading limits for simple local operations.
+# NullPool guarantees zero background connections are retained.
 engine = create_engine(
     DATABASE_URL, 
     poolclass=NullPool,
     connect_args={"check_same_thread": False}
 )
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+# ==========================================
+# 2. CENTRALIZED RELATIONAL SCHEMA
+# ==========================================
+Base = declarative_base()
 
 
 # ==========================================
@@ -86,9 +72,9 @@ def initialize_database():
     """Creates SQLite3 tables using the imported metadata schema."""
     try:
         Base.metadata.create_all(bind=engine)
-        print(" Database schemas initialized successfully.")
+        print("💾 Database schemas initialized successfully.")
     except Exception as e:
-        print(f" Initialization failure: {e}")
+        print(f"❌ Initialization failure: {e}")
 
 
 @db_safeguard
@@ -124,37 +110,36 @@ def get_product(db, product_id: int) -> Optional[Dict[str, Any]]:
 
 @db_safeguard
 def get_reviews(db, product_id: int) -> List[str]:
-    reviews = db.query(Review.body).filter(Review.product_id == product_id).all()
+    reviews = db.query(Review).filter(Review.product_id == product_id).all()
     return [r.body for r in reviews]
 
 
 @db_safeguard
 def add_review(db, product_id: int, review_text: str):
     db.add(Review(product_id=product_id, body=review_text))
-    # Clear cache directly in the same transaction
+    # Invalidate the cache since the database has a new review
     db.query(AnalysisCache).filter(AnalysisCache.product_id == product_id).delete()
     db.commit()
     return {"status": "success", "message": "Review added and cache invalidated successfully."}
 
 
 @db_safeguard
-def get_cached_analysis(db, product_id: int) -> Optional[Dict[str, Any]]:
+def get_cached_analysis(db, product_id: int) -> Optional[List[Dict[str, Any]]]:
     cache = db.query(AnalysisCache).filter(AnalysisCache.product_id == product_id).first()
     if cache:
         try:
-            raw_data = json.loads(cache.analysis)
-            # Validates data through Pydantic to ensure schema integrity
-            validated_data = InsightsList(**raw_data)
-            return validated_data.model_dump()
+            # Convert the stored JSON string back into a Python list of dictionaries
+            return json.loads(cache.analysis)
         except Exception:
             return None
     return None
 
 
 @db_safeguard
-def cache_analysis(db, product_id: int, insights_data: InsightsList):
-    """Serializes a validated Pydantic InsightsList object to JSON and caches it."""
-    analysis_str = json.dumps(insights_data.model_dump())
+def cache_analysis(db, product_id: int, analysis_data: List[Dict[str, Any]]):
+    """Takes standard Python lists/dicts, converts to JSON, and saves to cache."""
+    # Convert standard Python data to a JSON string for text column storage
+    analysis_str = json.dumps(analysis_data)
     
     cache = db.query(AnalysisCache).filter(AnalysisCache.product_id == product_id).first()
     if cache:
@@ -169,4 +154,4 @@ def cache_analysis(db, product_id: int, insights_data: InsightsList):
 def clear_cache(db, product_id: int):
     db.query(AnalysisCache).filter(AnalysisCache.product_id == product_id).delete()
     db.commit()
-    return {"status": "success", "message": "All AI insights have been permanently deleted from cache."}
+    return {"status": "success", "message": "Cache permanently deleted."}
