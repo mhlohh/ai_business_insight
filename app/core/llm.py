@@ -34,12 +34,12 @@ async def _semaphore_generate_content_async(self, *args, **kwargs):
 
     for attempt in range(max_retries):
         try:
-            # 1. Enforce Batching (4 requests per minute) before semaphore
+            # 1. Enforce Batching (3 requests per minute) before semaphore
             async with batch_lock:
                 request_counter += 1
-                if request_counter > 4:
+                if request_counter > 3:
                     print(
-                        f"\n⏳ [Rate Limit Manager] 4 requests processed. Initiating 60-second cooldown..."
+                        f"\n⏳ [Rate Limit Manager] 3 requests processed. Initiating 60-second cooldown..."
                     )
                     for remaining in range(60, 0, -10):
                         print(f"   ⏱️  {remaining} seconds remaining...")
