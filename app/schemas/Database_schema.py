@@ -1,8 +1,11 @@
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, Text
+from sqlalchemy.orm import declarative_base, relationship
 
 # ==========================================
 # 2. CENTRALIZED RELATIONAL SCHEMA
 # ==========================================
 Base = declarative_base()
+
 
 class Product(Base):
     __tablename__ = "products"
@@ -43,5 +46,3 @@ class AnalysisCache(Base):
     analysis = Column(Text, nullable=False)
 
     product = relationship("Product", back_populates="analysis_cache")
-
-
