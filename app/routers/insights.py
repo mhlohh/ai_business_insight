@@ -1,12 +1,12 @@
 from fastapi import APIRouter, HTTPException
-from models import InsightResponse , AI_Insight
+from schemas.insights import InsightsList , Insights
 from app.database import check_insights , save_insights , delete_insights , get_raw_reviews
 from services.chunkers import chunkers
 from services.model_provider import ask
 
 router = APIRouter(prefix="/insights" ,tags=["insights"])
 
-@router.get("/products/{product_name}/{product_id}", response_model=InsightResponse)
+@router.get("/products/{product_name}/{product_id}", response_model=InsightsList)
 
 async def get_product_insights(product_name:str , product_id: int):
     cached_data = await check_insights(product_id)
@@ -20,7 +20,7 @@ async def get_product_insights(product_name:str , product_id: int):
     
     try:
         results = await ask(chunks)
-        validated_insight = AI_Insight(**results) 
+        validated_insight = Insights(**results) 
     except Exception as e:
         raise HTTPException(status_code=500, detail="AI Engine failed to process data correctly.")
 

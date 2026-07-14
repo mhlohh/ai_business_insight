@@ -116,27 +116,28 @@ st.markdown(
 
 
 # Helper function to fetch products from backend
-@st.cache_data(show_spinner=False)
 def fetch_products():
     try:
         response = requests.get(f"{API_BASE}/db/products")
         if response.status_code == 200:
-            return response.json()
+            data = response.json()
+            if data:  # Only return if the list is not empty
+                return data
     except Exception:
         pass
-    # Fallback to local default list if backend is not started
+    # Fallback to local default list if backend is not started or DB is empty
     return [
         {
             "id": 1,
-            "asin": "B00F2SKPIM",
-            "name": "Samsung Galaxy Note 3",
-            "description": "Classic Samsung phablet with S-Pen.",
+            "asin": "B018Y229OU",
+            "name": "Fire Tablet, 7 Display, Wi-Fi, 8 GB",
+            "description": "Amazon Fire Tablet with 7-inch display, Wi-Fi, 8 GB storage.",
         },
         {
-            "id": 3,
-            "asin": "B07FZH9BGV",
-            "name": "Samsung Galaxy Note 9",
-            "description": "Flagship smartphone with S-Pen and Bixby.",
+            "id": 2,
+            "asin": "B00L9EPT8O",
+            "name": "Amazon Echo (White)",
+            "description": "Amazon Echo smart speaker with Alexa.",
         },
     ]
 
@@ -148,6 +149,10 @@ product_names = [p["name"] for p in products_list]
 # Sidebar selection
 with st.sidebar:
     st.markdown("### 🛒 Product Selection")
+    if not product_names:
+        st.warning("No products found in the database. Please run `python init_db.py` to initialize it.")
+        st.stop()
+
     selected_product_name = st.selectbox(
         "Choose a product for review analysis:", product_names
     )

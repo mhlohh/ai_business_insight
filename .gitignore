@@ -24,7 +24,6 @@ __pycache__/
 .coverage
 htmlcov/
 
-
 # OS metadata
 .DS_Store
 
