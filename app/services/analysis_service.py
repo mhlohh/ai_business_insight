@@ -19,6 +19,8 @@ STATUS_WORKING_WELL = "Working well"
 STATUS_WORTH_WATCHING = "Worth watching"
 STATUS_NEEDS_ATTENTION = "Needs attention"
 
+# This is the code standard
+
 
 def score_to_status(score: float) -> str:
     """Buckets a priority score into a business-readable plain-language status."""
@@ -28,6 +30,9 @@ def score_to_status(score: float) -> str:
         return STATUS_WORTH_WATCHING
     else:
         return STATUS_WORKING_WELL
+
+
+# This funciton is used to give colors and give clean and descriptive log
 
 
 def _log_agent_event(event, author: str, node_path: str):
@@ -76,8 +81,9 @@ def _log_agent_event(event, author: str, node_path: str):
             print(f"   ├─ {GREEN}Structured output parsed successfully.{RESET}")
 
 
+# If I change the model the output structure doesn't affect the system Its used like an adapter
 def _extract_output_data(output) -> list | None:
-    """Attempts to extract the insights list from various potential ADK output formats."""
+    # This function is used to extract the insights list from various potential ADK output formats.
     if output is None:
         return None
     if hasattr(output, "model_dump"):
@@ -91,8 +97,10 @@ def _extract_output_data(output) -> list | None:
     return None
 
 
+# This funciton act as safety layer When the Ai model doesn't perfectely follow strict Json format
+# It uses brace counting to extract the JSON from raw text.
 def _extract_json_fallback(response_text: str) -> list | None:
-    """Manually extracts JSON from raw text using brace counting if strict parsing failed."""
+    # Manually extracts JSON from raw text using brace counting if strict parsing failed.
     if not response_text:
         return None
 
@@ -131,7 +139,7 @@ def _extract_json_fallback(response_text: str) -> list | None:
 
 
 def _enrich_insights_data(data: list) -> list:
-    """Calculates scores, standardizes fields, and assigns business statuses to insights."""
+    # Calculates scores, standardizes fields, and assigns business statuses to insights.
     category_weights = CATEGORY_WEIGHTS
 
     for item in data:
