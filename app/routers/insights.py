@@ -24,11 +24,16 @@ async def get_product_insights(product_name:str , product_id: int):
     if not reviews:
          raise HTTPException(status_code=404, detail="No reviews found for this product.")
     
-    chunks = chunkers(reviews)
-    
     try:
-        results = await ask(chunks)
-        validated_insight = Insights(**results) 
+        reviews_prompt = "\n".join(reviews)
+        results = await ask(reviews_prompt)
+        if isinstance(results, list):
+            if len(results) > 0:
+                validated_insight = Insights(**results[0])
+            else:
+                validated_insight = Insights(insight="No insights found", confidence=0.0, frequency=0, example_quote="N/A", category="other")
+        else:
+            validated_insight = Insights(**results)
     except Exception as e:
         raise HTTPException(status_code=500, detail="AI Engine failed to process data correctly.")
 
