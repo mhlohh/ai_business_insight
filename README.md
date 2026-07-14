@@ -9,7 +9,28 @@ The immense volume of unstructured product reviews makes manual analysis ineffic
 - These chunks are processed by parallel sub-agents of a root model.
 - The root model then aggregates the results from the sub-agents and filters the data to ensure the best results and quality.
 
-![Alt Text](pipeline-digram.png)
+Below is the execution flow from the client request to the final response:
+
+```mermaid
+graph TD
+    A[Client Streamlit Frontend] -->|GET /ask?prompt=...| B[FastAPI Backend Server]
+    B -->|Fetch Reviews| C[Database SQLite3]
+    C -->|Reviews Text| D[Chunking Module]
+    D -->|N Chunks| E[Parallel Model Stage]
+    sub_agent_0[ReviewResearcher 0]
+    sub_agent_1[ReviewResearcher 1]
+    sub_agent_n[ReviewResearcher N]
+    E --> sub_agent_0
+    E --> sub_agent_1
+    E --> sub_agent_n
+    sub_agent_0 -->|Extract Local Insights| F[Aggregator Model]
+    sub_agent_1 -->|Extract Local Insights| F
+    sub_agent_n -->|Extract Local Insights| F
+    F -->|Collect, Deduplicate, Score, Filter| G[Post-Processing & Clean JSON Parsing]
+    G -->|Cache Results| H[SQLite3 Caching Layer]
+    G -->|JSON Response| B
+    B -->|Formatted Output| A
+```
 
 ---
 
