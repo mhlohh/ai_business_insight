@@ -155,3 +155,43 @@ def clear_cache(db, product_id: int):
     db.query(AnalysisCache).filter(AnalysisCache.product_id == product_id).delete()
     db.commit()
     return {"status": "success", "message": "Cache permanently deleted."}
+
+
+# ==========================================
+# 5. COMPATIBILITY HELPERS FOR OLD ROUTERS
+# ==========================================
+
+def all_products():
+    return get_products()
+
+
+def check_insights(product_id: int):
+    res = get_cached_analysis(product_id)
+    if res is not None:
+        return {"analysis": json.dumps(res)}
+    return None
+
+
+def save_insights(product_id: int, insight_data):
+    if isinstance(insight_data, str):
+        try:
+            insight_data = json.loads(insight_data)
+        except Exception:
+            pass
+    if isinstance(insight_data, dict) and "data" in insight_data:
+        analysis_data = insight_data["data"]
+    else:
+        analysis_data = insight_data
+    cache_analysis(product_id, analysis_data)
+
+
+def delete_insights(product_id: int):
+    existing = get_cached_analysis(product_id)
+    if existing is None:
+        return False
+    clear_cache(product_id)
+    return True
+
+
+def get_raw_reviews(product_id: int):
+    return get_reviews(product_id)
