@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException
 from schemas.insights import InsightsList , Insights
 from app.database import check_insights , save_insights , delete_insights , get_raw_reviews
 from services.chunkers import chunkers
-from services.model_provider import ask
+from app.services.analysis_service import ask
 
 router = APIRouter(prefix="/insights" ,tags=["insights"])
 
