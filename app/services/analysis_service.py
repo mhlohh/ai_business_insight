@@ -9,7 +9,7 @@ from app.core.llm import model_obj, parallel_model_obj
 from app.schemas.insights import InsightsList
 from app.services.parallel_agent import create_parallel_team
 from app.services.aggregator_agent import create_aggregator_agent
-from app.services.chunker import chunkers
+from app.services.chunkers import chunkers
 
 
 # Status thresholds and values for priority score bucketing

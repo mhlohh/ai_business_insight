@@ -5,7 +5,7 @@ import time
 from pydantic import BaseModel
 from app.schemas.insights import InsightsList , Insights
 from app.database import check_insights , save_insights , delete_insights , get_raw_reviews, get_product
-from app.services.chunker import chunkers
+from app.services.chunkers import chunkers
 from app.services.analysis_service import ask, ask_stream
 
 class InsightResponse(BaseModel):
