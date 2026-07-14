@@ -22,4 +22,4 @@ class Insights(BaseModel):
     category: str
 
 class InsightsList(BaseModel):
-    insights : list(Insights) = Field(description = "List of extracted business insights")
+    insights : list[Insights] = Field(description = "List of extracted business insights")
