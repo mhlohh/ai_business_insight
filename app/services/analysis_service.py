@@ -165,116 +165,18 @@ async def setup():
     pass
 
 
-async def ask(prompt: str) -> str | list:
+async def ask(prompt: str) -> list:
     """
-    Core function called by FastAPI `/ask` endpoint (renamed to `/analyze` usually).
-    Dynamically constructs a parallel review processing pipeline, runs it,
-    and returns the aggregated result.
+    Runs the analysis pipeline and returns the final enriched insights list.
+    Delegates to ask_stream() internally to avoid duplicating pipeline logic.
     """
-    chunks = chunkers(prompt)
+    async for event in ask_stream(prompt):
+        if event["status"] == "error":
+            raise RuntimeError(event["message"])
+        if event["status"] == "completed":
+            return event["result"]
 
-    # 1. Create Parallel Sub-agents for each chunk using the parallel model object
-    parallel_reviews_team, input_vars = create_parallel_team(chunks, parallel_model_obj)
-
-    # 2. Formulate Aggregator Prompt using the output keys from sub-agents
-    aggregator_agent = create_aggregator_agent(input_vars, model_obj)
-
-    # 3. Create the root Sequential Agent and InMemoryRunner
-    root_agent = SequentialAgent(
-        name="ReviewsAnalysisSystem",
-        sub_agents=[parallel_reviews_team, aggregator_agent],
-    )
-
-    runner = InMemoryRunner(agent=root_agent)
-
-    try:
-        session = await runner.session_service.create_session(
-            app_name=runner.app_name,
-            user_id="user",
-        )
-
-        response_text = ""
-        final_insights_data = None
-
-        async for event in runner.run_async(
-            user_id="user",
-            session_id=session.id,
-            new_message=types.Content(
-                role="user",
-                parts=[types.Part(text="Run the product review aggregation pipeline.")],
-            ),
-        ):
-            node_path = event.node_info.path if event.node_info else "unknown"
-            author = event.author or "System"
-
-            if not event.partial:
-                _log_agent_event(event, author, node_path)
-
-            if event.is_final_response():
-                if event.output is not None:
-                    final_insights_data = _extract_output_data(event.output)
-
-                if event.content and event.content.parts:
-                    for part in event.content.parts:
-                        if part.text:
-                            response_text += part.text
-
-        data = final_insights_data
-
-        # Fallback manual extraction if ADK failed to auto-parse
-        if data is None and response_text:
-            data = _extract_json_fallback(response_text)
-            if data is None:
-                print("⚠️ Failed to parse raw JSON string or no JSON block found.")
-
-        if data is None:
-            raise ValueError(
-                "Pydantic structured output not found. The model failed to conform to the required JSON schema."
-            )
-
-        if isinstance(data, list):
-            return _enrich_insights_data(data)
-
-        raise ValueError("Model output was not a valid list.")
-
-    except Exception as e:
-        error_msg = str(e)
-        RED = "\033[91m"
-        RESET = "\033[0m"
-
-        # Save the raw error to a log file for debugging
-        try:
-            import datetime
-
-            timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            with open("llm_error.log", "a", encoding="utf-8") as f:
-                f.write(f"[{timestamp}] LLM Exception: {error_msg}\n")
-        except Exception:
-            pass
-
-        if (
-            "RateLimitError" in error_msg
-            or "rate limit" in error_msg.lower()
-            or "tokens per minute" in error_msg.lower()
-        ):
-            print(
-                f"{RED}❌ [RATE LIMIT EXCEEDED] Groq API tokens-per-minute (TPM) limit reached.{RESET}"
-            )
-            print("👉 The parallel chunk queue processed too many tokens too fast.")
-            print(
-                "👉 Fix: Lower 'LOCAL_CONCURRENCY_LIMIT' or 'MAX_REVIEWS_TO_ANALYZE' in your .env file."
-            )
-            print("📝 The full error details have been saved to 'llm_error.log'.")
-        else:
-            print(
-                f"{RED}❌ Error communicating with LLM provider (Groq):{RESET} {error_msg}"
-            )
-            print(
-                "👉 Please ensure that your GROQ_API_KEY is correctly set in your .env file."
-            )
-            print("📝 The full error details have been saved to 'llm_error.log'.")
-
-        raise e
+    raise ValueError("Pipeline completed without returning a result.")
 
 
 async def ask_stream(prompt: str):
