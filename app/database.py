@@ -3,7 +3,7 @@ import json
 import os
 import inspect
 from typing import List, Dict, Any, Optional
-from schemas.Database_schema import Product, Review, AnalysisCache
+from app.schemas.Database_schema import Product, Review, AnalysisCache
 from sqlalchemy import create_engine, Column, Integer, String, Float, ForeignKey, Text
 from sqlalchemy.orm import declarative_base, sessionmaker, relationship
 from sqlalchemy.exc import OperationalError, SQLAlchemyError
