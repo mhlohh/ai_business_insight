@@ -1,6 +1,10 @@
 from fastapi import APIRouter, HTTPException
-from models import Product
-from app.database import all_products
+from app.schemas.Database_schema import Product
+from app.database import get_products
+
+
+async def all_products():
+    return get_products()
 
 router = APIRouter(prefix="/products" ,tags=["products"])
 @router.get("/",response_model = list[Product])
