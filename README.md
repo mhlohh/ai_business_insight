@@ -1,96 +1,168 @@
-# Product Review Intelligence Platform (litmus7_project)
+# 🤖 Product Review Intelligence Platform
 
-## The Problem
-The immense volume of unstructured product reviews makes manual analysis inefficient for businesses seeking actionable insights.
-
-## The Solution
-- Instead of prompting an entire list of reviews, we use a **divide-and-conquer** approach.
-- **Example**: For 1000 reviews, the system chunks the reviews into smaller chunks (e.g., 100 reviews each), and extracts the business-related context.
-- These chunks are processed by parallel sub-agents of a root model.
-- The root model then aggregates the results from the sub-agents and filters the data to ensure the best results and quality.
-
-Below is the execution flow from the client request to the final response:
-
-```mermaid
-graph TD
-    A["Streamlit Frontend"] -->|"GET /analyze/{id}/stream"| B["FastAPI Backend"]
-
-    B --> C{"Cache Hit?"}
-    C -->|"Yes"| Z["Return Cached JSON"]
-    C -->|"No"| D["Fetch Reviews from SQLite"]
-
-    D --> E["Chunker Module"]
-    E -->|"Normalize & Split into N Chunks"| F["Google ADK SequentialAgent"]
-
-    subgraph F["Google ADK SequentialAgent"]
-        direction TB
-        G["ParallelAgent"] --> H["AggregatorAgent"]
-    end
-
-    subgraph G["ParallelAgent"]
-        direction LR
-        R0["ReviewResearcher 0"]
-        R1["ReviewResearcher 1"]
-        RN["ReviewResearcher N"]
-    end
-
-    H -->|"4-Stage Synthesis"| I{"Pydantic Parse OK?"}
-    I -->|"Yes"| J["Extract Output Data"]
-    I -->|"No"| K["JSON Fallback Parser"]
-    K --> J
-
-    J --> L["Enrich & Score Insights"]
-    L -->|"Save to Cache"| M["SQLite analysis_cache"]
-    L -->|"Stream JSON Response"| A
-```
-
-> **Rate Limit Protection:** All LLM calls are routed through a custom Rate Limit Manager that enforces batched processing (4 requests/batch), 60s cooldowns, and 2s inter-request delays via LiteLLM.
+> **Divide-and-conquer AI pipeline** that transforms thousands of unstructured product reviews into scored, prioritized business insights — powered by parallel LLM agents.
 
 ---
 
-## Run Setup Guide
+## 📌 The Problem
 
-### 1. Create Environment (First Time)
-```bash
-python3 -m venv .venv
+The immense volume of unstructured product reviews makes manual analysis inefficient for businesses seeking actionable insights. Traditional LLMs struggle with thousands of reviews due to context-window limits, hallucinations, and high token costs.
+
+## 💡 The Solution
+
+Instead of prompting an LLM with all reviews at once, this platform uses a **multi-agent divide-and-conquer** strategy:
+
+1. **Chunk** — Reviews are normalized and split into manageable blocks (default: 200 per chunk).
+2. **Analyze in Parallel** — Each chunk is assigned to an independent `ReviewResearcher` sub-agent that extracts localized insights.
+3. **Aggregate** — A centralized `AggregatorAgent` synthesizes, deduplicates, resolves conflicts, and filters the combined findings.
+4. **Score & Rank** — The Python backend calculates a weighted priority score and assigns a business status to every insight.
+
+---
+
+## 🏗️ Architecture
+
+```mermaid
+graph TD
+    A["🖥️ Streamlit Frontend"]:::frontend -->|"GET /analyze/{id}/stream"| B["⚡ FastAPI Backend"]:::backend
+
+    B --> C{"🗄️ Cache Hit?"}:::decision
+    C -->|"✅ Yes"| Z["📦 Return Cached JSON"]:::cache
+    C -->|"❌ No"| D["📂 Fetch Reviews from SQLite"]:::database
+
+    D --> E["✂️ Chunker Module"]:::processing
+    E -->|"Normalize & Split"| SEQ
+
+    subgraph SEQ ["🔗 Google ADK SequentialAgent"]
+        direction TB
+        PAR["🔀 ParallelAgent"] --> AGG["🧠 AggregatorAgent"]
+    end
+
+    subgraph PAR ["🔀 ParallelAgent"]
+        direction LR
+        R0["ReviewResearcher 0"]:::agent
+        R1["ReviewResearcher 1"]:::agent
+        RN["ReviewResearcher N"]:::agent
+    end
+
+    AGG -->|"4-Stage Synthesis"| VAL{"🔍 Pydantic Valid?"}:::decision
+    VAL -->|"✅ Yes"| EXT["📤 Extract Output"]:::processing
+    VAL -->|"❌ No"| FB["🔧 JSON Fallback Parser"]:::fallback
+    FB --> EXT
+
+    EXT --> ENR["📊 Enrich & Score"]:::scoring
+    ENR -->|"💾 Save to Cache"| M["🗄️ SQLite Cache"]:::cache
+    ENR -->|"📡 Stream Response"| A
+
+    classDef frontend fill:#6366f1,stroke:#4f46e5,color:#fff
+    classDef backend fill:#0ea5e9,stroke:#0284c7,color:#fff
+    classDef database fill:#f59e0b,stroke:#d97706,color:#fff
+    classDef processing fill:#8b5cf6,stroke:#7c3aed,color:#fff
+    classDef agent fill:#06b6d4,stroke:#0891b2,color:#fff
+    classDef decision fill:#f97316,stroke:#ea580c,color:#fff
+    classDef cache fill:#22c55e,stroke:#16a34a,color:#fff
+    classDef fallback fill:#ef4444,stroke:#dc2626,color:#fff
+    classDef scoring fill:#ec4899,stroke:#db2777,color:#fff
 ```
 
-### 2. Activate the Environment
+> **⚠️ Rate Limit Protection:** All LLM calls pass through a custom Rate Limit Manager — batched processing (4 req/batch), 60s cooldowns, 2s inter-request delays, and intelligent retry parsing via LiteLLM.
+
+---
+
+## 📁 Project Structure
+
+```
+litmus7_project/
+├── app/
+│   ├── main.py                  # FastAPI app & lifespan setup
+│   ├── database.py              # SQLAlchemy DB operations & caching
+│   ├── core/
+│   │   └── llm.py               # LiteLLM config, rate limit manager
+│   ├── routers/
+│   │   ├── products.py          # /products & /db/products endpoints
+│   │   ├── reviews.py           # /reviews/{id} endpoints
+│   │   └── insights.py          # /analyze/{id} & streaming endpoints
+│   ├── schemas/
+│   │   ├── Database_schema.py   # SQLAlchemy ORM models
+│   │   └── insights.py          # Pydantic schemas & category weights
+│   └── services/
+│       ├── analysis_service.py  # Core pipeline orchestration
+│       ├── parallel_agent.py    # ParallelAgent factory
+│       ├── aggregator_agent.py  # AggregatorAgent factory
+│       └── chunkers.py          # Text normalization & chunking
+├── data/
+│   └── litmus7.db               # SQLite database (products + reviews)
+├── streamlit_app.py             # Streamlit frontend UI
+├── requirements.txt             # Python dependencies
+└── .env                         # Environment configuration
+```
+
+---
+
+## 🔌 API Reference
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/db/products` | List all products with reviews |
+| `GET` | `/db/product/{id}` | Get a specific product by ID |
+| `GET` | `/reviews/{product_id}` | Get all reviews for a product |
+| `POST` | `/reviews/{product_id}` | Add a review (auto-invalidates cache) |
+| `GET` | `/analyze/{product_id}` | Run analysis pipeline (with caching) |
+| `GET` | `/analyze/{product_id}/stream` | Stream analysis with real-time progress |
+| `DELETE` | `/analyze/{product_id}/cache` | Clear cached analysis for a product |
+
+---
+
+## 🚀 Quick Start
+
+### 1. Create & Activate Environment
 ```bash
+python3 -m venv .venv
 source .venv/bin/activate
 ```
 
-### 3. Install Dependencies
+### 2. Install Dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-### 4. Configure Environment (.env)
-Configure the following variables in a `.env` file at the root of the project:
-* `GROQ_API_KEY`: Your Groq API key (required for cloud model execution).
-* `LOCAL_MODEL_NAME`: Main aggregator model (default: `groq/meta-llama/llama-4-scout-17b-16e-instruct`).
-* `LOCAL_PARALLEL_MODEL_NAME`: Model for parallel sub-agents (default: `groq/meta-llama/llama-4-scout-17b-16e-instruct`).
-* `LOCAL_CONCURRENCY_LIMIT`: Controls parallel API requests to prevent rate limits (default: `4`).
-* `MAX_REVIEWS_TO_ANALYZE`: Maximum number of reviews to process at once (default: `100`).
-* `MODEL_TEMPERATURE`: Optional temperature for the models (default: `0.0`).
-* `MODEL_SEED`: Optional random seed for reproducible outputs (default: `42`).
-* `MODEL_TOP_P`: Optional top_p value for model generation (default: `1.0`).
-* `MODEL_MAX_TOKENS`: Max tokens for aggregator model (default: `8192`).
-* `PARALLEL_MODEL_MAX_TOKENS`: Max tokens for parallel models (default: `4096`).
+### 3. Configure Environment (`.env`)
+Create a `.env` file at the project root:
+```env
+GROQ_API_KEY=your_groq_api_key
 
-### 5. Start the FastAPI Backend
-```bash
-uvicorn app.main:app --reload
+# Models
+LOCAL_MODEL_NAME=groq/meta-llama/llama-4-scout-17b-16e-instruct
+LOCAL_PARALLEL_MODEL_NAME=groq/meta-llama/llama-4-scout-17b-16e-instruct
+
+# Rate Limiting
+LOCAL_CONCURRENCY_LIMIT=4
+
+# Generation Config
+MODEL_TEMPERATURE=0.0
+MODEL_SEED=42
+MODEL_TOP_P=1.0
+MODEL_MAX_TOKENS=8192
+PARALLEL_MODEL_MAX_TOKENS=4096
 ```
 
-### 6. Start the Streamlit Frontend
+### 4. Launch
 ```bash
+# Terminal 1 — Backend
+uvicorn app.main:app --reload
+
+# Terminal 2 — Frontend
 streamlit run streamlit_app.py
 ```
 
-### 🧠 Performance & Rate Limits
-This pipeline is designed for massive datasets (2000+ reviews). It includes built-in rate-limit protections:
-- **Batching & Cooldowns:** The rate limit manager enforces processing batches (e.g., 4 requests per batch) and automatically initiates a cooldown (e.g., 60 seconds) to safely remain under API limitations.
-- **Concurrency Queues:** The `LOCAL_CONCURRENCY_LIMIT` ensures that only a set number of API requests run at exactly the same time, spreading out requests (with a 2s delay) to stay under Groq's Tokens-Per-Minute (TPM) limits.
-- **Auto-Retries:** The pipeline leverages custom fallback logic and LiteLLM's retry policies to automatically back off and retry up to 5 times if Groq rate limits are hit, intelligently parsing Groq's "try again in X seconds" messages.
-- **Clean Error Logging:** If a catastrophic rate limit is hit, the massive JSON stack traces are hidden from the console and safely saved to a `llm_error.log` file in the root directory for debugging.
+---
+
+## 🧠 Performance & Rate Limits
+
+This pipeline is designed for massive datasets (2000+ reviews). Built-in protections include:
+
+| Protection | Description |
+|------------|-------------|
+| **Batching & Cooldowns** | 4 requests per batch with automatic 60-second cooldowns between batches |
+| **Concurrency Queues** | `LOCAL_CONCURRENCY_LIMIT` caps simultaneous API calls with 2s inter-request delays |
+| **Auto-Retries** | Up to 5 retries with intelligent parsing of Groq's `"try again in X seconds"` messages |
+| **Error Logging** | Rate limit stack traces are suppressed from console and saved to `llm_error.log` |
