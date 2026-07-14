@@ -39,6 +39,9 @@ Configure the following variables in a `.env` file at the root of the project:
 * `MAX_REVIEWS_TO_ANALYZE`: Maximum number of reviews to process at once (default: `100`).
 * `MODEL_TEMPERATURE`: Optional temperature for the models (default: `0.0`).
 * `MODEL_SEED`: Optional random seed for reproducible outputs (default: `42`).
+* `MODEL_TOP_P`: Optional top_p value for model generation (default: `1.0`).
+* `MODEL_MAX_TOKENS`: Max tokens for aggregator model (default: `8192`).
+* `PARALLEL_MODEL_MAX_TOKENS`: Max tokens for parallel models (default: `4096`).
 
 ### 5. Start the FastAPI Backend
 ```bash
@@ -52,6 +55,7 @@ streamlit run streamlit_app.py
 
 ### 🧠 Performance & Rate Limits
 This pipeline is designed for massive datasets (2000+ reviews). It includes built-in rate-limit protections:
-- **Concurrency Queues:** The `LOCAL_CONCURRENCY_LIMIT` ensures that only a set number of API requests run at exactly the same time, keeping you under Groq's Tokens-Per-Minute (TPM) limits.
-- **Auto-Retries:** The pipeline leverages LiteLLM's retry policies to automatically back off and retry up to 5 times if Groq rate limits are hit.
+- **Batching & Cooldowns:** The rate limit manager enforces processing batches (e.g., 4 requests per batch) and automatically initiates a cooldown (e.g., 60 seconds) to safely remain under API limitations.
+- **Concurrency Queues:** The `LOCAL_CONCURRENCY_LIMIT` ensures that only a set number of API requests run at exactly the same time, spreading out requests (with a 2s delay) to stay under Groq's Tokens-Per-Minute (TPM) limits.
+- **Auto-Retries:** The pipeline leverages custom fallback logic and LiteLLM's retry policies to automatically back off and retry up to 5 times if Groq rate limits are hit, intelligently parsing Groq's "try again in X seconds" messages.
 - **Clean Error Logging:** If a catastrophic rate limit is hit, the massive JSON stack traces are hidden from the console and safely saved to a `llm_error.log` file in the root directory for debugging.
