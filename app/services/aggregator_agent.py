@@ -22,7 +22,6 @@ You must execute a 6-stage flow to synthesize the findings:
         model=model_obj,
         instruction=aggregator_instruction,
         output_key="executive_summary",
-        output_schema = InsightsList
-
+        output_schema=InsightsList,
     )
     return aggregator_agent
