@@ -2,10 +2,9 @@ from fastapi import APIRouter, HTTPException
 from app.schemas.Database_schema import Product
 from app.database import all_products, get_product
 
-router = APIRouter(prefix="/products" ,tags=["products"])
-db_router = APIRouter(prefix="/db", tags=["products"])
+router = APIRouter(tags=["products"])
 
-@router.get("/")
+@router.get("/products")
 async def  get_all_products():
     products = await all_products()
     if not products:
@@ -13,13 +12,13 @@ async def  get_all_products():
     return products
 
 
-@db_router.get("/products")
+@router.get("/db/products")
 async def get_database_products():
     # Returns the list of products preloaded with Amazon reviews.
     return await all_products()
 
 
-@db_router.get("/product/{id}")
+@router.get("/db/product/{id}")
 async def get_database_product_by_id(id: int):
     # Returns a specific product from the reviews database.
     prod = await get_product(id)
