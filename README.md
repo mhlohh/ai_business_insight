@@ -13,24 +13,38 @@ Below is the execution flow from the client request to the final response:
 
 ```mermaid
 graph TD
-    A[Client Streamlit Frontend] -->|GET /ask?prompt=...| B[FastAPI Backend Server]
-    B -->|Fetch Reviews| C[Database SQLite3]
-    C -->|Reviews Text| D[Chunking Module]
-    D -->|N Chunks| E[Parallel Model Stage]
-    sub_agent_0[ReviewResearcher 0]
-    sub_agent_1[ReviewResearcher 1]
-    sub_agent_n[ReviewResearcher N]
-    E --> sub_agent_0
-    E --> sub_agent_1
-    E --> sub_agent_n
-    sub_agent_0 -->|Extract Local Insights| F[Aggregator Model]
-    sub_agent_1 -->|Extract Local Insights| F
-    sub_agent_n -->|Extract Local Insights| F
-    F -->|Collect, Deduplicate, Score, Filter| G[Post-Processing & Clean JSON Parsing]
-    G -->|Cache Results| H[SQLite3 Caching Layer]
-    G -->|JSON Response| B
-    B -->|Formatted Output| A
+    A["Streamlit Frontend"] -->|"GET /analyze/{id}/stream"| B["FastAPI Backend"]
+
+    B --> C{"Cache Hit?"}
+    C -->|"Yes"| Z["Return Cached JSON"]
+    C -->|"No"| D["Fetch Reviews from SQLite"]
+
+    D --> E["Chunker Module"]
+    E -->|"Normalize & Split into N Chunks"| F["Google ADK SequentialAgent"]
+
+    subgraph F["Google ADK SequentialAgent"]
+        direction TB
+        G["ParallelAgent"] --> H["AggregatorAgent"]
+    end
+
+    subgraph G["ParallelAgent"]
+        direction LR
+        R0["ReviewResearcher 0"]
+        R1["ReviewResearcher 1"]
+        RN["ReviewResearcher N"]
+    end
+
+    H -->|"4-Stage Synthesis"| I{"Pydantic Parse OK?"}
+    I -->|"Yes"| J["Extract Output Data"]
+    I -->|"No"| K["JSON Fallback Parser"]
+    K --> J
+
+    J --> L["Enrich & Score Insights"]
+    L -->|"Save to Cache"| M["SQLite analysis_cache"]
+    L -->|"Stream JSON Response"| A
 ```
+
+> **Rate Limit Protection:** All LLM calls are routed through a custom Rate Limit Manager that enforces batched processing (4 requests/batch), 60s cooldowns, and 2s inter-request delays via LiteLLM.
 
 ---
 
