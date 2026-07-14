@@ -12,9 +12,9 @@ class InsightResponse(BaseModel):
     status: str
     data: Insights
 
-router = APIRouter(prefix="/insights" ,tags=["insights"])
+router = APIRouter(tags=["insights"])
 
-@router.get("/products/{product_name}/{product_id}", response_model=InsightsList)
+@router.get("/insights/products/{product_name}/{product_id}", response_model=InsightsList)
 
 async def get_product_insights(product_name:str , product_id: int):
     cached_data = await check_insights(product_id)
@@ -38,7 +38,7 @@ async def get_product_insights(product_name:str , product_id: int):
     return final_response
 
 
-@router.delete("/products/{product_name}/{product_id}")
+@router.delete("/insights/products/{product_name}/{product_id}")
 async def clear_product_insights(product_name: str, product_id: int):
     deleted = await delete_insights(product_id)
     if not deleted:
@@ -50,10 +50,8 @@ async def clear_product_insights(product_name: str, product_id: int):
 # 6. ANALYZE ROUTER (STREAMING & PIPELINE)
 # ==========================================
 
-analyze_router = APIRouter(prefix="/analyze", tags=["analyze"])
 
-
-@analyze_router.get("/{product_id}")
+@router.get("/analyze/{product_id}")
 async def analyze_product_reviews(product_id: int):
     # Analyzes a product's reviews using the parallel ADK pipeline (supports caching).
     prod = await get_product(product_id)
@@ -115,7 +113,7 @@ async def analyze_product_reviews(product_id: int):
     }
 
 
-@analyze_router.delete("/{product_id}/cache")
+@router.delete("/analyze/{product_id}/cache")
 async def clear_product_analysis_cache(product_id: int):
     # Clears the cached review analysis for a product.
     prod = await get_product(product_id)
@@ -127,7 +125,7 @@ async def clear_product_analysis_cache(product_id: int):
     return {"message": f"Cache cleared successfully for product {product_id}"}
 
 
-@analyze_router.get("/{product_id}/stream")
+@router.get("/analyze/{product_id}/stream")
 async def analyze_product_reviews_stream(product_id: int):
     # Analyzes a product's reviews and streams progress updates
     prod = await get_product(product_id)
