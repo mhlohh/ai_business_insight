@@ -47,20 +47,17 @@ graph TD
 The [FastAPI](file:///Users/muhsilnr/Library/Mobile%20Documents/com~apple%20CloudDocs/Documents/codespace/litmus7_project/main.py) endpoint receives review text via the `/ask` query parameter. It triggers the lifespan setup, verifies the model provider, and delegates analysis to the model provider layer.
 
 ### 2. Chunking Module
-Splits the unstructured text block into smaller, manageable chunks of reviews (each review on a separate line) to prevent LLM context-window exhaustion and ensure granular analysis.
-- $\le 10$ reviews: Chunk size = 3
-- $10 - 100$ reviews: Chunk size = 10
-- $> 100$ reviews: Chunk size = 100
+Splits the unstructured text block into smaller, manageable chunks of reviews to prevent LLM context-window exhaustion and ensure granular analysis. The chunker first normalizes text (lowercasing and whitespace stripping) and then divides the reviews using a standard block size (default `chunk_size = 200`).
 
 ### 3. Parallel Research Agents (Google ADK)
-The system dynamically instantiates $1 - 4$ sub-agents (one per chunk of reviews) running in parallel using `google.adk.agents.ParallelAgent`. Each sub-agent extracts key business-relevant insights, representative quotes, confidence levels, and categories.
+The system dynamically instantiates sub-agents (one per chunk of reviews) running in parallel using `google.adk.agents.ParallelAgent`. Each sub-agent extracts key business-relevant insights, representative quotes, confidence levels, and categories. The prompt strictly instructs models to return raw, valid JSON output and explicitly suppresses verbose `<think>` tags.
 
 ### 4. Synthesis & Aggregator Model
-The `AggregatorModel` receives the output from all sub-models and processes it to synthesize the findings via a 4-stage LLM prompt:
+The `AggregatorModel` receives the output from all sub-models and processes it to synthesize the findings via a 4-stage LLM prompt (and strictly enforces raw JSON output without `<think>` tags):
 1. **Collect**: Gather all raw insights.
 2. **Deduplicate**: Merge highly similar or duplicate insights, incrementing frequency counters and selecting representative quotes.
 3. **Resolve Conflicts**: If insights on the same topic contradict each other (e.g., 'good battery' vs 'bad battery'), merge them into a single 'Mixed Feedback' insight, sum their frequencies, and average their confidences. This ensures highly debated topics bubble up as high priority.
-4. **Quality Filter**: Drop low-frequency, low-confidence, or irrelevant items.
+4. **Quality Filter**: Keep all valid product feedback, positive reviews, issues, and features, only filtering out blank, unrelated, or gibberish outputs.
 
 ### 5. Backend Post-Processing & Scoring
 After the LLM generates the aggregated JSON list, the Python backend calculates a priority score and business status using:
@@ -81,7 +78,7 @@ Ensures that if the same product reviews are requested twice, the pipeline does 
 
 - **Backend Framework**: FastAPI & Uvicorn
 - **Orchestration Framework**: Google ADK (Agent Development Kit)
-- **Model Connector**: LiteLLM (for routing and rate-limit auto-retries)
+- **Model Connector**: LiteLLM (for routing and an advanced Rate Limit Manager handling batched processing, 60s cooldowns)
 - **LLM Provider**: Groq Cloud API (defaulting to fast, high-performance models like `meta-llama/llama-4-scout-17b-16e-instruct`)
 - **Database / Cache**: SQLite3
 - **Frontend**: Streamlit
@@ -109,6 +106,9 @@ To run the project locally with the Groq cloud LLM provider:
    MAX_REVIEWS_TO_ANALYZE=100
    MODEL_TEMPERATURE=0.0
    MODEL_SEED=42
+   MODEL_TOP_P=1.0
+   MODEL_MAX_TOKENS=8192
+   PARALLEL_MODEL_MAX_TOKENS=4096
    ```
 
 3. **Launch the FastAPI Server**:

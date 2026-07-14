@@ -209,26 +209,64 @@ analyze_btn = st.button("🤖 Analyze Reviews", type="primary", use_container_wi
 
 # Placeholder or display result
 if analyze_btn:
-    with st.spinner("Executing dynamic parallel sub-agents and aggregator flow..."):
-        try:
-            response = requests.get(f"{API_BASE}/analyze/{product_id}")
-            if response.status_code == 200:
-                result = response.json()
-                insights = result.get("analysis", [])
-                cached = result.get("cached", False)
-                reviews_analyzed = result.get("reviews_analyzed", 0)
-                execution_time = result.get("execution_time_seconds", 0.0)
-
-                # Store results in session state to persist on redraw
-                st.session_state["insights"] = insights
-                st.session_state["cached"] = cached
-                st.session_state["reviews_analyzed"] = reviews_analyzed
-                st.session_state["execution_time"] = execution_time
-                st.session_state["analyzed_prod_id"] = product_id
-            else:
-                st.error(f"Error running analysis: {response.text}")
-        except Exception as e:
-            st.error(f"Failed to communicate with analysis backend: {e}")
+    import json
+    progress_bar = st.progress(0, text="Initializing analysis pipeline...")
+    time_text = st.empty()
+    
+    start_time = time.time()
+    
+    try:
+        response = requests.get(f"{API_BASE}/analyze/{product_id}/stream", stream=True)
+        if response.status_code == 200:
+            for line in response.iter_lines():
+                if line:
+                    data = json.loads(line)
+                    status = data.get("status")
+                    
+                    elapsed_time = time.time() - start_time
+                    time_str = f"⏱️ Time elapsed: {elapsed_time:.1f}s"
+                    time_text.markdown(f"**{time_str}**")
+                    
+                    if status == "init":
+                        progress_bar.progress(0, text=data.get("message", "Initializing..."))
+                    elif status == "processing":
+                        processed = data.get("chunks_processed", 0)
+                        total = data.get("num_chunks", 1)
+                        prog = min(int((processed / total) * 90), 90)
+                        progress_bar.progress(prog, text=f"Processing chunks: {processed}/{total}")
+                    elif status == "aggregating":
+                        progress_bar.progress(95, text="Aggregating insights from chunks...")
+                    elif status == "completed":
+                        progress_bar.progress(100, text="Analysis complete!")
+                        
+                        insights = data.get("result", [])
+                        cached = data.get("cached", False)
+                        reviews_analyzed = data.get("reviews_analyzed", 0)
+                        execution_time = data.get("execution_time_seconds", 0.0)
+                        
+                        # Store results in session state to persist on redraw
+                        st.session_state["insights"] = insights
+                        st.session_state["cached"] = cached
+                        st.session_state["reviews_analyzed"] = reviews_analyzed
+                        st.session_state["execution_time"] = execution_time
+                        st.session_state["analyzed_prod_id"] = product_id
+                        
+                        time.sleep(0.5)
+                        progress_bar.empty()
+                        time_text.empty()
+                        st.rerun()  # Rerun to show results
+                        break
+                    elif status == "error":
+                        st.error(f"Error during analysis: {data.get('message')}")
+                        progress_bar.empty()
+                        time_text.empty()
+                        break
+        else:
+            st.error(f"Error connecting to stream: {response.text}")
+            progress_bar.empty()
+            time_text.empty()
+    except Exception as e:
+        st.error(f"Failed to communicate with analysis backend: {e}")
 
 # Check if we have analysis results in session state for selected product
 if (

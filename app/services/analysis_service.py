@@ -1,4 +1,3 @@
-import os
 import json
 from google.adk.agents import Agent, ParallelAgent, SequentialAgent
 from google.adk.runners import InMemoryRunner
@@ -6,9 +5,11 @@ from google.genai import types
 
 # New imports based on reorganized files
 from app.core.llm import model_obj, parallel_model_obj
-from app.schemas.insights import InsightsList
+from app.schemas.insights import InsightsList, CATEGORY_WEIGHTS
 from app.services.parallel_agent import create_parallel_team
 from app.services.aggregator_agent import create_aggregator_agent
+from app.services.chunkers import chunkers
+
 
 # Status thresholds and values for priority score bucketing
 STATUS_THRESHOLD_HIGH = 8.0
@@ -17,6 +18,8 @@ STATUS_THRESHOLD_MEDIUM = 5.0
 STATUS_WORKING_WELL = "Working well"
 STATUS_WORTH_WATCHING = "Worth watching"
 STATUS_NEEDS_ATTENTION = "Needs attention"
+
+# This is the code standard
 
 
 def score_to_status(score: float) -> str:
@@ -29,26 +32,7 @@ def score_to_status(score: float) -> str:
         return STATUS_WORKING_WELL
 
 
-def chunk_reviews(prompt: str) -> list[list[str]]:
-    """Helper to chunk a large block of reviews into smaller sub-lists."""
-    lines = [line.strip() for line in prompt.split("\n") if line.strip()]
-    if not lines:
-        return [["No reviews provided."]]
-
-    # Cap total reviews to analyze for performance and context limits
-    max_reviews = int(os.getenv("MAX_REVIEWS_TO_ANALYZE", "100"))
-    lines = lines[:max_reviews]
-
-    # Dynamically select a chunk size based on input size
-    if len(lines) < 10:
-        chunk_size = 3
-    elif len(lines) < 100:
-        chunk_size = 10
-    else:
-        chunk_size = 20  # 5 chunks of 20 reviews for max 100
-
-    chunks = [lines[i : i + chunk_size] for i in range(0, len(lines), chunk_size)]
-    return chunks
+# This funciton is used to give colors and give clean and descriptive log
 
 
 def _log_agent_event(event, author: str, node_path: str):
@@ -73,7 +57,9 @@ def _log_agent_event(event, author: str, node_path: str):
             f"{MAGENTA}[Pipeline Synthesis]{RESET} {author} successfully aggregated all sub-agent findings."
         )
     else:
-        print(f"{YELLOW}[Agent Operation]{RESET} {author} completed task on node: {node_path}")
+        print(
+            f"{YELLOW}[Agent Operation]{RESET} {author} completed task on node: {node_path}"
+        )
 
     if event.content and event.content.parts:
         for part in event.content.parts:
@@ -84,15 +70,20 @@ def _log_agent_event(event, author: str, node_path: str):
         try:
             items_count = len(_extract_output_data(event.output) or [])
             if items_count > 0:
-                print(f"   ├─ {GREEN}Extracted {items_count} structured insights.{RESET}")
+                print(
+                    f"   ├─ {GREEN}Extracted {items_count} structured insights.{RESET}"
+                )
             else:
-                print(f"   ├─ {RED}Structured output parsed, but no insights list found.{RESET}")
+                print(
+                    f"   ├─ {RED}Structured output parsed, but no insights list found.{RESET}"
+                )
         except Exception:
             print(f"   ├─ {GREEN}Structured output parsed successfully.{RESET}")
 
 
+# If I change the model the output structure doesn't affect the system Its used like an adapter
 def _extract_output_data(output) -> list | None:
-    """Attempts to extract the insights list from various potential ADK output formats."""
+    # This function is used to extract the insights list from various potential ADK output formats.
     if output is None:
         return None
     if hasattr(output, "model_dump"):
@@ -106,8 +97,10 @@ def _extract_output_data(output) -> list | None:
     return None
 
 
+# This funciton act as safety layer When the Ai model doesn't perfectely follow strict Json format
+# It uses brace counting to extract the JSON from raw text.
 def _extract_json_fallback(response_text: str) -> list | None:
-    """Manually extracts JSON from raw text using brace counting if strict parsing failed."""
+    # Manually extracts JSON from raw text using brace counting if strict parsing failed.
     if not response_text:
         return None
 
@@ -146,13 +139,8 @@ def _extract_json_fallback(response_text: str) -> list | None:
 
 
 def _enrich_insights_data(data: list) -> list:
-    """Calculates scores, standardizes fields, and assigns business statuses to insights."""
-    category_weights = {
-        "quality": 1.5,
-        "support": 1.2,
-        "usability": 1.3,
-        "price": 1.0,
-    }
+    # Calculates scores, standardizes fields, and assigns business statuses to insights.
+    category_weights = CATEGORY_WEIGHTS
 
     for item in data:
         if isinstance(item, dict):
@@ -185,21 +173,36 @@ async def setup():
     pass
 
 
-async def ask(prompt: str) -> str | list:
+async def ask(prompt: str) -> list:
     """
-    Core function called by FastAPI `/ask` endpoint (renamed to `/analyze` usually).
-    Dynamically constructs a parallel review processing pipeline, runs it,
-    and returns the aggregated result.
+    Runs the analysis pipeline and returns the final enriched insights list.
+    Delegates to ask_stream() internally to avoid duplicating pipeline logic.
     """
-    chunks = chunk_reviews(prompt)
+    async for event in ask_stream(prompt):
+        if event["status"] == "error":
+            raise RuntimeError(event["message"])
+        if event["status"] == "completed":
+            return event["result"]
 
-    # 1. Create Parallel Sub-agents for each chunk using the parallel model object
+    raise ValueError("Pipeline completed without returning a result.")
+
+
+async def ask_stream(prompt: str):
+    """
+    Core function that behaves like ask() but yields progress events.
+    """
+    chunks = chunkers(prompt)
+    num_chunks = len(chunks)
+
+    yield {
+        "status": "init",
+        "num_chunks": num_chunks,
+        "message": "Initializing pipeline...",
+    }
+
     parallel_reviews_team, input_vars = create_parallel_team(chunks, parallel_model_obj)
-
-    # 2. Formulate Aggregator Prompt using the output keys from sub-agents
     aggregator_agent = create_aggregator_agent(input_vars, model_obj)
 
-    # 3. Create the root Sequential Agent and InMemoryRunner
     root_agent = SequentialAgent(
         name="ReviewsAnalysisSystem",
         sub_agents=[parallel_reviews_team, aggregator_agent],
@@ -215,6 +218,7 @@ async def ask(prompt: str) -> str | list:
 
         response_text = ""
         final_insights_data = None
+        chunks_processed = 0
 
         async for event in runner.run_async(
             user_id="user",
@@ -230,6 +234,22 @@ async def ask(prompt: str) -> str | list:
             if not event.partial:
                 _log_agent_event(event, author, node_path)
 
+                if "ReviewResearcher" in author:
+                    chunks_processed += 1
+                    yield {
+                        "status": "processing",
+                        "chunks_processed": chunks_processed,
+                        "num_chunks": num_chunks,
+                        "message": f"Processing chunk {chunks_processed}/{num_chunks}...",
+                    }
+                elif "AggregatorAgent" in author:
+                    yield {
+                        "status": "aggregating",
+                        "chunks_processed": chunks_processed,
+                        "num_chunks": num_chunks,
+                        "message": "Aggregating insights...",
+                    }
+
             if event.is_final_response():
                 if event.output is not None:
                     final_insights_data = _extract_output_data(event.output)
@@ -241,7 +261,6 @@ async def ask(prompt: str) -> str | list:
 
         data = final_insights_data
 
-        # Fallback manual extraction if ADK failed to auto-parse
         if data is None and response_text:
             data = _extract_json_fallback(response_text)
             if data is None:
@@ -253,7 +272,9 @@ async def ask(prompt: str) -> str | list:
             )
 
         if isinstance(data, list):
-            return _enrich_insights_data(data)
+            enriched = _enrich_insights_data(data)
+            yield {"status": "completed", "result": enriched}
+            return
 
         raise ValueError("Model output was not a valid list.")
 
@@ -261,24 +282,27 @@ async def ask(prompt: str) -> str | list:
         error_msg = str(e)
         RED = "\033[91m"
         RESET = "\033[0m"
-        
-        # Save the raw error to a log file for debugging
+
         try:
             import datetime
+
             timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             with open("llm_error.log", "a", encoding="utf-8") as f:
                 f.write(f"[{timestamp}] LLM Exception: {error_msg}\n")
         except Exception:
             pass
 
-        if "RateLimitError" in error_msg or "rate limit" in error_msg.lower() or "tokens per minute" in error_msg.lower():
-            print(f"{RED}❌ [RATE LIMIT EXCEEDED] Groq API tokens-per-minute (TPM) limit reached.{RESET}")
-            print("👉 The parallel chunk queue processed too many tokens too fast.")
-            print("👉 Fix: Lower 'LOCAL_CONCURRENCY_LIMIT' or 'MAX_REVIEWS_TO_ANALYZE' in your .env file.")
-            print("📝 The full error details have been saved to 'llm_error.log'.")
+        if (
+            "RateLimitError" in error_msg
+            or "rate limit" in error_msg.lower()
+            or "tokens per minute" in error_msg.lower()
+        ):
+            print(
+                f"{RED}❌ [RATE LIMIT EXCEEDED] Groq API tokens-per-minute (TPM) limit reached.{RESET}"
+            )
+            yield {"status": "error", "message": "Rate limit exceeded"}
         else:
-            print(f"{RED}❌ Error communicating with LLM provider (Groq):{RESET} {error_msg}")
-            print("👉 Please ensure that your GROQ_API_KEY is correctly set in your .env file.")
-            print("📝 The full error details have been saved to 'llm_error.log'.")
-            
+            print(f"{RED}❌ Error communicating with LLM provider:{RESET} {error_msg}")
+            yield {"status": "error", "message": error_msg}
+
         raise e

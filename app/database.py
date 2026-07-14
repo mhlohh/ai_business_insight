@@ -1,8 +1,9 @@
 import logging
 import json
 import os
+import inspect
 from typing import List, Dict, Any, Optional
-from schemas.Database_schema import Product, Review, AnalysisCache
+from app.schemas.Database_schema import Product, Review, AnalysisCache
 from sqlalchemy import create_engine, Column, Integer, String, Float, ForeignKey, Text
 from sqlalchemy.orm import declarative_base, sessionmaker, relationship
 from sqlalchemy.exc import OperationalError, SQLAlchemyError
@@ -20,9 +21,7 @@ DATABASE_URL = f"sqlite:///{DB_FILE}"
 
 # NullPool guarantees zero background connections are retained.
 engine = create_engine(
-    DATABASE_URL, 
-    poolclass=NullPool,
-    connect_args={"check_same_thread": False}
+    DATABASE_URL, poolclass=NullPool, connect_args={"check_same_thread": False}
 )
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
@@ -37,36 +36,57 @@ Base = declarative_base()
 # ==========================================
 def db_safeguard(func):
     """Decorator to catch database locks, missing tables, and system errors."""
-    def wrapper(*args, **kwargs):
+
+    async def wrapper(*args, **kwargs):
         func_name = func.__name__
         # Opens a brand new connection directly to the file every time
         session = SessionLocal()
         try:
-            result = func(session, *args, **kwargs)
+            if inspect.iscoroutinefunction(func):
+                result = await func(session, *args, **kwargs)
+            else:
+                result = func(session, *args, **kwargs)
             return result
         except OperationalError as e:
             session.rollback()
             error_msg = str(e).lower()
             if "no such table" in error_msg:
-                return {"status": "error", "message": f"Table missing error in [{func_name}]: {str(e)}"}
+                return {
+                    "status": "error",
+                    "message": f"Table missing error in [{func_name}]: {str(e)}",
+                }
             elif "locked" in error_msg or "busy" in error_msg:
-                return {"status": "error", "message": f"Database locked/busy under high load in [{func_name}]: {str(e)}"}
-            return {"status": "error", "message": f"Operational database error in [{func_name}]: {str(e)}"}
+                return {
+                    "status": "error",
+                    "message": f"Database locked/busy under high load in [{func_name}]: {str(e)}",
+                }
+            return {
+                "status": "error",
+                "message": f"Operational database error in [{func_name}]: {str(e)}",
+            }
         except SQLAlchemyError as e:
             session.rollback()
-            return {"status": "error", "message": f"Database execution error in [{func_name}]: {str(e)}"}
+            return {
+                "status": "error",
+                "message": f"Database execution error in [{func_name}]: {str(e)}",
+            }
         except Exception as e:
             session.rollback()
-            return {"status": "error", "message": f"Unexpected system failure in [{func_name}]: {str(e)}"}
+            return {
+                "status": "error",
+                "message": f"Unexpected system failure in [{func_name}]: {str(e)}",
+            }
         finally:
             # Closes and drops the connection handle instantly
-            session.close()  
+            session.close()
+
     return wrapper
 
 
 # ==========================================
 # 4. CORE DATABASE HELPER FUNCTIONS
 # ==========================================
+
 
 def initialize_database():
     """Creates SQLite3 tables using the imported metadata schema."""
@@ -78,7 +98,7 @@ def initialize_database():
 
 
 @db_safeguard
-def get_products(db) -> List[Dict[str, Any]]:
+async def all_products(db) -> List[Dict[str, Any]]:
     products = db.query(Product).all()
     return [
         {
@@ -94,7 +114,7 @@ def get_products(db) -> List[Dict[str, Any]]:
 
 
 @db_safeguard
-def get_product(db, product_id: int) -> Optional[Dict[str, Any]]:
+async def get_product(db, product_id: int) -> Optional[Dict[str, Any]]:
     p = db.query(Product).filter(Product.id == product_id).first()
     if p:
         return {
@@ -109,39 +129,51 @@ def get_product(db, product_id: int) -> Optional[Dict[str, Any]]:
 
 
 @db_safeguard
-def get_reviews(db, product_id: int) -> List[str]:
+async def get_raw_reviews(db, product_id: int) -> List[str]:
     reviews = db.query(Review).filter(Review.product_id == product_id).all()
     return [r.body for r in reviews]
 
 
 @db_safeguard
-def add_review(db, product_id: int, review_text: str):
+async def add_review(db, product_id: int, review_text: str):
     db.add(Review(product_id=product_id, body=review_text))
     # Invalidate the cache since the database has a new review
     db.query(AnalysisCache).filter(AnalysisCache.product_id == product_id).delete()
     db.commit()
-    return {"status": "success", "message": "Review added and cache invalidated successfully."}
+    return {
+        "status": "success",
+        "message": "Review added and cache invalidated successfully.",
+    }
 
 
 @db_safeguard
-def get_cached_analysis(db, product_id: int) -> Optional[List[Dict[str, Any]]]:
-    cache = db.query(AnalysisCache).filter(AnalysisCache.product_id == product_id).first()
+async def check_insights(db, product_id: int) -> Optional[Dict[str, Any]]:
+    cache = (
+        db.query(AnalysisCache).filter(AnalysisCache.product_id == product_id).first()
+    )
     if cache:
-        try:
-            # Convert the stored JSON string back into a Python list of dictionaries
-            return json.loads(cache.analysis)
-        except Exception:
-            return None
+        return {"analysis": cache.analysis}
     return None
 
 
 @db_safeguard
-def cache_analysis(db, product_id: int, analysis_data: List[Dict[str, Any]]):
-    """Takes standard Python lists/dicts, converts to JSON, and saves to cache."""
-    # Convert standard Python data to a JSON string for text column storage
-    analysis_str = json.dumps(analysis_data)
-    
-    cache = db.query(AnalysisCache).filter(AnalysisCache.product_id == product_id).first()
+async def save_insights(db, product_id: int, insight_data):
+    if isinstance(insight_data, dict):
+        if "data" in insight_data:
+            analysis_data = insight_data["data"]
+        else:
+            analysis_data = insight_data
+        if hasattr(analysis_data, "model_dump"):
+            analysis_data = analysis_data.model_dump()
+        analysis_str = json.dumps(analysis_data)
+    elif isinstance(insight_data, str):
+        analysis_str = insight_data
+    else:
+        analysis_str = json.dumps(insight_data)
+
+    cache = (
+        db.query(AnalysisCache).filter(AnalysisCache.product_id == product_id).first()
+    )
     if cache:
         cache.analysis = analysis_str
     else:
@@ -151,7 +183,12 @@ def cache_analysis(db, product_id: int, analysis_data: List[Dict[str, Any]]):
 
 
 @db_safeguard
-def clear_cache(db, product_id: int):
+async def delete_insights(db, product_id: int):
+    cache = (
+        db.query(AnalysisCache).filter(AnalysisCache.product_id == product_id).first()
+    )
+    if not cache:
+        return False
     db.query(AnalysisCache).filter(AnalysisCache.product_id == product_id).delete()
     db.commit()
-    return {"status": "success", "message": "Cache permanently deleted."}
+    return True

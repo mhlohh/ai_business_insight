@@ -7,7 +7,8 @@ cursor = conn.cursor()
 # -------------------------------
 # Products Table
 # -------------------------------
-cursor.execute("""
+cursor.execute(
+    """
 CREATE TABLE IF NOT EXISTS products (
     id INTEGER PRIMARY KEY,
     asin TEXT NOT NULL,
@@ -16,12 +17,14 @@ CREATE TABLE IF NOT EXISTS products (
     price REAL,
     quantity INTEGER
 )
-""")
+"""
+)
 
 # -------------------------------
 # Reviews Table
 # -------------------------------
-cursor.execute("""
+cursor.execute(
+    """
 CREATE TABLE IF NOT EXISTS reviews (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     product_id TEXT NOT NULL,
@@ -29,18 +32,21 @@ CREATE TABLE IF NOT EXISTS reviews (
     body TEXT NOT NULL,
     FOREIGN KEY (product_id) REFERENCES products(id)
 )
-""")
+"""
+)
 
 # -------------------------------
 # Analysis Cache Table
 # -------------------------------
-cursor.execute("""
+cursor.execute(
+    """
 CREATE TABLE IF NOT EXISTS analysis_cache (
     product_id INTEGER PRIMARY KEY,
     analysis TEXT NOT NULL,
     FOREIGN KEY (product_id) REFERENCES products(id)
 )
-""")
+"""
+)
 
 # Save changes
 conn.commit()
