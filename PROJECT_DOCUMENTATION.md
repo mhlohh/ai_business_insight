@@ -78,7 +78,7 @@ Ensures that if the same product reviews are requested twice, the pipeline does 
 
 - **Backend Framework**: FastAPI & Uvicorn
 - **Orchestration Framework**: Google ADK (Agent Development Kit)
-- **Model Connector**: LiteLLM (for routing and an advanced Rate Limit Manager handling batched processing, 60s cooldowns, and intelligent wait-time parsing)
+- **Model Connector**: LiteLLM (for routing and an advanced Rate Limit Manager handling batched processing, 60s cooldowns)
 - **LLM Provider**: Groq Cloud API (defaulting to fast, high-performance models like `meta-llama/llama-4-scout-17b-16e-instruct`)
 - **Database / Cache**: SQLite3
 - **Frontend**: Streamlit
