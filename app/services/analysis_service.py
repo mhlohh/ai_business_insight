@@ -1,4 +1,3 @@
-import os
 import json
 from google.adk.agents import Agent, ParallelAgent, SequentialAgent
 from google.adk.runners import InMemoryRunner
@@ -6,7 +5,7 @@ from google.genai import types
 
 # New imports based on reorganized files
 from app.core.llm import model_obj, parallel_model_obj
-from app.schemas.insights import InsightsList
+from app.schemas.insights import InsightsList, CATEGORY_WEIGHTS
 from app.services.parallel_agent import create_parallel_team
 from app.services.aggregator_agent import create_aggregator_agent
 from app.services.chunkers import chunkers
@@ -133,12 +132,7 @@ def _extract_json_fallback(response_text: str) -> list | None:
 
 def _enrich_insights_data(data: list) -> list:
     """Calculates scores, standardizes fields, and assigns business statuses to insights."""
-    category_weights = {
-        "quality": 1.5,
-        "support": 1.2,
-        "usability": 1.3,
-        "price": 1.0,
-    }
+    category_weights = CATEGORY_WEIGHTS
 
     for item in data:
         if isinstance(item, dict):
