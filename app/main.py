@@ -1,8 +1,7 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from app.services.analysis_service import setup
-from app.routers import insights as team_insights, products as team_products
-from app.api.routes import products as api_products, reviews as api_reviews, analyze as api_analyze
+from app.routers import insights, products, reviews
 
 
 @asynccontextmanager
@@ -15,10 +14,10 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 
 # Team's routers
-app.include_router(team_products.router)
-app.include_router(team_insights.router)
+app.include_router(products.router)
+app.include_router(insights.router)
 
-# User's API routes
-app.include_router(api_products.router)
-app.include_router(api_reviews.router)
-app.include_router(api_analyze.router)
+# User's API routes (now in app/routers)
+app.include_router(products.db_router)
+app.include_router(reviews.router)
+app.include_router(insights.analyze_router)
