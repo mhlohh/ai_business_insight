@@ -23,31 +23,33 @@ Instead of prompting an LLM with all reviews at once, this platform uses a **mul
 
 ```mermaid
 graph TD
-    A["🚀 Analysis Triggered"]:::trigger -->|"Raw Reviews Text"| B["✂️ Chunker Module"]:::processing
+    A["Analysis Triggered"]:::trigger -->|"Product ID"| DB1[("SQLite Database")]:::database
+    DB1 -->|"Fetch Raw Reviews"| B["Chunker Module"]:::processing
     B -->|"Normalize, Clean & Split"| C["N Review Chunks"]:::processing
 
     C --> SEQ
 
-    subgraph SEQ ["🔗 Google ADK SequentialAgent"]
+    subgraph SEQ ["Google ADK SequentialAgent"]
         direction TB
-        PAR --> AGG["🧠 AggregatorAgent"]
+        PAR --> AGG["AggregatorAgent"]
     end
 
-    subgraph PAR ["🔀 ParallelAgent"]
+    subgraph PAR ["ParallelAgent"]
         direction LR
         R0["ReviewResearcher 0"]:::agent
         R1["ReviewResearcher 1"]:::agent
         RN["ReviewResearcher N"]:::agent
     end
 
-    AGG -->|"Collect → Deduplicate → Resolve Conflicts → Filter"| VAL{"🔍 Pydantic Valid?"}:::decision
-    VAL -->|"✅ Yes"| EXT["📤 Extract Output Data"]:::processing
-    VAL -->|"❌ No"| FB["🔧 JSON Fallback Parser"]:::fallback
+    AGG -->|"Collect, Deduplicate, Resolve Conflicts, Filter"| VAL{"Pydantic Valid?"}:::decision
+    VAL -->|"Yes"| EXT["Extract Output Data"]:::processing
+    VAL -->|"No"| FB["JSON Fallback Parser"]:::fallback
     FB --> EXT
 
-    EXT --> ENR["📊 Enrich & Score Insights"]:::scoring
-    ENR -->|"score = freq × conf × weight"| STATUS["🏷️ Assign Business Status"]:::scoring
-    STATUS --> OUT["📡 Return Enriched Results"]:::result
+    EXT --> ENR["Enrich & Score Insights"]:::scoring
+    ENR -->|"score = freq x conf x weight"| STATUS["Assign Business Status"]:::scoring
+    STATUS -->|"Save to Cache"| DB2[("SQLite Cache")]:::database
+    DB2 --> OUT["Return Enriched Results"]:::result
 
     classDef trigger fill:#6366f1,stroke:#4f46e5,color:#fff
     classDef processing fill:#8b5cf6,stroke:#7c3aed,color:#fff
@@ -56,9 +58,10 @@ graph TD
     classDef fallback fill:#ef4444,stroke:#dc2626,color:#fff
     classDef scoring fill:#ec4899,stroke:#db2777,color:#fff
     classDef result fill:#22c55e,stroke:#16a34a,color:#fff
+    classDef database fill:#f59e0b,stroke:#d97706,color:#fff
 ```
 
-> **⚠️ Rate Limit Protection:** All LLM calls pass through a custom Rate Limit Manager — batched processing (4 req/batch), 60s cooldowns, 2s inter-request delays, and intelligent retry parsing via LiteLLM.
+> **Rate Limit Protection:** All LLM calls pass through a custom Rate Limit Manager — batched processing (4 req/batch), 60s cooldowns, 2s inter-request delays, and intelligent retry parsing via LiteLLM.
 
 ---
 
