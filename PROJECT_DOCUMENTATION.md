@@ -20,31 +20,48 @@ Below is the execution flow from the client request to the final response:
 
 ```mermaid
 graph TD
-    A[Client Streamlit Frontend] -->|GET /ask?prompt=...| B[FastAPI Backend Server]
-    B -->|Fetch Reviews| C[Database SQLite3]
-    C -->|Reviews Text| D[Chunking Module]
-    D -->|N Chunks| E[Parallel Model Stage]
-    sub_agent_0[ReviewResearcher 0]
-    sub_agent_1[ReviewResearcher 1]
-    sub_agent_n[ReviewResearcher N]
-    E --> sub_agent_0
-    E --> sub_agent_1
-    E --> sub_agent_n
-    sub_agent_0 -->|Extract Local Insights| F[Aggregator Model]
-    sub_agent_1 -->|Extract Local Insights| F
-    sub_agent_n -->|Extract Local Insights| F
-    F -->|Collect, Deduplicate, Score, Filter| G[Post-Processing & Clean JSON Parsing]
-    G -->|Cache Results| H[SQLite3 Caching Layer]
-    G -->|JSON Response| B
-    B -->|Formatted Output| A
+    A["Streamlit Frontend"] -->|"GET /analyze/{id}/stream"| B["FastAPI Backend"]
+
+    B --> C{"Cache Hit?"}
+    C -->|"Yes"| Z["Return Cached JSON"]
+    C -->|"No"| D["Fetch Reviews from SQLite"]
+
+    D --> E["Chunker Module"]
+    E -->|"Normalize & Split into N Chunks"| F["Google ADK SequentialAgent"]
+
+    subgraph F["Google ADK SequentialAgent"]
+        direction TB
+        G["ParallelAgent"] --> H["AggregatorAgent"]
+    end
+
+    subgraph G["ParallelAgent"]
+        direction LR
+        R0["ReviewResearcher 0"]
+        R1["ReviewResearcher 1"]
+        RN["ReviewResearcher N"]
+    end
+
+    H -->|"4-Stage Synthesis"| I{"Pydantic Parse OK?"}
+    I -->|"Yes"| J["Extract Output Data"]
+    I -->|"No"| K["JSON Fallback Parser"]
+    K --> J
+
+    J --> L["Enrich & Score Insights"]
+    L -->|"Save to Cache"| M["SQLite analysis_cache"]
+    L -->|"Stream JSON Response"| A
 ```
+
+> **Rate Limit Protection:** All LLM calls are routed through a custom Rate Limit Manager that enforces batched processing (4 requests/batch), 60s cooldowns, and 2s inter-request delays via LiteLLM.
 
 ---
 
 ## 3. Working Components
 
 ### 1. Request Handler (FastAPI)
-The [FastAPI](file:///Users/muhsilnr/Library/Mobile%20Documents/com~apple%20CloudDocs/Documents/codespace/litmus7_project/main.py) endpoint receives review text via the `/ask` query parameter. It triggers the lifespan setup, verifies the model provider, and delegates analysis to the model provider layer.
+The [FastAPI app](file:///Users/muhsilnr/Library/Mobile%20Documents/com~apple~CloudDocs/Documents/codespace/litmus7_project/app/main.py) registers three routers:
+- **Products** (`/db/products`, `/products`): Lists and retrieves products from the SQLite database.
+- **Reviews** (`/reviews/{product_id}`): Fetches or submits reviews for a product. Adding a review automatically invalidates the analysis cache.
+- **Insights** (`/analyze/{product_id}`, `/analyze/{product_id}/stream`): The primary analysis endpoints. The streaming endpoint sends real-time progress events (init → processing → aggregating → completed) via NDJSON.
 
 ### 2. Chunking Module
 Splits the unstructured text block into smaller, manageable chunks of reviews to prevent LLM context-window exhaustion and ensure granular analysis. The chunker first normalizes text (lowercasing and whitespace stripping) and then divides the reviews using a standard block size (default `chunk_size = 200`).
