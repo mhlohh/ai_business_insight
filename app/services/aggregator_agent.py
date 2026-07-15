@@ -10,7 +10,7 @@ def create_aggregator_agent(input_vars: str, model_obj) -> Agent:
 
 {input_vars}
 
-You must execute a 6-stage flow to synthesize the findings:
+You must execute a 4-stage flow to synthesize the findings:
 1. **Collect**: Gather all raw insights from all chunks.
 2. **Deduplicate**: Merge highly similar or duplicate insights. If two insights are nearly identical, group them, increment the frequency count, and choose the most representative quote as the example quote.
 3. **Resolve Conflicts**: If insights on the same topic directly contradict each other (e.g., 'good battery' vs 'bad battery'), merge them into a single 'Mixed Feedback' insight. Sum their frequencies, average their confidences, and provide a quote that highlights the mixed consensus.
