@@ -1,7 +1,7 @@
 import logging
 from pydantic import BaseModel, Field, ValidationError, field_validator
 from google.adk.agents import Agent
-from app.models import AI_Insight
+from app.models import AI_Insight,InsightsList
 
 def create_aggregator_agent(input_vars: str, model_obj) -> Agent:
     """
@@ -17,17 +17,14 @@ You must execute a 6-stage flow to synthesize the findings:
 3. **Resolve Conflicts**: If insights on the same topic directly contradict each other (e.g., 'good battery' vs 'bad battery'), merge them into a single 'Mixed Feedback' insight. Sum their frequencies, average their confidences, and provide a quote that highlights the mixed consensus.
 4. **Rank**: Group the unique insights. (Note: A final numerical score based on frequency, confidence, and category weights will be calculated automatically by the system).
 5. **Quality Filter**: Keep all valid product feedback, positive reviews, issues, and features. Do not filter out insights unless they are completely blank, unrelated to the product, or gibberish.
-6. **Format**: Output the final list of insights as a valid JSON array of objects conforming to this schema (leave score and status out, as the backend calculates them):
-
-
-Important: Your response must be ONLY a valid JSON array and nothing else. No markdown wrappers like ```json or trailing text.
+6. **Format**: Output the final list of insights as a valid JSON array of objects conforming to this schema (leave score, as the backend calculates them):
 """
 
     aggregator_agent = Agent(
         name="AggregatorAgent",
         model=model_obj,
         instruction=aggregator_instruction,
-        output_schema=InsightSchema,
+        output_schema=InsightsList,
         output_key="executive_summary",
     )
 

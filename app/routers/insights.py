@@ -1,12 +1,12 @@
 from fastapi import APIRouter, HTTPException
-from app.models import InsightResponse
+from app.models import AI_Insight,InsightsList
 from app.database import check_insights , save_insights , clear_insights , get_raw_reviews
 from app.services.chunkers import chunkers
 from app.services.model_provider import ask
 
 router = APIRouter(prefix="/insights" ,tags=["insights"])
 
-@router.get("/products/{product_id}", response_model=InsightResponse)
+@router.get("/products/{product_id}", response_model=InsightsList)
 
 async def get_product_insights(product_id: int):
     cached_data = check_insights(product_id)

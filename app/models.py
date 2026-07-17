@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 class Product(BaseModel):
     product_id: int
@@ -6,20 +6,16 @@ class Product(BaseModel):
 
   
 class AI_Insight(BaseModel):
-    insight: str
-    score: float
-    status: str
-    frequency: int
-    example_quote: str
-    category: str
-    confidence: float
-
-class InsightResponse(BaseModel):
-    status: str    
-    insight: str
-    category: str
-    example_quote: str
-    frequency: int
-    score: float
+    insight: str = Field(description="Description of the insight")
+    confidence: float = Field(description="Confidence level (0.0 to 1.0)", default=0.8)
+    frequency: float = Field(
+        description="Frequency of occurrence across reviews", default=1
+    )
+    example_quote: str = Field(description="Representative customer quote")
+    category: str = Field(
+        description="Insight category (e.g., quality, support, price, usability, other)"
+    )
     
 
+class InsightsList(BaseModel):
+    insights: list[AI_Insight] = Field(description="List of extracted business insights")

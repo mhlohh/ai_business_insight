@@ -1,7 +1,6 @@
 from google.adk.agents import SequentialAgent
 from google.adk.runners import InMemoryRunner
 from google.genai import types
-from app.models import InsightResponse
 from app.services.llm_config import model_obj, parallel_model_obj, LMSTUDIO_API_BASE
 from app.services.parallel_agent import create_parallel_team
 from app.services.aggregator_agent import create_aggregator_agent
@@ -100,8 +99,6 @@ async def ask(chunks: list[list[str]]) -> str | list:
                         # Normalize keys for frontend
                         if "example_quote" not in item and "quote" in item:
                             item["example_quote"] = item["quote"]
-                        if "confidence" not in item:
-                            item["confidence"] = conf
                         if "frequency" not in item:
                             item["frequency"] = freq
                     except (ValueError, TypeError):
