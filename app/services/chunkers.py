@@ -8,3 +8,5 @@ def chunkers(raw_reviews: list[str], chunk_size: int = 100) -> list[list[str]]:
     chunks = [cleaned_reviews[i:i + chunk_size] for i in range(0, len(cleaned_reviews), chunk_size)]
     
     return chunks
+
+

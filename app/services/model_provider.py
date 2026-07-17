@@ -4,9 +4,7 @@ from google.genai import types
 
 from app.services.llm_config import model_obj, parallel_model_obj, LMSTUDIO_API_BASE
 from app.services.parallel_agent import create_parallel_team
-from app.services.aggregator_agent import create_aggregator_agent, score_to_status, STATUS_NEEDS_ATTENTION
-from app.services.parser import extract_insights_json, parse_fallback_insights
-
+from app.services.aggregator_agent import create_aggregator_agent
 
 async def setup():
     """
@@ -77,7 +75,7 @@ async def ask(chunks: list[list[str]]) -> str | list:
                             response_text += part.text
 
         # Post-process response to extract only the JSON array if available
-        data = extract_insights_json(response_text)
+        data = response_text
         if data is not None and isinstance(data, list):
             category_weights = {
                 "quality": 1.5,
@@ -97,21 +95,6 @@ async def ask(chunks: list[list[str]]) -> str | list:
                         weight = category_weights.get(cat, 1.0)
                         calculated_score = freq * conf * weight
                         item["score"] = round(calculated_score, 2)
-
-                        # Normalize keys for frontend
-                        if "example_quote" not in item and "quote" in item:
-                            item["example_quote"] = item["quote"]
-                        if "confidence" not in item:
-                            item["confidence"] = conf
-                        if "frequency" not in item:
-                            item["frequency"] = freq
-                    except (ValueError, TypeError):
-                        pass
-
-                    try:
-                        item["status"] = score_to_status(float(item["score"]))
-                    except (ValueError, TypeError):
-                        item["status"] = STATUS_NEEDS_ATTENTION
             return data
 
         # Fallback parsing for raw text explanation

@@ -2,7 +2,7 @@ import logging
 from pydantic import BaseModel, Field, ValidationError, field_validator
 from google.adk.agents import Agent
 from app.services.aggregator import score_to_status
-
+from app.models import InsightSchema
 
 def create_aggregator_agent(input_vars: str, model_obj) -> Agent:
     """
@@ -36,6 +36,7 @@ Important: Your response must be ONLY a valid JSON array and nothing else. No ma
         name="AggregatorAgent",
         model=model_obj,
         instruction=aggregator_instruction,
+        output_schema=InsightSchema,
         output_key="executive_summary",
     )
 
@@ -43,71 +44,4 @@ Important: Your response must be ONLY a valid JSON array and nothing else. No ma
 
 logger = logging.getLogger(__name__)
 
-VALID_CATEGORIES = {"quality", "support", "price", "usability", "other"}
 
-# Defined here so Python can handle the math reliably
-CATEGORY_WEIGHTS = {
-    "quality": 1.5,
-    "support": 1.2,
-    "price": 1.0,
-    "usability": 1.3,
-    "other": 1.0
-}
-
-class InsightSchema(BaseModel):
-    """
-    Schema used to validate and sanitize the LLM output.
-    """
-    insight: str = Field(..., min_length=1)
-    confidence: float = Field(..., ge=0.0, le=1.0)
-    frequency: int = Field(..., gt=0)
-    example_quote: str
-    category: str
-    
-    # Populated dynamically via Python post-processing
-    score: float | None = None
-    status: str | None = None
-
-    @field_validator("category")
-    @classmethod
-    def validate_and_lower_category(cls, v: str) -> str:
-        """Enforces case-insensitivity and checks valid categories natively in Pydantic."""
-        lowered = v.lower()
-        if lowered not in VALID_CATEGORIES:
-            raise ValueError(f"Category must be one of {VALID_CATEGORIES}")
-        return lowered
-
-
-def validate_insights(data: list) -> list:
-    """
-    Validates the JSON produced by the aggregator LLM, normalizes categories,
-    and deterministically calculates scores in Python.
-    """
-    validated = []
-
-    for index, item in enumerate(data):
-        try:
-            # 1. Validate basic schema and normalize category casing
-            insight_obj = InsightSchema(**item)
-            
-            # 2. Safely calculate the mathematical score in Python
-            weight = CATEGORY_WEIGHTS.get(insight_obj.category, 1.0)
-            insight_obj.score = round(insight_obj.frequency * insight_obj.confidence * weight, 2)
-            
-            # 3. Assign your pipeline status
-            insight_obj.status = score_to_status(insight_obj.score)
-
-            validated.append(insight_obj.model_dump())
-
-        except (ValidationError, ValueError) as e:
-            logger.warning(
-                f"Insight {index} failed validation: {e}"
-            )
-
-    logger.info(
-        f"Validation Complete | "
-        f"Accepted={len(validated)} | "
-        f"Rejected={len(data)-len(validated)}"
-    )
-
-    return validated

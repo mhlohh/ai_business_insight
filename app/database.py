@@ -37,7 +37,7 @@ def save_insights(product_id: int, insight_text: str):
         )
         conn.commit()
 
-def clear_all_insights(product_id: int):
+def clear_insights(product_id: int):
     """One single function to handle the web request AND wipe the database."""
     
     # 1. Open the database
