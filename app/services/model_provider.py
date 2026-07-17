@@ -1,10 +1,17 @@
 from google.adk.agents import SequentialAgent
 from google.adk.runners import InMemoryRunner
 from google.genai import types
-
+from app.models import InsightResponse
 from app.services.llm_config import model_obj, parallel_model_obj, LMSTUDIO_API_BASE
 from app.services.parallel_agent import create_parallel_team
 from app.services.aggregator_agent import create_aggregator_agent
+
+category_weights = {
+                "quality": 1.5,
+                "support": 1.2,
+                "usability": 1.3,
+                "price": 1.0,
+            }
 
 async def setup():
     """
@@ -77,12 +84,7 @@ async def ask(chunks: list[list[str]]) -> str | list:
         # Post-process response to extract only the JSON array if available
         data = response_text
         if data is not None and isinstance(data, list):
-            category_weights = {
-                "quality": 1.5,
-                "support": 1.2,
-                "usability": 1.3,
-                "price": 1.0,
-            }
+            
             for item in data:
                 if isinstance(item, dict):
                     # Recalculate score and status programmatically to ensure accuracy
@@ -104,12 +106,6 @@ async def ask(chunks: list[list[str]]) -> str | list:
                             item["frequency"] = freq
                     except (ValueError, TypeError):
                         pass
-
-                    try:
-                        item["status"] = score_to_status(float(item["score"]))
-                    except (ValueError, TypeError):
-                        item["status"] = STATUS_NEEDS_ATTENTION
-
                     return data
 
     except Exception as e:

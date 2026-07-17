@@ -23,10 +23,9 @@ async def get_product_insights(product_id: int):
     except Exception as e:  
         raise HTTPException(status_code=500, detail="AI Engine failed to process data correctly.")
 
-    final_response = InsightResponse(status="success", data=results)
-    save_insights(product_id, final_response.model_dump())
+    save_insights(product_id, results)
     
-    return final_response
+    return results
 
 
 @router.delete("/products/{product_id}")

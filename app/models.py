@@ -12,8 +12,14 @@ class AI_Insight(BaseModel):
     frequency: int
     example_quote: str
     category: str
+    confidence: float
 
 class InsightResponse(BaseModel):
     status: str    
-    data: list[AI_Insight]
+    insight: str
+    category: str
+    example_quote: str
+    frequency: int
+    score: float
+    
 
