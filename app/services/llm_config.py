@@ -31,11 +31,11 @@ async def _semaphore_generate_content_async(self, *args, **kwargs):
 LiteLlm.generate_content_async = _semaphore_generate_content_async
 
 # Configuration parameters for Groq models
-LOCAL_MODEL_NAME = os.getenv(
-    "LOCAL_MODEL_NAME", "groq/meta-llama/llama-4-scout-17b-16e-instruct"
+GROQ_MODEL_NAME = os.getenv(
+    "GROQ_MODEL_NAME", "groq/meta-llama/llama-4-scout-17b-16e-instruct"
 )
-LOCAL_PARALLEL_MODEL_NAME = os.getenv(
-    "LOCAL_PARALLEL_MODEL_NAME", "groq/meta-llama/llama-4-scout-17b-16e-instruct"
+GROQ_PARALLEL_MODEL_NAME = os.getenv(
+    "GROQ_PARALLEL_MODEL_NAME", "groq/meta-llama/llama-4-scout-17b-16e-instruct"
 )
 
 # Generation configuration for consistent responses
@@ -56,12 +56,13 @@ PARALLEL_GENERATION_CONFIG = {
 
 # Instantiate model objects
 model_obj = LiteLlm(
-    model=LOCAL_MODEL_NAME,
+    model=GROQ_MODEL_NAME,
     **GENERATION_CONFIG,
 )
 parallel_model_obj = LiteLlm(
-    model=LOCAL_PARALLEL_MODEL_NAME,
+    model=GROQ_PARALLEL_MODEL_NAME,
     **PARALLEL_GENERATION_CONFIG,
 )
 
-print(f"✅ Aggregator Model: {LOCAL_MODEL_NAME}")
+print(f"✅ Aggregator Model: {GROQ_MODEL_NAME}")
+print(f"✅ Parallel Model: {GROQ_PARALLEL_MODEL_NAME}")

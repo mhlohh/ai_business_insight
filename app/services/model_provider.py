@@ -1,7 +1,7 @@
 from google.adk.agents import SequentialAgent
 from google.adk.runners import InMemoryRunner
 from google.genai import types
-from app.services.llm_config import model_obj, parallel_model_obj, LMSTUDIO_API_BASE
+from app.services.llm_config import model_obj, parallel_model_obj
 from app.services.parallel_agent import create_parallel_team
 from app.services.aggregator_agent import create_aggregator_agent
 
