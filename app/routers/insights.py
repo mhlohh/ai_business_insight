@@ -6,7 +6,7 @@ from app.services.model_provider import ask
 
 router = APIRouter(prefix="/insights" ,tags=["insights"])
 
-@router.get("/products/{product_name}/{product_id}", response_model=InsightResponse)
+@router.get("/products/{product_id}", response_model=InsightResponse)
 
 async def get_product_insights(product_id: int):
     cached_data = check_insights(product_id)
@@ -29,9 +29,9 @@ async def get_product_insights(product_id: int):
     return final_response
 
 
-@router.delete("/products/{product_name}/{product_id}")
-async def clear_product_insights(product_name: str, product_id: int):
-    deleted = await delete_insights(product_id)
+@router.delete("/products/{product_id}")
+async def clear_product_insights(product_id: int):
+    deleted = clear_insights(product_id)
     if not deleted:
          raise HTTPException(status_code=404, detail="Cache not found or already cleared.")
     return {"status": "success", "message": f"Cache for product {product_id} cleared successfully."}
