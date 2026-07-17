@@ -8,7 +8,7 @@ router = APIRouter(prefix="/insights" ,tags=["insights"])
 
 @router.get("/products/{product_name}/{product_id}", response_model=InsightResponse)
 
-async def get_product_insights(product_name:str , product_id: int):
+async def get_product_insights(product_id: int):
     cached_data = check_insights(product_id)
     if cached_data:
         return {"status": "success","data": cached_data}

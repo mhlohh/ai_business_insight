@@ -2,7 +2,7 @@ import logging
 from pydantic import BaseModel, Field, ValidationError, field_validator
 from google.adk.agents import Agent
 from app.services.aggregator import score_to_status
-from app.models import InsightSchema
+from app.models import AI_Insight
 
 def create_aggregator_agent(input_vars: str, model_obj) -> Agent:
     """

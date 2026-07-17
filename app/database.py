@@ -1,12 +1,12 @@
 import sqlite3
 
 # Point this to your mock database
-DB_NAME = "litmus7.db"
+DB_NAME = "app/litmus7.db"
 def all_products():
     with sqlite3.connect(DB_NAME) as conn:
         conn.row_factory = sqlite3.Row
         cur = conn.cursor()
-        cur.execute("SELECT id, name FROM Products")
+        cur.execute(" SELECT id,name FROM products")
         rows = cur.fetchall()
         return [dict(row) for row in rows]
 

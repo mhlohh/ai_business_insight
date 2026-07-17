@@ -95,13 +95,22 @@ async def ask(chunks: list[list[str]]) -> str | list:
                         weight = category_weights.get(cat, 1.0)
                         calculated_score = freq * conf * weight
                         item["score"] = round(calculated_score, 2)
-            return data
+                        # Normalize keys for frontend
+                        if "example_quote" not in item and "quote" in item:
+                            item["example_quote"] = item["quote"]
+                        if "confidence" not in item:
+                            item["confidence"] = conf
+                        if "frequency" not in item:
+                            item["frequency"] = freq
+                    except (ValueError, TypeError):
+                        pass
 
-        # Fallback parsing for raw text explanation
-        print(
-            "⚠️ [Parser Warning] Model returned raw text instead of a JSON array. Applying fallback text parser."
-        )
-        return parse_fallback_insights(response_text)
+                    try:
+                        item["status"] = score_to_status(float(item["score"]))
+                    except (ValueError, TypeError):
+                        item["status"] = STATUS_NEEDS_ATTENTION
+
+                    return data
 
     except Exception as e:
         print(f"❌ Error communicating with local model provider: {e}")
