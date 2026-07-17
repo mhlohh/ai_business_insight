@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from app.models import AI_Insight,InsightsList
-from app.database import check_insights , save_insights , clear_insights , get_raw_reviews
+from app.database import check_insights , clear_insights , get_raw_reviews
 from app.services.chunkers import chunkers
 from app.services.model_provider import ask
 
@@ -23,7 +23,6 @@ async def get_product_insights(product_id: int):
     except Exception as e:  
         raise HTTPException(status_code=500, detail="AI Engine failed to process data correctly.")
 
-    save_insights(product_id, results)
     
     return results
 

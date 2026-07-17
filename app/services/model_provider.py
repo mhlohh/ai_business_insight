@@ -4,6 +4,9 @@ from google.genai import types
 from app.services.llm_config import model_obj, parallel_model_obj
 from app.services.parallel_agent import create_parallel_team
 from app.services.aggregator_agent import create_aggregator_agent
+import json
+import re
+
 
 category_weights = {
                 "quality": 1.5,
@@ -48,6 +51,7 @@ async def ask(chunks: list[list[str]]) -> str | list:
             user_id="user",
         )
 
+        parsed_data = None
         response_text = ""
         async for event in runner.run_async(
             user_id="user",
@@ -79,31 +83,52 @@ async def ask(chunks: list[list[str]]) -> str | list:
                     for part in event.content.parts:
                         if part.text:
                             response_text += part.text
+                if event.output is not None:
+                    parsed_data = event.output
 
         # Post-process response to extract only the JSON array if available
-        data = response_text
-        if data is not None and isinstance(data, list):
-            
-            for item in data:
-                if isinstance(item, dict):
-                    # Recalculate score and status programmatically to ensure accuracy
-                    try:
-                        freq = float(item.get("frequency", item.get("count", 1)))
-                        conf = float(
-                            item.get("confidence", item.get("confidence_level", 0.8))
-                        )
-                        cat = str(item.get("category", "other")).lower().strip()
-                        weight = category_weights.get(cat, 1.0)
-                        calculated_score = freq * conf * weight
-                        item["score"] = round(calculated_score, 2)
-                        # Normalize keys for frontend
-                        if "example_quote" not in item and "quote" in item:
-                            item["example_quote"] = item["quote"]
-                        if "frequency" not in item:
-                            item["frequency"] = freq
-                    except (ValueError, TypeError):
-                        pass
-                    return data
+       
+        if parsed_data is None and response_text:
+            try:
+                # Remove markdown code blocks if any
+                clean_data = re.sub(r'```(?:json)?\n(.*?)\n```', r'\1', response_text, flags=re.DOTALL).strip()
+                parsed_data = json.loads(clean_data)
+            except json.JSONDecodeError as e:
+                print(f"❌ Failed to parse JSON from response: {e}")
+                return response_text
+
+        if parsed_data is not None:
+            insights = parsed_data.get("insights", []) if isinstance(parsed_data, dict) else parsed_data
+            if hasattr(parsed_data, "insights"): # Check if it's a Pydantic object
+                insights = parsed_data.insights
+
+            if isinstance(insights, list):
+                for item in insights:
+                    if isinstance(item, dict):
+                        # Recalculate score programmatically
+                        try:
+                            freq = float(item.get("frequency", item.get("count", 1)))
+                            conf = float(item.get("confidence", item.get("confidence_level", 0.8)))
+                            cat = str(item.get("category", "other")).lower().strip()
+                            weight = category_weights.get(cat, 1.0)
+                            item["score"] = round(freq * conf * weight, 2)
+                            # Normalize keys for frontend
+                            if "example_quote" not in item and "quote" in item:
+                                item["example_quote"] = item["quote"]
+                            if "frequency" not in item:
+                                item["frequency"] = freq
+                        except (ValueError, TypeError):
+                            pass
+
+            if isinstance(parsed_data, dict):
+                parsed_data["insights"] = insights
+                return parsed_data
+            elif isinstance(parsed_data, list):
+                return {"insights": insights}
+            else: # Return the parsed Pydantic ADK response directly
+                return parsed_data
+                
+        return response_text
 
     except Exception as e:
         print(f"❌ Error communicating with local model provider: {e}")
