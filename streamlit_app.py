@@ -3,6 +3,7 @@ import requests
 import pandas as pd
 import matplotlib.pyplot as plt
 import re
+from app.logger import logger
 
 # Page config
 st.set_page_config(
@@ -197,12 +198,16 @@ backend_url = st.sidebar.text_input("Backend API URL", "http://localhost:8000")
 # Fetch products
 @st.cache_data(ttl=60)
 def fetch_products(api_url):
+    logger.info(f"Streamlit - Fetching products from {api_url}/products/")
     try:
         response = requests.get(f"{api_url}/products/")
         if response.status_code == 200:
-            return response.json()
-    except Exception:
-        pass
+            data = response.json()
+            logger.info(f"Streamlit - Successfully fetched {len(data)} products")
+            return data
+    except Exception as e:
+        logger.error(f"Streamlit - Error connecting to backend: {e}")
+        st.sidebar.error(f"Error connecting to backend: {e}")
     return []
 
 products = fetch_products(backend_url)
@@ -221,18 +226,23 @@ if not products:
 product_options = {p['name']: p['id'] for p in products}
 selected_product_name = st.sidebar.selectbox("Select a Product", list(product_options.keys()))
 selected_product_id = product_options[selected_product_name]
+logger.info(f"Streamlit - User active product: {selected_product_name} (ID: {selected_product_id})")
 
 # Refresh Cache button
 st.sidebar.markdown("<br>", unsafe_allow_html=True)
 if st.sidebar.button("Clear Cache"):
+    logger.info(f"Streamlit - User triggered Cache Clear for product ID {selected_product_id}")
     try:
         res = requests.delete(f"{backend_url}/insights/products/{selected_product_id}")
         if res.status_code == 200:
+            logger.info(f"Streamlit - Cache successfully cleared on backend for product ID {selected_product_id}")
             st.sidebar.success("Cache cleared successfully!")
             st.cache_data.clear()
         else:
+            logger.error(f"Streamlit - Failed to clear cache on backend for product ID {selected_product_id}. Status: {res.status_code}")
             st.sidebar.error("Failed to clear cache.")
     except Exception as e:
+        logger.error(f"Streamlit - Exception during cache clear for product ID {selected_product_id}: {e}")
         st.sidebar.error(f"Error: {e}")
 
 # Main Layout Header
@@ -250,6 +260,7 @@ st.markdown(
 
 # Fetch Insights
 def get_insights(api_url, product_id):
+    logger.info(f"Streamlit - Requesting insights for product ID {product_id}")
     try:
         res = requests.get(f"{api_url}/insights/products/{product_id}")
         if res.status_code == 200:
@@ -260,15 +271,21 @@ def get_insights(api_url, product_id):
                 if "analysis" in inner_data:
                     try:
                         import json
+                        logger.info(f"Streamlit - Cache hit for product ID {product_id} (wrapped data)")
                         return json.loads(inner_data["analysis"]), None
-                    except Exception:
+                    except Exception as e:
+                        logger.error(f"Streamlit - Failed to parse wrapped insights json for product ID {product_id}: {e}")
                         pass
+                logger.info(f"Streamlit - Cache hit for product ID {product_id}")
                 return inner_data, None
+            logger.info(f"Streamlit - Successfully fetched insights for product ID {product_id}")
             return data, None
         else:
             detail = res.json().get("detail", "Failed to fetch insights")
+            logger.warning(f"Streamlit - Failed to fetch insights for product ID {product_id}. Status: {res.status_code}, Detail: {detail}")
             return None, detail
     except Exception as e:
+        logger.error(f"Streamlit - Exception during fetching insights for product ID {product_id}: {e}")
         return None, str(e)
 
 insights_data, error = get_insights(backend_url, selected_product_id)
@@ -283,10 +300,12 @@ if error:
     )
     
     if st.button("Generate AI Insights"):
+        logger.info(f"Streamlit - User triggered AI Insight generation for product ID {selected_product_id}")
         with st.spinner("Processing reviews with parallel LLM agents... Please wait."):
             # Re-fetch which triggers generation
             insights_data, error = get_insights(backend_url, selected_product_id)
             if error:
+                logger.error(f"Streamlit - Generation failed for product ID {selected_product_id}: {error}")
                 st.markdown(
                     f'<div class="neumorphic-card" style="border-left: 5px solid #b85c5c; padding: 20px; margin-top: 15px;">'
                     f'<h4 style="color: #b85c5c !important; margin: 0;">Analysis Failed</h4>'
@@ -295,6 +314,7 @@ if error:
                     unsafe_allow_html=True
                 )
             else:
+                logger.info(f"Streamlit - Generation succeeded and cache loaded for product ID {selected_product_id}")
                 st.success("Successfully generated new insights!")
                 st.rerun()
 else:
