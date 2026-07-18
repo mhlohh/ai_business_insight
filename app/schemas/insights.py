@@ -1,25 +1,26 @@
 from pydantic import BaseModel, Field
 
-VALID_CATEGORIES = {"quality", "support", "price", "usability", "other"}
 
-# Defined here so Python can handle the math reliably
-CATEGORY_WEIGHTS = {
-    "quality": 1.5,
-    "support": 1.2,
-    "price": 1.0,
-    "usability": 1.3,
-    "other": 1.0
-}
+class Product(BaseModel):
+    product_id: int
+    name: str
 
-class Insights(BaseModel):
-    """
-    Schema used to validate and sanitize the LLM output.
-    """
-    insight: str = Field(..., min_length=1)
-    confidence: float = Field(..., ge=0.0, le=1.0)
-    frequency: int = Field(..., gt=0)
-    example_quote: str
-    category: str
+
+class Insight(BaseModel):
+    insight: str = Field(description="Description of the insight")
+    confidence: float = Field(description="Confidence level (0.0 to 1.0)", default=0.8)
+    frequency: float = Field(
+        description="Frequency of occurrence across reviews", default=1
+    )
+    example_quote: str = Field(description="Representative customer quote")
+    category: str = Field(
+        description="Insight category (e.g., quality, support, price, usability, other)"
+    )
+    score: float | None = Field(
+        description="Calculated score based on frequency, confidence, and category",
+        default=None,
+    )
+
 
 class InsightsList(BaseModel):
-    insights : list[Insights] = Field(description = "List of extracted business insights")
+    insights: list[Insight] = Field(description="List of extracted business insights")
