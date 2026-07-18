@@ -44,17 +44,3 @@ class AnalysisCache(Base):
     analysis = Column(Text, nullable=False)
 
     product = relationship("Product", back_populates="analysis_cache")
-
-
-# Pydantic schemas for API response validation
-class ProductResponse(BaseModel):
-    id: int
-    asin: str
-    name: str
-    description: str | None = None
-    price: float = 0.0
-    quantity: int = 0
-
-    class Config:
-        from_attributes = True
-
