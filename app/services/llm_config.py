@@ -32,10 +32,10 @@ LiteLlm.generate_content_async = _semaphore_generate_content_async
 
 # Configuration parameters for Groq models
 GROQ_MODEL_NAME = os.getenv(
-    "GROQ_MODEL_NAME", "groq/meta-llama/llama-4-scout-17b-16e-instruct"
+    "GROQ_MODEL_NAME", "groq/llama-3.3-70b-versatile"
 )
 GROQ_PARALLEL_MODEL_NAME = os.getenv(
-    "GROQ_PARALLEL_MODEL_NAME", "groq/meta-llama/llama-4-scout-17b-16e-instruct"
+    "GROQ_PARALLEL_MODEL_NAME", "groq/llama-3.3-70b-versatile"
 )
 
 # Generation configuration for consistent responses

@@ -9,11 +9,12 @@ import re
 
 
 category_weights = {
-                "quality": 1.5,
-                "support": 1.2,
-                "usability": 1.3,
-                "price": 1.0,
-            }
+    "quality": 1.5,
+    "support": 1.2,
+    "usability": 1.3,
+    "price": 1.0,
+}
+
 
 async def setup():
     """
@@ -78,7 +79,7 @@ async def ask(chunks: list[list[str]]) -> str | list:
                 if event.output is not None:
                     print(f"   ├─ Output Data: {event.output}")
 
-            if event.is_final_response():
+            if event.is_final_response() and author == "AggregatorAgent":
                 if event.content and event.content.parts:
                     for part in event.content.parts:
                         if part.text:
@@ -87,19 +88,25 @@ async def ask(chunks: list[list[str]]) -> str | list:
                     parsed_data = event.output
 
         # Post-process response to extract only the JSON array if available
-       
+
         if parsed_data is None and response_text:
             try:
                 # Remove markdown code blocks if any
-                clean_data = re.sub(r'```(?:json)?\n(.*?)\n```', r'\1', response_text, flags=re.DOTALL).strip()
+                clean_data = re.sub(
+                    r"```(?:json)?\n(.*?)\n```", r"\1", response_text, flags=re.DOTALL
+                ).strip()
                 parsed_data = json.loads(clean_data)
             except json.JSONDecodeError as e:
                 print(f"❌ Failed to parse JSON from response: {e}")
                 return response_text
 
         if parsed_data is not None:
-            insights = parsed_data.get("insights", []) if isinstance(parsed_data, dict) else parsed_data
-            if hasattr(parsed_data, "insights"): # Check if it's a Pydantic object
+            insights = (
+                parsed_data.get("insights", [])
+                if isinstance(parsed_data, dict)
+                else parsed_data
+            )
+            if hasattr(parsed_data, "insights"):  # Check if it's a Pydantic object
                 insights = parsed_data.insights
 
             if isinstance(insights, list):
@@ -108,7 +115,11 @@ async def ask(chunks: list[list[str]]) -> str | list:
                         # Recalculate score programmatically
                         try:
                             freq = float(item.get("frequency", item.get("count", 1)))
-                            conf = float(item.get("confidence", item.get("confidence_level", 0.8)))
+                            conf = float(
+                                item.get(
+                                    "confidence", item.get("confidence_level", 0.8)
+                                )
+                            )
                             cat = str(item.get("category", "other")).lower().strip()
                             weight = category_weights.get(cat, 1.0)
                             item["score"] = round(freq * conf * weight, 2)
@@ -125,14 +136,11 @@ async def ask(chunks: list[list[str]]) -> str | list:
                 return parsed_data
             elif isinstance(parsed_data, list):
                 return {"insights": insights}
-            else: # Return the parsed Pydantic ADK response directly
+            else:  # Return the parsed Pydantic ADK response directly
                 return parsed_data
-                
+
         return response_text
 
     except Exception as e:
-        print(f"❌ Error communicating with local model provider: {e}")
-        print(
-            f"👉 Please ensure that your local LM Studio server is running and listening on {LMSTUDIO_API_BASE}"
-        )
+        print(f"❌ Error communicating with model provider: {e}")
         raise e
