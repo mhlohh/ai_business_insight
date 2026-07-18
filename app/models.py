@@ -15,6 +15,7 @@ class AI_Insight(BaseModel):
     category: str = Field(
         description="Insight category (e.g., quality, support, price, usability, other)"
     )
+    score: float | None = Field(description="Calculated score based on frequency, confidence, and category", default=None)
     
 
 class InsightsList(BaseModel):

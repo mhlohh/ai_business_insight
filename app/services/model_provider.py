@@ -89,40 +89,28 @@ async def ask(chunks: list[list[str]]) -> str | list:
                 if event.output is not None:
                     parsed_data = event.output
 
-        # Since ADK parses the output_schema automatically, event.output is our parsed InsightsList
+        # Enforce Pydantic parsing if ADK did not natively convert the string to the schema
+        if parsed_data is None and response_text:
+            try:
+                # Strip Markdown code block if present
+                clean_data = re.sub(
+                    r"```(?:json)?\n(.*?)\n```", r"\1", response_text, flags=re.DOTALL
+                ).strip()
+                parsed_data = InsightsList.model_validate_json(clean_data)
+            except Exception as e:
+                print(f"❌ Failed to parse JSON to Pydantic model: {e}")
+                return response_text
+
         if parsed_data is not None:
-            # We can process the Pydantic object directly
-            insights = []
-            if hasattr(parsed_data, "insights"):
-                insights = parsed_data.insights
-            elif isinstance(parsed_data, dict):
-                insights = parsed_data.get("insights", [])
-
-            for item in insights:
-                # If it's a Pydantic object, we might want to update it, but usually it's better to just return the clean model
-                # or we can update fields if they are dicts
-                if isinstance(item, dict):
-                    try:
-                        freq = float(item.get("frequency", 1))
-                        conf = float(item.get("confidence", 0.8))
-                        cat = str(item.get("category", "other")).lower().strip()
-                        weight = category_weights.get(cat, 1.0)
-                        item["score"] = round(freq * conf * weight, 2)
-                    except (ValueError, TypeError):
-                        pass
-                else:
-                    # It's an AI_Insight Pydantic model
-                    try:
-                        freq = float(item.frequency)
-                        conf = float(item.confidence)
-                        cat = str(item.category).lower().strip()
-                        weight = category_weights.get(cat, 1.0)
-                        # We would set the score, but 'score' is not in the AI_Insight model
-                        # For now, just return the Pydantic object directly, FastAPI handles serialization
-                        pass
-                    except Exception:
-                        pass
-
+            # We now have a guaranteed Pydantic InsightsList object
+            for item in parsed_data.insights:
+                try:
+                    cat = str(item.category).lower().strip()
+                    weight = category_weights.get(cat, 1.0)
+                    item.score = round(item.frequency * item.confidence * weight, 2)
+                except Exception:
+                    pass
+            
             return parsed_data
 
         return response_text
