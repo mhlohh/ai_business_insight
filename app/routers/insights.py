@@ -13,7 +13,7 @@ router = APIRouter(prefix="/insights", tags=["insights"])
 
 
 @router.get("/products/{product_id}", response_model=InsightsList)
-def get_product_insights(product_name: str, product_id: int):
+def get_product_insights(product_id: int):
     cached_data = get_cached_analysis(product_id)
     if cached_data:
         return {"status": "success", "data": cached_data}
@@ -37,8 +37,8 @@ def get_product_insights(product_name: str, product_id: int):
     return results
 
 
-@router.delete("/products/{product_name}/{product_id}")
-def clear_product_insights(product_name: str, product_id: int):
+@router.delete("/products/{product_id}")
+def clear_product_insights(product_id: int):
     deleted = clear_cache(product_id)
     if not deleted:
         raise HTTPException(

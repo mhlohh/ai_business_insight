@@ -1,10 +1,13 @@
-
 # ==========================================
 # 2. CENTRALIZED RELATIONAL SCHEMA
 # ==========================================
-Base = declarative_base()
 
-class Product(Base):
+from pydantic import BaseModel, Field
+from sqlalchemy import Column, Integer, String, Text, Float, ForeignKey
+from sqlalchemy.orm import relationship
+
+
+class Product(BaseModel):
     __tablename__ = "products"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -26,7 +29,7 @@ class Product(Base):
     )
 
 
-class Review(Base):
+class Review(BaseModel):
     __tablename__ = "reviews"
 
     id = Column(Integer, primary_key=True, autoincrement=True, index=True)
@@ -43,5 +46,3 @@ class AnalysisCache(Base):
     analysis = Column(Text, nullable=False)
 
     product = relationship("Product", back_populates="analysis_cache")
-
-

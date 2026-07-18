@@ -2,7 +2,7 @@ import logger
 import json
 import os
 from typing import List, Dict, Any, Optional
-from schemas.Database_schema import Product, Review, AnalysisCache
+from app.schemas.database_schema import Product, Review, AnalysisCache
 from sqlalchemy import create_engine, Column, Integer, String, Float, ForeignKey, Text
 from sqlalchemy.orm import declarative_base, sessionmaker, relationship
 from sqlalchemy.exc import OperationalError, SQLAlchemyError
@@ -26,7 +26,6 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 # ==========================================
 # 2. CENTRALIZED RELATIONAL SCHEMA
 # ==========================================
-Base = declarative_base()
 
 
 # ==========================================
@@ -81,15 +80,6 @@ def db_safeguard(func):
 # ==========================================
 # 4. CORE DATABASE HELPER FUNCTIONS
 # ==========================================
-
-
-def initialize_database():
-    """Creates SQLite3 tables using the imported metadata schema."""
-    try:
-        Base.metadata.create_all(bind=engine)
-        print("💾 Database schemas initialized successfully.")
-    except Exception as e:
-        print(f"❌ Initialization failure: {e}")
 
 
 @db_safeguard
