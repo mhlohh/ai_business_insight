@@ -4,6 +4,7 @@ from google.genai import types
 from app.services.llm_config import model_obj, parallel_model_obj
 from app.services.parallel_agent import create_parallel_team
 from app.services.aggregator_agent import create_aggregator_agent
+from app.models import InsightsList
 import json
 import re
 
@@ -42,6 +43,7 @@ async def ask(chunks: list[list[str]]) -> str | list:
     root_agent = SequentialAgent(
         name="ReviewsAnalysisSystem",
         sub_agents=[parallel_reviews_team, aggregator_agent],
+        output_schema=InsightsList,
     )
 
     runner = InMemoryRunner(agent=root_agent)
@@ -87,57 +89,41 @@ async def ask(chunks: list[list[str]]) -> str | list:
                 if event.output is not None:
                     parsed_data = event.output
 
-        # Post-process response to extract only the JSON array if available
-
-        if parsed_data is None and response_text:
-            try:
-                # Remove markdown code blocks if any
-                clean_data = re.sub(
-                    r"```(?:json)?\n(.*?)\n```", r"\1", response_text, flags=re.DOTALL
-                ).strip()
-                parsed_data = json.loads(clean_data)
-            except json.JSONDecodeError as e:
-                print(f"❌ Failed to parse JSON from response: {e}")
-                return response_text
-
+        # Since ADK parses the output_schema automatically, event.output is our parsed InsightsList
         if parsed_data is not None:
-            insights = (
-                parsed_data.get("insights", [])
-                if isinstance(parsed_data, dict)
-                else parsed_data
-            )
-            if hasattr(parsed_data, "insights"):  # Check if it's a Pydantic object
+            # We can process the Pydantic object directly
+            insights = []
+            if hasattr(parsed_data, "insights"):
                 insights = parsed_data.insights
+            elif isinstance(parsed_data, dict):
+                insights = parsed_data.get("insights", [])
 
-            if isinstance(insights, list):
-                for item in insights:
-                    if isinstance(item, dict):
-                        # Recalculate score programmatically
-                        try:
-                            freq = float(item.get("frequency", item.get("count", 1)))
-                            conf = float(
-                                item.get(
-                                    "confidence", item.get("confidence_level", 0.8)
-                                )
-                            )
-                            cat = str(item.get("category", "other")).lower().strip()
-                            weight = category_weights.get(cat, 1.0)
-                            item["score"] = round(freq * conf * weight, 2)
-                            # Normalize keys for frontend
-                            if "example_quote" not in item and "quote" in item:
-                                item["example_quote"] = item["quote"]
-                            if "frequency" not in item:
-                                item["frequency"] = freq
-                        except (ValueError, TypeError):
-                            pass
+            for item in insights:
+                # If it's a Pydantic object, we might want to update it, but usually it's better to just return the clean model
+                # or we can update fields if they are dicts
+                if isinstance(item, dict):
+                    try:
+                        freq = float(item.get("frequency", 1))
+                        conf = float(item.get("confidence", 0.8))
+                        cat = str(item.get("category", "other")).lower().strip()
+                        weight = category_weights.get(cat, 1.0)
+                        item["score"] = round(freq * conf * weight, 2)
+                    except (ValueError, TypeError):
+                        pass
+                else:
+                    # It's an AI_Insight Pydantic model
+                    try:
+                        freq = float(item.frequency)
+                        conf = float(item.confidence)
+                        cat = str(item.category).lower().strip()
+                        weight = category_weights.get(cat, 1.0)
+                        # We would set the score, but 'score' is not in the AI_Insight model
+                        # For now, just return the Pydantic object directly, FastAPI handles serialization
+                        pass
+                    except Exception:
+                        pass
 
-            if isinstance(parsed_data, dict):
-                parsed_data["insights"] = insights
-                return parsed_data
-            elif isinstance(parsed_data, list):
-                return {"insights": insights}
-            else:  # Return the parsed Pydantic ADK response directly
-                return parsed_data
+            return parsed_data
 
         return response_text
 
