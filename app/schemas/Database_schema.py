@@ -1,13 +1,11 @@
-# ==========================================
-# 2. CENTRALIZED RELATIONAL SCHEMA
-# ==========================================
-
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 from sqlalchemy import Column, Integer, String, Text, Float, ForeignKey
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import declarative_base, relationship
+
+Base = declarative_base()
 
 
-class Product(BaseModel):
+class Product(Base):
     __tablename__ = "products"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -29,7 +27,7 @@ class Product(BaseModel):
     )
 
 
-class Review(BaseModel):
+class Review(Base):
     __tablename__ = "reviews"
 
     id = Column(Integer, primary_key=True, autoincrement=True, index=True)
@@ -46,3 +44,17 @@ class AnalysisCache(Base):
     analysis = Column(Text, nullable=False)
 
     product = relationship("Product", back_populates="analysis_cache")
+
+
+# Pydantic schemas for API response validation
+class ProductResponse(BaseModel):
+    id: int
+    asin: str
+    name: str
+    description: str | None = None
+    price: float = 0.0
+    quantity: int = 0
+
+    class Config:
+        from_attributes = True
+

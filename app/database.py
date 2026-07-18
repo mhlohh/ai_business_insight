@@ -1,17 +1,17 @@
-import logger
+from logger import logger
 import json
 import os
 from typing import List, Dict, Any, Optional
 from app.schemas.database_schema import Product, Review, AnalysisCache
 from sqlalchemy import create_engine, Column, Integer, String, Float, ForeignKey, Text
-from sqlalchemy.orm import declarative_base, sessionmaker, relationship
+from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.exc import OperationalError, SQLAlchemyError
 from sqlalchemy.pool import NullPool
 
 # ==========================================
 # 1. DATABASE CONFIGURATION (NullPool Enabled)
 # ==========================================
-logger.basicConfig(level=logger.INFO)
+
 
 DB_FILE = "data/litmus7.db"
 os.makedirs(os.path.dirname(DB_FILE), exist_ok=True)
