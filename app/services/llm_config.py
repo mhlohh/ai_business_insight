@@ -3,6 +3,7 @@ import asyncio
 import litellm
 from dotenv import load_dotenv
 from google.adk.models.lite_llm import LiteLlm
+from app.logger import logger
 
 load_dotenv(override=True)
 
@@ -64,5 +65,5 @@ parallel_model_obj = LiteLlm(
     **PARALLEL_GENERATION_CONFIG,
 )
 
-print(f"✅ Aggregator Model: {GROQ_MODEL_NAME}")
-print(f"✅ Parallel Model: {GROQ_PARALLEL_MODEL_NAME}")
+logger.info(f"✅ Aggregator Model: {GROQ_MODEL_NAME}")
+logger.info(f"✅ Parallel Model: {GROQ_PARALLEL_MODEL_NAME}")

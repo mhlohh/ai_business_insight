@@ -5,6 +5,7 @@ from app.services.llm_config import model_obj, parallel_model_obj
 from app.services.parallel_agent import create_parallel_team
 from app.services.aggregator_agent import create_aggregator_agent
 from app.models import InsightsList
+from app.logger import logger
 import json
 import re
 
@@ -70,16 +71,16 @@ async def ask(chunks: list[list[str]]) -> str | list:
 
             # Print intermediate agent trace if not partial/stream chunks
             if not event.partial:
-                print(f"🔄 [Agent Event] Author: {author} | Node Path: {node_path}")
+                logger.info(f"🔄 [Agent Event] Author: {author} | Node Path: {node_path}")
                 if event.content and event.content.parts:
                     for part in event.content.parts:
                         if part.text:
                             snippet = part.text.strip().replace("\n", " ")
                             if len(snippet) > 100:
                                 snippet = snippet[:100] + "..."
-                            print(f"   ├─ Output Text: {snippet}")
+                            logger.info(f"   ├─ Output Text: {snippet}")
                 if event.output is not None:
-                    print(f"   ├─ Output Data: {event.output}")
+                    logger.info(f"   ├─ Output Data: {event.output}")
 
             if event.is_final_response() and author == "AggregatorAgent":
                 if event.content and event.content.parts:
@@ -98,7 +99,7 @@ async def ask(chunks: list[list[str]]) -> str | list:
                 ).strip()
                 parsed_data = InsightsList.model_validate_json(clean_data)
             except Exception as e:
-                print(f"❌ Failed to parse JSON to Pydantic model: {e}")
+                logger.error(f"❌ Failed to parse JSON to Pydantic model: {e}")
                 return response_text
 
         if parsed_data is not None:
@@ -116,5 +117,5 @@ async def ask(chunks: list[list[str]]) -> str | list:
         return response_text
 
     except Exception as e:
-        print(f"❌ Error communicating with model provider: {e}")
+        logger.error(f"❌ Error communicating with model provider: {e}")
         raise e

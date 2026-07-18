@@ -1,4 +1,5 @@
 import sqlite3
+from app.logger import logger
 
 # Connect to SQLite database
 conn = sqlite3.connect("litmus7.db")
@@ -48,4 +49,4 @@ conn.commit()
 # Close connection
 conn.close()
 
-print("✅ Database and tables created successfully!")
+logger.info("✅ Database and tables created successfully!")
