@@ -2,8 +2,9 @@ from pydantic import BaseModel, Field
 
 
 class Product(BaseModel):
-    product_id: int
+    id: int
     name: str
+    description: str
 
 
 class Insight(BaseModel):

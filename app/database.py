@@ -88,11 +88,8 @@ def get_products(db) -> List[Dict[str, Any]]:
     return [
         {
             "id": p.id,
-            "asin": p.asin,
             "name": p.name,
             "description": p.description,
-            "price": p.price,
-            "quantity": p.quantity,
         }
         for p in products
     ]
