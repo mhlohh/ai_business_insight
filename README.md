@@ -32,13 +32,13 @@ pip install -r requirements.txt
 
 ### 4. Configure Environment (.env)
 Configure the following variables in a `.env` file at the root of the project:
-* `GROQ_API_KEY`: Your Groq API key (required for cloud model execution).
-* `LOCAL_MODEL_NAME`: Main aggregator model (default: `groq/meta-llama/llama-4-scout-17b-16e-instruct`).
-* `LOCAL_PARALLEL_MODEL_NAME`: Model for parallel sub-agents (default: `groq/meta-llama/llama-4-scout-17b-16e-instruct`).
+* `GEMINI_API_KEY`: Your Gemini API key (required for Gemini model execution).
 * `LOCAL_CONCURRENCY_LIMIT`: Controls parallel API requests to prevent rate limits (default: `4`).
 * `MAX_REVIEWS_TO_ANALYZE`: Maximum number of reviews to process at once (default: `100`).
 * `MODEL_TEMPERATURE`: Optional temperature for the models (default: `0.0`).
 * `MODEL_SEED`: Optional random seed for reproducible outputs (default: `42`).
+* `MODEL_MAX_TOKENS`: Maximum output tokens for aggregator (default: `8192`).
+* `PARALLEL_MODEL_MAX_TOKENS`: Maximum output tokens for parallel sub-agents (default: `4096`).
 
 ### 5. Start the FastAPI Backend
 ```bash
@@ -52,6 +52,5 @@ streamlit run streamlit_app.py
 
 ### 🧠 Performance & Rate Limits
 This pipeline is designed for massive datasets (2000+ reviews). It includes built-in rate-limit protections:
-- **Concurrency Queues:** The `LOCAL_CONCURRENCY_LIMIT` ensures that only a set number of API requests run at exactly the same time, keeping you under Groq's Tokens-Per-Minute (TPM) limits.
-- **Auto-Retries:** The pipeline leverages LiteLLM's retry policies to automatically back off and retry up to 5 times if Groq rate limits are hit.
-- **Clean Error Logging:** If a catastrophic rate limit is hit, the massive JSON stack traces are hidden from the console and safely saved to a `llm_error.log` file in the root directory for debugging.
+- **Concurrency Queues:** The `LOCAL_CONCURRENCY_LIMIT` ensures that only a set number of API requests run at exactly the same time, keeping you under rate limits.
+- **Auto-Retries:** The pipeline leverages Google ADK native retry policies to automatically handle transient API errors.

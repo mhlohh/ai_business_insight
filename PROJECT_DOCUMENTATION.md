@@ -81,8 +81,8 @@ Ensures that if the same product reviews are requested twice, the pipeline does 
 
 - **Backend Framework**: FastAPI & Uvicorn
 - **Orchestration Framework**: Google ADK (Agent Development Kit)
-- **Model Connector**: LiteLLM (for routing and rate-limit auto-retries)
-- **LLM Provider**: Groq Cloud API (defaulting to fast, high-performance models like `meta-llama/llama-4-scout-17b-16e-instruct`)
+- **Model Connector**: Google ADK native Gemini client (via google-genai)
+- **LLM Provider**: Gemini 2.0 Flash (fast, native tool-use support)
 - **Database / Cache**: SQLite3
 - **Frontend**: Streamlit
 - **Hosting**: Render
@@ -102,13 +102,13 @@ To run the project locally with the Groq cloud LLM provider:
 
 2. **Configure Environment Variables ([.env](file:///Users/muhsilnr/Library/Mobile%20Documents/com~apple%20CloudDocs/Documents/codespace/litmus7_project/.env))**:
    ```env
-   GROQ_API_KEY=your_groq_api_key
-   LOCAL_MODEL_NAME=groq/meta-llama/llama-4-scout-17b-16e-instruct
-   LOCAL_PARALLEL_MODEL_NAME=groq/meta-llama/llama-4-scout-17b-16e-instruct
+   GEMINI_API_KEY=your_gemini_api_key
    LOCAL_CONCURRENCY_LIMIT=4
    MAX_REVIEWS_TO_ANALYZE=100
    MODEL_TEMPERATURE=0.0
    MODEL_SEED=42
+   MODEL_MAX_TOKENS=8192
+   PARALLEL_MODEL_MAX_TOKENS=4096
    ```
 
 3. **Launch the FastAPI Server**:
