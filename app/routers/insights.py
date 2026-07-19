@@ -12,8 +12,8 @@ from app.services.analysis_service import ask
 router = APIRouter(prefix="/insights", tags=["insights"])
 
 
-@router.get("/products/{product_id}", response_model=InsightsList)
-def get_product_insights(product_id: int):
+@router.get("/products/{product_id}", response_model=InsightsList)   
+def get_cached_analysis(product_id: int):
     cached_data = get_cached_analysis(product_id)
     if cached_data:
         return {"status": "success", "data": cached_data}
