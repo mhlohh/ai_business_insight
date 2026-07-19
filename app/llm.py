@@ -30,7 +30,7 @@ async def _semaphore_generate_content_async(self, *args, **kwargs):
 Gemini.generate_content_async = _semaphore_generate_content_async
 
 # Model Configuration (Gemini 2.0 Flash)
-GEMINI_MODEL_NAME = "gemini-2.5-flash-lite"
+GEMINI_MODEL_NAME = "gemini-3.1-flash-lite"
 
 # Generation configuration for consistent responses
 GENERATION_CONFIG = types.GenerateContentConfig(
