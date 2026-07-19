@@ -16,7 +16,7 @@ router = APIRouter(prefix="/insights", tags=["insights"])
 async def get_product_insights(product_id: int):
     cached_data = get_cached_analysis(product_id)
     if cached_data:
-        return {"status": "success", "data": cached_data}
+        return cached_data
     reviews = get_reviews(product_id)
     if not reviews:
         raise HTTPException(
