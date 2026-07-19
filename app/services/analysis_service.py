@@ -5,7 +5,7 @@ from app.llm import model_obj, parallel_model_obj
 from app.services.parallel_agent import create_parallel_team
 from app.services.aggregator_agent import create_aggregator_agent
 from app.schemas.insights import InsightsList
-from logger import logger
+from logger import logger, log_agent_event
 import json
 import re
 
@@ -66,23 +66,8 @@ async def ask(chunks: list[list[str]]) -> str | list:
             ),
         ):
             # Print execution logs for parallel agents, aggregator, and root agent
-            node_path = event.node_info.path if event.node_info else "unknown"
             author = event.author or "System"
-
-            # Print intermediate agent trace if not partial/stream chunks
-            if not event.partial:
-                logger.info(
-                    f"🔄 [Agent Event] Author: {author} | Node Path: {node_path}"
-                )
-                if event.content and event.content.parts:
-                    for part in event.content.parts:
-                        if part.text:
-                            snippet = part.text.strip().replace("\n", " ")
-                            if len(snippet) > 100:
-                                snippet = snippet[:100] + "..."
-                            logger.info(f"   ├─ Output Text: {snippet}")
-                if event.output is not None:
-                    logger.info(f"   ├─ Output Data: {event.output}")
+            log_agent_event(event)
 
             if event.is_final_response() and author == "AggregatorAgent":
                 if event.content and event.content.parts:
@@ -119,5 +104,7 @@ async def ask(chunks: list[list[str]]) -> str | list:
         return response_text
 
     except Exception as e:
-        logger.error(f"❌ Error communicating with model provider: {e}")
+        import traceback
+        logger.error("❌ Error communicating with model provider:")
+        logger.error(traceback.format_exc())
         raise e

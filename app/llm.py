@@ -7,6 +7,13 @@ from logger import logger
 
 load_dotenv(override=True)
 
+# Safety check for GEMINI_API_KEY
+gemini_key = os.getenv("GEMINI_API_KEY")
+if not gemini_key or gemini_key == "your_gemini_api_key_here":
+    logger.warning(
+        "⚠️ GEMINI_API_KEY is not configured in your environment or .env file."
+    )
+
 # Concurrency limit to prevent rate limits
 CONCURRENCY_LIMIT = int(os.getenv("LOCAL_CONCURRENCY_LIMIT", "4"))
 concurrency_semaphore = asyncio.Semaphore(CONCURRENCY_LIMIT)
@@ -23,7 +30,7 @@ async def _semaphore_generate_content_async(self, *args, **kwargs):
 Gemini.generate_content_async = _semaphore_generate_content_async
 
 # Model Configuration (Gemini 2.0 Flash)
-GEMINI_MODEL_NAME = "gemini-2.0-flash"
+GEMINI_MODEL_NAME = "gemini-2.5-flash-lite"
 
 # Generation configuration for consistent responses
 GENERATION_CONFIG = types.GenerateContentConfig(
