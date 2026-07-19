@@ -1,5 +1,12 @@
 import logging
 import sys
+from pathlib import Path
+from logging.handlers import RotatingFileHandler
+
+
+LOG_DIR = Path("logs")
+LOG_DIR.mkdir(parents=True, exist_ok=True)
+LOG_FILE = LOG_DIR / "litmus7.log"
 
 
 def get_logger(name: str = "litmus7") -> logging.Logger:
@@ -10,7 +17,8 @@ def get_logger(name: str = "litmus7") -> logging.Logger:
 
     # Avoid adding duplicate handlers if the logger is already configured
     if not logger.handlers:
-        logger.setLevel(logging.INFO)
+        logger.setLevel(logging.DEBUG)
+        logger.propagate = False
 
         formatter = logging.Formatter(
             fmt="%(asctime)s | %(levelname)-8s | %(module)s | %(message)s",
@@ -18,9 +26,20 @@ def get_logger(name: str = "litmus7") -> logging.Logger:
         )
 
         console_handler = logging.StreamHandler(sys.stdout)
+        console_handler.setLevel(logging.INFO)
         console_handler.setFormatter(formatter)
 
+        file_handler = RotatingFileHandler(
+            LOG_FILE,
+            maxBytes=5_242_880,
+            backupCount=3,
+            encoding="utf-8",
+        )
+        file_handler.setLevel(logging.DEBUG)
+        file_handler.setFormatter(formatter)
+
         logger.addHandler(console_handler)
+        logger.addHandler(file_handler)
 
     return logger
 
@@ -47,5 +66,5 @@ def log_agent_event(event) -> None:
                         snippet = snippet[:100] + "..."
                     logger.info(f"   ├─ Output Text: {snippet}")
         if event.output is not None:
-            logger.info(f"   ├─ Output Data: {event.output}")
+            logger.debug(f"   ├─ Output Data: {event.output}")
 

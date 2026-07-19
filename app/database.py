@@ -1,12 +1,12 @@
-from logger import logger
 import json
 import os
 from typing import List, Dict, Any, Optional
 from app.schemas.database_schema import Product, Review, AnalysisCache
-from sqlalchemy import create_engine, Column, Integer, String, Float, ForeignKey, Text
-from sqlalchemy.orm import sessionmaker, relationship
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import OperationalError, SQLAlchemyError
 from sqlalchemy.pool import NullPool
+from logger import logger
 
 # ==========================================
 # 1. DATABASE CONFIGURATION (NullPool Enabled)
@@ -36,14 +36,17 @@ def db_safeguard(func):
 
     def wrapper(*args, **kwargs):
         func_name = func.__name__
+        logger.debug(f"DB | Entering {func_name} with args={args[1:] if len(args) > 1 else []} kwargs={kwargs}")
         # Opens a brand new connection directly to the file every time
         session = SessionLocal()
         try:
             result = func(session, *args, **kwargs)
+            logger.debug(f"DB | {func_name} completed successfully")
             return result
         except OperationalError as e:
             session.rollback()
             error_msg = str(e).lower()
+            logger.error(f"DB | OperationalError in {func_name}: {str(e)}")
             if "no such table" in error_msg:
                 return {
                     "status": "error",
@@ -60,12 +63,14 @@ def db_safeguard(func):
             }
         except SQLAlchemyError as e:
             session.rollback()
+            logger.error(f"DB | SQLAlchemyError in {func_name}: {str(e)}")
             return {
                 "status": "error",
                 "message": f"Database execution error in [{func_name}]: {str(e)}",
             }
         except Exception as e:
             session.rollback()
+            logger.error(f"DB | Unexpected error in {func_name}: {str(e)}")
             return {
                 "status": "error",
                 "message": f"Unexpected system failure in [{func_name}]: {str(e)}",
