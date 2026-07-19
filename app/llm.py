@@ -1,5 +1,6 @@
 import os
 import asyncio
+import time
 from dotenv import load_dotenv
 from google.adk.models import Gemini
 from google.genai import types
@@ -15,13 +16,37 @@ if not gemini_key or gemini_key == "your_gemini_api_key_here":
     )
 
 # Concurrency limit to prevent rate limits
-CONCURRENCY_LIMIT = int(os.getenv("LOCAL_CONCURRENCY_LIMIT", "4"))
+CONCURRENCY_LIMIT = int(os.getenv("LOCAL_CONCURRENCY_LIMIT", "10"))
 concurrency_semaphore = asyncio.Semaphore(CONCURRENCY_LIMIT)
+
+# Rate limiting / cooldown state
+request_count = 0
+cooldown_lock = asyncio.Lock()
+last_cooldown_time = 0.0
 
 _original_generate_content_async = Gemini.generate_content_async
 
 
 async def _semaphore_generate_content_async(self, *args, **kwargs):
+    global request_count, last_cooldown_time
+
+    async with cooldown_lock:
+        if request_count >= 10:
+            elapsed = time.time() - last_cooldown_time
+            if elapsed < 60.0:
+                sleep_time = 60.0 - elapsed
+                logger.info(
+                    f"⏳ Rate limit safeguard: Cooldown active. Sleeping for {sleep_time:.2f} seconds..."
+                )
+                await asyncio.sleep(sleep_time)
+            # Reset count after cooldown
+            request_count = 0
+            last_cooldown_time = time.time()
+
+        request_count += 1
+        if request_count == 10:
+            last_cooldown_time = time.time()
+
     async with concurrency_semaphore:
         async for response in _original_generate_content_async(self, *args, **kwargs):
             yield response
