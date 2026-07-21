@@ -536,7 +536,6 @@ else:
                 ax.spines["left"].set_color("#718096")
                 ax.spines["bottom"].set_color("#718096")
                 ax.tick_params(colors="#4a5568", labelsize=10)
-                ax.set_xlabel("Impact Score", color="#4a5568", fontsize=11)
                 fig.tight_layout()
 
                 st.pyplot(fig)
@@ -568,7 +567,6 @@ else:
                 f'<div class="neumorphic-card">'
                 f'  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">'
                 f'    <span class="category-badge" style="display: flex; align-items: center;">{SVG_TAG}{category_name}</span>'
-                f'    <span class="score-badge">Impact: {score_val}</span>'
                 f"  </div>"
                 f'  <h3 style="margin: 0 0 10px 0; color: #2d3748; font-size: 1.25rem;">{row.get("insight")}</h3>'
                 f'  <div class="neumorphic-card-inset">'
