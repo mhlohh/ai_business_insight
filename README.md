@@ -67,7 +67,7 @@ graph TD
 ## 📁 Project Structure
 
 ```
-litmus7_project/
+AI_Business_Insights_project/
 ├── app/
 │   ├── main.py                  # FastAPI app & lifespan setup
 │   ├── database.py              # SQLAlchemy DB operations & caching (ORM layer)
