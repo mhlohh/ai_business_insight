@@ -81,5 +81,8 @@ parallel_model_obj = Gemini(
     model=GEMINI_MODEL_NAME,
 )
 
+# Chunker LIMT
+CHUNK_LIMIT = 200
+
 logger.info(f"✅ Aggregator Model: {GEMINI_MODEL_NAME}")
 logger.info(f"✅ Parallel Model: {GEMINI_MODEL_NAME}")
