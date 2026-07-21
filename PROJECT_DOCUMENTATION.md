@@ -4,6 +4,16 @@
 
 ---
 
+## Recent Changes
+
+- Merge: `pull request #32` from `shifamn7-cpu/orm`
+    - Added ORM module at `app/database.py` (SQLAlchemy-based DB layer)
+    - Added ORM schema definitions at `app/schemas/Database_schema.py`
+    - Removed legacy top-level `database.py` and centralized DB logic under `app/`
+
+These changes restructure the project's database layer to use a clear ORM pattern and keep database code inside the `app` package.
+
+
 ## 1. Executive Summary
 
 ### The Problem
@@ -47,8 +57,7 @@ graph TD
     FB --> EXT
 
     EXT --> ENR["Enrich & Score Insights"]:::scoring
-    ENR -->|"score = freq x conf x weight"| STATUS["Assign Business Status"]:::scoring
-    STATUS -->|"Save to Cache"| DB2[("SQLite Cache")]:::database
+    ENR -->|"score = freq x conf x weight; Save to Cache"| DB2[("SQLite Cache")]:::database
     DB2 --> OUT["Return Enriched Results"]:::result
 
     classDef trigger fill:#6366f1,stroke:#4f46e5,color:#fff
@@ -61,7 +70,7 @@ graph TD
     classDef database fill:#f59e0b,stroke:#d97706,color:#fff
 ```
 
-> **Rate Limit Protection:** All LLM calls pass through a custom Rate Limit Manager — batched processing (4 req/batch), 60s cooldowns, 2s inter-request delays, and intelligent retry parsing via LiteLLM.
+> **Rate Limit Protection:** All LLM calls pass through a custom Rate Limit Manager — batched processing (10 req/batch), 60s cooldowns and intelligent.
 
 ### 2.2 Database Schema (SQLite + SQLAlchemy)
 
@@ -152,13 +161,6 @@ $$\text{score} = \text{frequency} \times \text{confidence} \times \text{category
 | `price` | 1.0 | Baseline weight |
 | `other` | 1.0 | Baseline weight |
 
-**Business Status Bucketing:**
-
-| Score Range | Status | Meaning |
-|-------------|--------|---------|
-| ≥ 8.0 | 🔴 Needs attention | Critical issue requiring immediate action |
-| ≥ 5.0 | 🟡 Worth watching | Emerging trend to monitor |
-| < 5.0 | 🟢 Working well | Positive or low-impact feedback |
 
 **Resilience Layers:**
 - `_extract_output_data()` — Universal adapter supporting Pydantic V1, V2, raw dict, and list output formats
@@ -180,8 +182,7 @@ The `analysis_cache` table ensures repeat requests skip the entire LLM pipeline:
 |-------|-----------|---------|
 | **Backend** | FastAPI + Uvicorn | Async REST API with streaming support |
 | **Orchestration** | Google ADK | Agent Development Kit for SequentialAgent / ParallelAgent orchestration |
-| **Model Router** | LiteLLM | Unified interface for LLM providers with retry policies and rate limit management |
-| **LLM Provider** | Groq Cloud API | Fast inference with `meta-llama/llama-4-scout-17b-16e-instruct` |
+| **LLM Provider** | Google Studio | Gemini-3.1-flash
 | **Database** | SQLite3 + SQLAlchemy | Product/review storage and analysis caching (NullPool for zero idle connections) |
 | **Validation** | Pydantic V2 | Strict schema enforcement for LLM outputs |
 | **Frontend** | Streamlit | Interactive dashboard with real-time streaming progress |
@@ -193,7 +194,7 @@ The `analysis_cache` table ensures repeat requests skip the entire LLM pipeline:
 
 ### Prerequisites
 - Python 3.10+
-- A [Groq API Key](https://console.groq.com)
+- Google Studio API
 
 ### Installation
 
@@ -209,14 +210,12 @@ pip install -r requirements.txt
 ### Configuration (`.env`)
 
 ```env
-GROQ_API_KEY=your_groq_api_key
 
 # Models
-LOCAL_MODEL_NAME=groq/meta-llama/llama-4-scout-17b-16e-instruct
-LOCAL_PARALLEL_MODEL_NAME=groq/meta-llama/llama-4-scout-17b-16e-instruct
+Gemini-3.1-flash-lite
 
 # Rate Limiting
-LOCAL_CONCURRENCY_LIMIT=4
+LOCAL_CONCURRENCY_LIMIT=10
 
 # Generation Config
 MODEL_TEMPERATURE=0.0

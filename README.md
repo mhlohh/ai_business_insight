@@ -47,8 +47,7 @@ graph TD
     FB --> EXT
 
     EXT --> ENR["Enrich & Score Insights"]:::scoring
-    ENR -->|"score = freq x conf x weight"| STATUS["Assign Business Status"]:::scoring
-    STATUS -->|"Save to Cache"| DB2[("SQLite Cache")]:::database
+    ENR -->|"score = freq x conf x weight; Save to Cache"| DB2[("SQLite Cache")]:::database
     DB2 --> OUT["Return Enriched Results"]:::result
 
     classDef trigger fill:#6366f1,stroke:#4f46e5,color:#fff
@@ -71,9 +70,8 @@ graph TD
 litmus7_project/
 ├── app/
 │   ├── main.py                  # FastAPI app & lifespan setup
-│   ├── database.py              # SQLAlchemy DB operations & caching
-│   ├── core/
-│   │   └── llm.py               # LiteLLM config, rate limit manager
+│   ├── database.py              # SQLAlchemy DB operations & caching (ORM layer)
+│   ├── llm.py                   # LiteLLM config, rate limit manager
 │   ├── routers/
 │   │   ├── products.py          # /products & /db/products endpoints
 │   │   ├── reviews.py           # /reviews/{id} endpoints
@@ -91,6 +89,13 @@ litmus7_project/
 ├── streamlit_app.py             # Streamlit frontend UI
 ├── requirements.txt             # Python dependencies
 └── .env                         # Environment configuration
+
+## Recent Changes (PR #32)
+
+- Added `app/database.py` (ORM-based DB layer) and `app/schemas/Database_schema.py` to centralize database models and operations.
+- Removed legacy top-level `database.py`; database logic now lives under the `app/` package.
+
+These updates reorganize the database layer to use SQLAlchemy ORM models and improve maintainability.
 ```
 
 ---
@@ -125,11 +130,10 @@ pip install -r requirements.txt
 ### 3. Configure Environment (`.env`)
 Create a `.env` file at the project root:
 ```env
-GROQ_API_KEY=your_groq_api_key
+GEMINI_API_KEY=your-google-api-key
 
 # Models
-LOCAL_MODEL_NAME=groq/meta-llama/llama-4-scout-17b-16e-instruct
-LOCAL_PARALLEL_MODEL_NAME=groq/meta-llama/llama-4-scout-17b-16e-instruct
+GEMINI_MODEL_NAME = "gemini-3.1-flash-lite"
 
 # Rate Limiting
 LOCAL_CONCURRENCY_LIMIT=4
@@ -159,7 +163,6 @@ This pipeline is designed for massive datasets (2000+ reviews). Built-in protect
 
 | Protection | Description |
 |------------|-------------|
-| **Batching & Cooldowns** | 4 requests per batch with automatic 60-second cooldowns between batches |
-| **Concurrency Queues** | `LOCAL_CONCURRENCY_LIMIT` caps simultaneous API calls with 2s inter-request delays |
-| **Auto-Retries** | Up to 5 retries with intelligent parsing of Groq's `"try again in X seconds"` messages |
+| **Batching & Cooldowns** | 10 requests per batch with automatic 60-second cooldowns between batches |
+| **Concurrency Queues** | `LOCAL_CONCURRENCY_LIMIT` caps 
 | **Error Logging** | Rate limit stack traces are suppressed from console and saved to `llm_error.log` |
