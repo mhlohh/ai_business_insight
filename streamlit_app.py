@@ -194,7 +194,7 @@ st.sidebar.markdown(
     unsafe_allow_html=True,
 )
 
-backend_url = st.sidebar.text_input("Backend API URL", "http://localhost:8000")
+backend_url = "http://localhost:8000"
 
 
 # Fetch products
