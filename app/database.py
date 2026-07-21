@@ -36,7 +36,9 @@ def db_safeguard(func):
 
     def wrapper(*args, **kwargs):
         func_name = func.__name__
-        logger.debug(f"DB | Entering {func_name} with args={args[1:] if len(args) > 1 else []} kwargs={kwargs}")
+        logger.debug(
+            f"DB | Entering {func_name} with args={args[1:] if len(args) > 1 else []} kwargs={kwargs}"
+        )
         # Opens a brand new connection directly to the file every time
         session = SessionLocal()
         try:
