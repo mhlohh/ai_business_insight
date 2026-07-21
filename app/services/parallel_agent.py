@@ -1,5 +1,6 @@
 from google.adk.agents import Agent, ParallelAgent
 from app.schemas.insights import InsightsList
+from app.llm import PARALLEL_GENERATION_CONFIG
 
 
 def create_parallel_team(
@@ -13,6 +14,7 @@ def create_parallel_team(
         sub_agent = Agent(
             name=f"ReviewResearcher_{i}",
             model=parallel_model_obj,
+            generate_content_config=PARALLEL_GENERATION_CONFIG,
             instruction=f"""Analyze the following product reviews, extract key business-relevant insights, issues, or features, and output a list of distinct insights.
 
 CRITICAL INSTRUCTION: You MUST output ONLY raw, valid JSON matching the requested schema. DO NOT output any reasoning. DO NOT use `<think>` tags.

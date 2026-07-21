@@ -1,5 +1,6 @@
 from google.adk.agents import Agent
-from schemas import InsightsList
+from app.schemas.insights import InsightsList
+from app.llm import GENERATION_CONFIG
 
 
 def create_aggregator_agent(input_vars: str, model_obj) -> Agent:
@@ -20,9 +21,9 @@ You must execute a 6-stage flow to synthesize the findings:
     aggregator_agent = Agent(
         name="AggregatorAgent",
         model=model_obj,
+        generate_content_config=GENERATION_CONFIG,
         instruction=aggregator_instruction,
         output_key="executive_summary",
-        output_schema = InsightsList
-
+        output_schema=InsightsList,
     )
     return aggregator_agent

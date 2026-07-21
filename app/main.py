@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from routers import insights ,products
+from app.routers import insights, products
 
 app = FastAPI()
 

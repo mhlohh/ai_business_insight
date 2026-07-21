@@ -1,464 +1,592 @@
 import streamlit as st
 import requests
-import matplotlib.pyplot as plt
 import pandas as pd
-import time
+import matplotlib.pyplot as plt
+import re
+from logger import logger
 
-# Category and Status Style Configuration
-CATEGORY_COLORS = {
-    "Quality": ("rgba(239, 68, 68, 0.15)", "#f87171"),  # Red
-    "Support": ("rgba(245, 158, 11, 0.15)", "#fbbf24"),  # Amber
-    "Usability": ("rgba(37, 99, 235, 0.15)", "#60a5fa"),  # Blue
-    "Price": ("rgba(34, 197, 94, 0.15)", "#4ade80"),  # Green
-    "Features": ("rgba(168, 85, 247, 0.15)", "#c084fc"),  # Purple
-    "Other": ("rgba(107, 114, 128, 0.15)", "#9ca3af"),  # Gray
-}
-
-STATUS_STYLES = {
-    "Working well": {
-        "bg": "rgba(34, 197, 94, 0.15)",
-        "text": "#4ade80",
-        "border": "rgba(34, 197, 94, 0.3)",
-    },
-    "Worth watching": {
-        "bg": "rgba(234, 179, 8, 0.15)",
-        "text": "#facc15",
-        "border": "rgba(234, 179, 8, 0.3)",
-    },
-    "Needs attention": {
-        "bg": "rgba(239, 68, 68, 0.15)",
-        "text": "#f87171",
-        "border": "rgba(239, 68, 68, 0.3)",
-    },
-}
-
-
-def get_category_style(category: str):
-    cat_cap = category.capitalize()
-    return CATEGORY_COLORS.get(cat_cap, CATEGORY_COLORS["Other"])
-
-
-# Page Configuration
+# Page config
 st.set_page_config(
-    page_title="litmus7 | Product Review Intelligence",
-    page_icon="🤖",
-    layout="wide",
-    initial_sidebar_state="expanded",
+    page_title="AI Product Insights Dashboard", page_icon="📈", layout="wide"
 )
 
-# Premium Custom CSS
-st.markdown(
-    """
+# Inline SVG Logos
+SVG_GEAR = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4a5568" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 8px;"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>'
+
+SVG_SEARCH = '<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#4a6b82" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 10px;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>'
+
+SVG_PACKAGE = '<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4a6b82" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 8px;"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"></line><polygon points="12 22.08 12 12 3 6.92 3 17.08 12 22.08"></polygon><polygon points="12 12 21 6.92 21 17.08 12 22.08"></polygon><polygon points="12 2 21 6.92 12 12 3 6.92 12 2"></polygon><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>'
+
+SVG_CHART = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4a6b82" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 8px;"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>'
+
+SVG_TRENDING = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#b27a50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 8px;"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>'
+
+SVG_LIST = '<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4a6b82" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 8px;"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>'
+
+SVG_TAG = '<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#4a5568" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 4px;"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>'
+
+SVG_REFRESH = '<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#4a5568" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 4px;"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>'
+
+SVG_TARGET = '<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#4a5568" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 4px;"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>'
+
+# Custom CSS for Neumorphism (Soft UI) with Consistent Palette
+neumorphic_css = """
 <style>
-    /* Dark glassmorphic container styles */
+    /* Global Styles */
     .stApp {
-        background: linear-gradient(135deg, #0e1117 0%, #161a24 100%);
-        color: #e2e8f0;
+        background-color: #e0e5ec !important;
     }
     
-    /* Header custom styles */
+    [data-testid="stSidebar"] {
+        background-color: #e0e5ec !important;
+        box-shadow: 4px 0 15px rgba(163, 177, 198, 0.4) !important;
+        border-right: none !important;
+    }
+    
+    /* Top Header Bar */
+    header[data-testid="stHeader"] {
+        background-color: #ffffff !important;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05) !important;
+    }
+    header[data-testid="stHeader"] * {
+        color: #4a5568 !important;
+    }
+    
+    /* Typography */
+    h1, h2, h3, h4, h5, h6, p, label, span, div {
+        color: #4a5568 !important;
+        font-family: 'Outfit', 'Inter', -apple-system, sans-serif !important;
+    }
+    
+    /* Title Styling */
     .main-title {
-        font-family: 'Outfit', 'Inter', sans-serif;
-        background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        font-size: 3rem;
-        font-weight: 800;
-        margin-bottom: 0.5rem;
-    }
-    
-    /* Subtitle styles */
-    .subtitle {
-        color: #94a3b8;
-        font-size: 1.2rem;
-        margin-bottom: 2rem;
-    }
-    
-    /* Premium card containers */
-    .metric-card {
-        background: rgba(30, 41, 59, 0.4);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        border-radius: 12px;
-        padding: 1.5rem;
+        font-size: 2.3rem;
+        font-weight: 700;
         text-align: center;
-        backdrop-filter: blur(10px);
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        margin-bottom: 2rem;
+        color: #4a6b82 !important;
+        text-shadow: 1px 1px 2px rgba(255,255,255,0.8), -1px -1px 2px rgba(163,177,198,0.6);
     }
     
-    /* Custom insight card */
-    .insight-card {
-        background: rgba(30, 41, 59, 0.3);
-        border-left: 4px solid #6366f1;
-        border-radius: 6px;
-        padding: 1.2rem;
-        margin-bottom: 1rem;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    /* Neumorphic Cards */
+    .neumorphic-card {
+        background-color: #e0e5ec;
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 25px;
+        box-shadow: 9px 9px 16px rgba(163, 177, 198, 0.6), 
+                    -9px -9px 16px rgba(255, 255, 255, 0.6);
+        border: none;
     }
     
-    /* Custom scrollable container for reviews */
-    .reviews-container {
-        max-height: 400px;
-        overflow-y: auto;
-        padding-right: 10px;
+    .neumorphic-card-inset {
+        background-color: #e0e5ec;
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: inset 6px 6px 10px rgba(163, 177, 198, 0.5), 
+                    inset -6px -6px 10px rgba(255, 255, 255, 0.6);
+        border: none;
+    }
+
+    /* KPI metric cards */
+    .kpi-container {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+    .kpi-card {
+        flex: 1;
+        background-color: #e0e5ec;
+        border-radius: 15px;
+        padding: 20px;
+        text-align: center;
+        box-shadow: 6px 6px 12px rgba(163, 177, 198, 0.5), 
+                    -6px -6px 12px rgba(255, 255, 255, 0.6);
+    }
+    .kpi-value {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #4a6b82 !important;
+        margin: 5px 0;
+    }
+    .kpi-label {
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #718096 !important;
+    }
+    
+    /* Neumorphic Badges */
+    .category-badge {
+        background-color: #e0e5ec;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        color: #4a5568 !important;
+        box-shadow: inset 3px 3px 6px rgba(163, 177, 198, 0.4), 
+                    inset -3px -3px 6px rgba(255, 255, 255, 0.6);
+        display: inline-block;
+    }
+    
+    .score-badge {
+        background-color: #e0e5ec;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #b27a50 !important;
+        box-shadow: 3px 3px 6px rgba(163, 177, 198, 0.4), 
+                    -3px -3px 6px rgba(255, 255, 255, 0.6);
+        display: inline-block;
+    }
+
+    /* Buttons */
+    div.stButton > button {
+        background-color: #e0e5ec !important;
+        color: #4a5568 !important;
+        border: none !important;
+        border-radius: 12px !important;
+        padding: 12px 28px !important;
+        font-weight: 600 !important;
+        box-shadow: 6px 6px 12px rgba(163, 177, 198, 0.6), 
+                    -6px -6px 12px rgba(255, 255, 255, 0.6) !important;
+        transition: all 0.2s ease-in-out !important;
+        width: 100% !important;
+    }
+    
+    div.stButton > button:hover {
+        color: #4a6b82 !important;
+        box-shadow: 3px 3px 6px rgba(163, 177, 198, 0.6), 
+                    -3px -3px 6px rgba(255, 255, 255, 0.6) !important;
+    }
+    
+    div.stButton > button:active {
+        box-shadow: inset 4px 4px 8px rgba(163, 177, 198, 0.7), 
+                    inset -4px -4px 8px rgba(255, 255, 255, 0.8) !important;
+    }
+
+    /* Selectbox & Inputs */
+    div[data-baseweb="select"] {
+        background-color: #e0e5ec !important;
+        border-radius: 12px !important;
+        box-shadow: inset 4px 4px 8px rgba(163, 177, 198, 0.5), 
+                    inset -4px -4px 8px rgba(255, 255, 255, 0.6) !important;
+        border: none !important;
+    }
+    
+    div[data-baseweb="select"] > div {
+        background-color: transparent !important;
+        border: none !important;
     }
 </style>
-""",
+"""
+st.markdown(neumorphic_css, unsafe_allow_html=True)
+
+# Sidebar Configuration
+st.sidebar.markdown(
+    f'<div class="neumorphic-card" style="padding: 15px;">'
+    f'<h3 style="margin-top:0; text-align:center; display:flex; align-items:center; justify-content:center;">'
+    f"{SVG_GEAR}Configuration</h3>"
+    f"</div>",
     unsafe_allow_html=True,
 )
 
-# API Endpoint Configurations
-API_BASE = "http://127.0.0.1:8000"
-
-st.markdown(
-    '<div class="main-title">Product Review Intelligence Platform</div>',
-    unsafe_allow_html=True,
-)
-
-
-# Helper function to fetch products from backend
-def fetch_products():
-    try:
-        response = requests.get(f"{API_BASE}/db/products")
-        if response.status_code == 200:
-            data = response.json()
-            if data:  # Only return if the list is not empty
-                return data
-    except Exception:
-        pass
-    # Fallback to local default list if backend is not started or DB is empty
-    return [
-        {
-            "id": 1,
-            "asin": "B018Y229OU",
-            "name": "Fire Tablet, 7 Display, Wi-Fi, 8 GB",
-            "description": "Amazon Fire Tablet with 7-inch display, Wi-Fi, 8 GB storage.",
-        },
-        {
-            "id": 2,
-            "asin": "B00L9EPT8O",
-            "name": "Amazon Echo (White)",
-            "description": "Amazon Echo smart speaker with Alexa.",
-        },
-    ]
+backend_url = "http://localhost:8000"
 
 
 # Fetch products
-products_list = fetch_products()
-product_names = [p["name"] for p in products_list]
+@st.cache_data(ttl=60)
+def fetch_products(api_url):
+    logger.info(f"Streamlit - Fetching products from {api_url}/products/")
+    try:
+        response = requests.get(f"{api_url}/products/")
+        if response.status_code == 200:
+            data = response.json()
+            logger.info(f"Streamlit - Successfully fetched {len(data)} products")
+            return data
+    except Exception as e:
+        logger.error(f"Streamlit - Error connecting to backend: {e}")
+        st.sidebar.error(f"Error connecting to backend: {e}")
+    return []
 
-# Sidebar selection
-with st.sidebar:
-    st.markdown("### 🛒 Product Selection")
-    if not product_names:
-        st.warning("No products found in the database. Please run `python init_db.py` to initialize it.")
-        st.stop()
 
-    selected_product_name = st.selectbox(
-        "Choose a product for review analysis:", product_names
-    )
+products = fetch_products(backend_url)
 
-    # Get selected product details
-    selected_prod = next(p for p in products_list if p["name"] == selected_product_name)
-    product_id = selected_prod["id"]
-    asin = selected_prod.get("asin", "N/A")
-
-    st.markdown("---")
-    st.markdown(f"**ASIN:** `{asin}`")
-    st.markdown(f"**Description:** {selected_prod.get('description', '')}")
-    if "price" in selected_prod:
-        st.markdown(f"**Price:** `${selected_prod['price']}`")
-
-    st.markdown("---")
-    st.markdown("### ⚙️ Pipeline Control")
-    if st.button("🔄 Reload Products", use_container_width=True):
-        st.cache_data.clear()
-        st.rerun()
-
-    if st.button("🗑️ Clear Analysis Cache", use_container_width=True):
-        try:
-            resp = requests.delete(f"{API_BASE}/analyze/{product_id}/cache")
-            if resp.status_code == 200:
-                if "insights" in st.session_state:
-                    del st.session_state["insights"]
-                st.sidebar.success("Analysis cache cleared successfully!")
-                st.rerun()
-            else:
-                st.sidebar.error(f"Failed to clear cache: {resp.text}")
-        except Exception as e:
-            st.sidebar.error(f"Failed to communicate with backend: {e}")
-
-# ----------------- Main Layout -----------------
-
-# Fetch reviews for the selected product
-reviews_data = []
-try:
-    resp = requests.get(f"{API_BASE}/reviews/{product_id}")
-    if resp.status_code == 200:
-        reviews_data = resp.json().get("reviews", [])
-except Exception:
-    st.error(
-        "🔌 Could not connect to FastAPI backend server. Please verify uvicorn is running on port 8000."
+if not products:
+    st.markdown(
+        f'<div class="neumorphic-card" style="border-left: 5px solid #b85c5c; padding: 20px;">'
+        f'<h3 style="color: #b85c5c !important; margin: 0;">Connection Error</h3>'
+        f'<p style="color: #718096 !important; margin: 5px 0 0 0;">Could not retrieve products. Please ensure the FastAPI backend is running.</p>'
+        f"</div>",
+        unsafe_allow_html=True,
     )
     st.stop()
 
-# Layout: Full-width AI Analytics Dashboard
-st.markdown("### 📊 AI Analytics Dashboard")
-st.write("Extract business intelligence using the divide-and-conquer agent pipeline.")
+# Product list formatter
+product_options = {p["name"]: p["id"] for p in products}
+selected_product_name = st.sidebar.selectbox(
+    "Select a Product", list(product_options.keys())
+)
+selected_product_id = product_options[selected_product_name]
+logger.info(
+    f"Streamlit - User active product: {selected_product_name} (ID: {selected_product_id})"
+)
 
-analyze_btn = st.button("🤖 Analyze Reviews", type="primary", use_container_width=True)
-
-# Placeholder or display result
-if analyze_btn:
-    with st.spinner("Executing dynamic parallel sub-agents and aggregator flow..."):
-        try:
-            response = requests.get(f"{API_BASE}/analyze/{product_id}")
-            if response.status_code == 200:
-                result = response.json()
-                insights = result.get("analysis", [])
-                cached = result.get("cached", False)
-                reviews_analyzed = result.get("reviews_analyzed", 0)
-                execution_time = result.get("execution_time_seconds", 0.0)
-
-                # Store results in session state to persist on redraw
-                st.session_state["insights"] = insights
-                st.session_state["cached"] = cached
-                st.session_state["reviews_analyzed"] = reviews_analyzed
-                st.session_state["execution_time"] = execution_time
-                st.session_state["analyzed_prod_id"] = product_id
-            else:
-                st.error(f"Error running analysis: {response.text}")
-        except Exception as e:
-            st.error(f"Failed to communicate with analysis backend: {e}")
-
-# Check if we have analysis results in session state for selected product
-if (
-    "insights" in st.session_state
-    and st.session_state.get("analyzed_prod_id") == product_id
-):
-    insights = st.session_state["insights"]
-    cached = st.session_state["cached"]
-    reviews_analyzed = st.session_state["reviews_analyzed"]
-    execution_time = st.session_state["execution_time"]
-
-    # 1. Performance Indicator Cards
-    m_col1, m_col2 = st.columns(2)
-    with m_col1:
-        if cached:
-            st.markdown(
-                """
-            <div class="metric-card">
-                <div style="font-size: 1.8rem;">⚡</div>
-                <div style="font-weight: bold; color: #10b981; font-size: 1.1rem;">CACHE HIT</div>
-                <div style="color: #94a3b8; font-size: 0.85rem;">Loaded from Sqlite3 cache</div>
-            </div>
-            """,
-                unsafe_allow_html=True,
+# Refresh Cache button
+st.sidebar.markdown("<br>", unsafe_allow_html=True)
+if st.sidebar.button("Clear Cache"):
+    logger.info(
+        f"Streamlit - User triggered Cache Clear for product ID {selected_product_id}"
+    )
+    try:
+        res = requests.delete(f"{backend_url}/insights/products/{selected_product_id}")
+        if res.status_code == 200:
+            logger.info(
+                f"Streamlit - Cache successfully cleared on backend for product ID {selected_product_id}"
             )
+            st.sidebar.success("Cache cleared successfully!")
+            st.cache_data.clear()
         else:
+            logger.error(
+                f"Streamlit - Failed to clear cache on backend for product ID {selected_product_id}. Status: {res.status_code}"
+            )
+            st.sidebar.error("Failed to clear cache.")
+    except Exception as e:
+        logger.error(
+            f"Streamlit - Exception during cache clear for product ID {selected_product_id}: {e}"
+        )
+        st.sidebar.error(f"Error: {e}")
+
+# Main Layout Header
+st.markdown(
+    f'<div class="main-title">{SVG_SEARCH}AI Product Review Insights</div>',
+    unsafe_allow_html=True,
+)
+
+# Product Info Card
+st.markdown(
+    f'<div class="neumorphic-card">'
+    f'<h2 style="margin: 0; color: #4a6b82 !important; display: flex; align-items: center;">'
+    f"{SVG_PACKAGE}{selected_product_name}</h2>"
+    f'<p style="margin: 5px 0 0 0; color: #718096 !important; font-size: 0.95rem;">Product ID: {selected_product_id}</p>'
+    f"</div>",
+    unsafe_allow_html=True,
+)
+
+
+# Fetch Insights
+def get_insights(api_url, product_id):
+    logger.info(f"Streamlit - Requesting insights for product ID {product_id}")
+    try:
+        res = requests.get(f"{api_url}/insights/products/{product_id}")
+        if res.status_code == 200:
+            data = res.json()
+            # If the backend returned wrapped cache data: {"status": "success", "data": {"analysis": "..."}}
+            if isinstance(data, dict) and data.get("status") == "success":
+                inner_data = data.get("data", {})
+                if "analysis" in inner_data:
+                    try:
+                        import json
+
+                        logger.info(
+                            f"Streamlit - Cache hit for product ID {product_id} (wrapped data)"
+                        )
+                        return json.loads(inner_data["analysis"]), None
+                    except Exception as e:
+                        logger.error(
+                            f"Streamlit - Failed to parse wrapped insights json for product ID {product_id}: {e}"
+                        )
+                        pass
+                logger.info(f"Streamlit - Cache hit for product ID {product_id}")
+                return inner_data, None
+            logger.info(
+                f"Streamlit - Successfully fetched insights for product ID {product_id}"
+            )
+            return data, None
+        else:
+            detail = res.json().get("detail", "Failed to fetch insights")
+            logger.warning(
+                f"Streamlit - Failed to fetch insights for product ID {product_id}. Status: {res.status_code}, Detail: {detail}"
+            )
+            return None, detail
+    except Exception as e:
+        logger.error(
+            f"Streamlit - Exception during fetching insights for product ID {product_id}: {e}"
+        )
+        return None, str(e)
+
+
+insights_data, error = get_insights(backend_url, selected_product_id)
+
+if error:
+    st.markdown(
+        f'<div class="neumorphic-card" style="text-align: center; padding: 40px; border-top: 4px solid #b27a50;">'
+        f'<h3 style="color: #b27a50 !important; margin: 0 0 10px 0;">No insights cached for this product yet.</h3>'
+        f'<p style="color: #718096 !important; margin: 0;">The reviews need to be processed by the AI pipeline.</p>'
+        f"</div>",
+        unsafe_allow_html=True,
+    )
+
+    if st.button("Generate AI Insights"):
+        logger.info(
+            f"Streamlit - User triggered AI Insight generation for product ID {selected_product_id}"
+        )
+        with st.spinner("Processing reviews with parallel LLM agents... Please wait."):
+            # Re-fetch which triggers generation
+            insights_data, error = get_insights(backend_url, selected_product_id)
+            if error:
+                logger.error(
+                    f"Streamlit - Generation failed for product ID {selected_product_id}: {error}"
+                )
+                st.markdown(
+                    f'<div class="neumorphic-card" style="border-left: 5px solid #b85c5c; padding: 20px; margin-top: 15px;">'
+                    f'<h4 style="color: #b85c5c !important; margin: 0;">Analysis Failed</h4>'
+                    f'<p style="color: #718096 !important; margin: 5px 0 0 0;">{error}</p>'
+                    f"</div>",
+                    unsafe_allow_html=True,
+                )
+            else:
+                logger.info(
+                    f"Streamlit - Generation succeeded and cache loaded for product ID {selected_product_id}"
+                )
+                st.success("Successfully generated new insights!")
+                st.rerun()
+else:
+    # Render Insights
+    insights = (
+        insights_data.get("insights", [])
+        if isinstance(insights_data, dict)
+        else insights_data
+    )
+
+    if not insights:
+        st.info("No insights found.")
+        st.stop()
+
+    # Create initial DataFrame
+    df = pd.DataFrame(insights)
+
+    # Category weights for frontend score calculation fallback
+    category_weights = {
+        "quality": 1.5,
+        "support": 1.2,
+        "usability": 1.3,
+        "price": 1.0,
+    }
+
+    # Ensure score is computed on the frontend if missing in the API response
+    if "score" not in df.columns or df["score"].isnull().all():
+        scores = []
+        for idx, row in df.iterrows():
+            freq = float(row.get("frequency", 1))
+            conf = float(row.get("confidence", 0.8))
+            cat = str(row.get("category", "other")).lower().strip()
+            weight = category_weights.get(cat, 1.0)
+            scores.append(round(freq * conf * weight, 2))
+        df["score"] = scores
+
+    # Sidebar Filter Controls
+    st.sidebar.markdown(
+        f'<div class="neumorphic-card" style="padding: 12px; margin-top: 20px;">'
+        f'<h4 style="margin:0; text-align:center; color:#4a6b82 !important;">Filter Insights</h4>'
+        f"</div>",
+        unsafe_allow_html=True,
+    )
+
+    # Category Filter
+    all_categories = sorted(df["category"].str.title().unique())
+    selected_categories = st.sidebar.multiselect(
+        "Select Categories", options=all_categories, default=all_categories
+    )
+
+    # Frequency Filter
+    min_freq_val = float(df["frequency"].min()) if "frequency" in df.columns else 1.0
+    max_freq_val = float(df["frequency"].max()) if "frequency" in df.columns else 10.0
+
+    if min_freq_val == max_freq_val:
+        min_freq_val = 0.0
+
+    selected_min_freq = st.sidebar.slider(
+        "Min Mentions (Frequency)",
+        min_value=float(min_freq_val),
+        max_value=float(max_freq_val),
+        value=float(min_freq_val),
+        step=1.0,
+    )
+
+    # Apply Filters to DataFrame
+    df_filtered = df.copy()
+    if selected_categories:
+        df_filtered = df_filtered[
+            df_filtered["category"].str.title().isin(selected_categories)
+        ]
+    else:
+        df_filtered = df_filtered.iloc[0:0]  # Empty df if no categories selected
+
+    if "frequency" in df_filtered.columns:
+        df_filtered = df_filtered[df_filtered["frequency"] >= selected_min_freq]
+
+    # Calculate stats based on filtered data
+    total_insights = len(df_filtered)
+
+    # Calculate avg confidence
+    avg_conf = (
+        df_filtered["confidence"].mean() * 100
+        if "confidence" in df_filtered.columns and not df_filtered.empty
+        else 0
+    )
+    # Top Category
+    top_cat = (
+        df_filtered["category"].mode()[0]
+        if "category" in df_filtered.columns and not df_filtered["category"].empty
+        else "N/A"
+    )
+
+    # KPI Grid
+    st.markdown(
+        f'<div class="kpi-container">'
+        f'  <div class="kpi-card">'
+        f'    <div class="kpi-label">Total Insights</div>'
+        f'    <div class="kpi-value">{total_insights}</div>'
+        f"  </div>"
+        f'  <div class="kpi-card">'
+        f'    <div class="kpi-label">Top Category</div>'
+        f'    <div class="kpi-value">{top_cat.title()}</div>'
+        f"  </div>"
+        f'  <div class="kpi-card">'
+        f'    <div class="kpi-label">Avg Confidence</div>'
+        f'    <div class="kpi-value">{avg_conf:.1f}%</div>'
+        f"  </div>"
+        f"</div>",
+        unsafe_allow_html=True,
+    )
+
+    if not df_filtered.empty:
+        col1, col2 = st.columns([1, 1])
+
+        with col1:
             st.markdown(
-                f"""
-            <div class="metric-card">
-                <div style="font-size: 1.8rem;">🤖</div>
-                <div style="font-weight: bold; color: #6366f1; font-size: 1.1rem;">CACHE MISS ({execution_time}s)</div>
-                <div style="color: #94a3b8; font-size: 0.85rem;">Generated by ADK agents</div>
-            </div>
-            """,
+                f'<div class="neumorphic-card">'
+                f'<h3 style="margin-top:0; display: flex; align-items: center;">'
+                f"{SVG_CHART}Insight Categories Distribution</h3>",
                 unsafe_allow_html=True,
             )
-    with m_col2:
+
+            category_counts = df_filtered["category"].str.title().value_counts()
+            fig, ax = plt.subplots(figsize=(6, 4.5), dpi=200)
+            fig.patch.set_facecolor("#e0e5ec")
+            ax.set_facecolor("#e0e5ec")
+
+            bars = ax.bar(
+                category_counts.index,
+                category_counts.values,
+                color="#4a6b82",
+                edgecolor="#354e60",
+                width=0.6,
+                linewidth=1.5,
+            )
+
+            ax.spines["top"].set_visible(False)
+            ax.spines["right"].set_visible(False)
+            ax.spines["left"].set_color("#718096")
+            ax.spines["bottom"].set_color("#718096")
+            ax.tick_params(colors="#4a5568", labelsize=10)
+            ax.set_ylabel("Count of Insights", color="#4a5568", fontsize=11)
+
+            plt.xticks(rotation=45, ha="right")
+            fig.tight_layout()
+
+            st.pyplot(fig)
+            st.markdown("</div>", unsafe_allow_html=True)
+
+        with col2:
+            st.markdown(
+                f'<div class="neumorphic-card">'
+                f'<h3 style="margin-top:0; display: flex; align-items: center;">'
+                f"{SVG_TRENDING}Insights ranked by Score</h3>",
+                unsafe_allow_html=True,
+            )
+
+            if "score" in df_filtered.columns:
+                df_sorted = df_filtered.sort_values(by="score", ascending=True).tail(
+                    5
+                )  # Top 5
+                fig, ax = plt.subplots(figsize=(6, 4.5), dpi=200)
+                fig.patch.set_facecolor("#e0e5ec")
+                ax.set_facecolor("#e0e5ec")
+
+                short_labels = [
+                    label[:25] + "..." if len(label) > 25 else label
+                    for label in df_sorted["insight"]
+                ]
+                ax.barh(
+                    short_labels,
+                    df_sorted["score"],
+                    color="#b27a50",
+                    edgecolor="#8c5e3d",
+                    height=0.5,
+                    linewidth=1.5,
+                )
+
+                ax.spines["top"].set_visible(False)
+                ax.spines["right"].set_visible(False)
+                ax.spines["left"].set_color("#718096")
+                ax.spines["bottom"].set_color("#718096")
+                ax.tick_params(colors="#4a5568", labelsize=10)
+                ax.set_xlabel("Impact Score", color="#4a5568", fontsize=11)
+                fig.tight_layout()
+
+                st.pyplot(fig)
+            else:
+                st.write("Score parameter not computed yet.")
+            st.markdown("</div>", unsafe_allow_html=True)
+    else:
         st.markdown(
-            f"""
-        <div class="metric-card">
-            <div style="font-size: 1.8rem;">📁</div>
-            <div style="font-weight: bold; color: #3b82f6; font-size: 1.1rem;">{reviews_analyzed} REVIEWS</div>
-            <div style="color: #94a3b8; font-size: 0.85rem;">Processed in parallel</div>
-        </div>
-        """,
+            f'<div class="neumorphic-card" style="text-align: center; padding: 40px; border-top: 4px solid #b85c5c;">'
+            f'<h3 style="color: #b85c5c !important; margin: 0 0 10px 0;">No matching insights</h3>'
+            f'<p style="color: #718096 !important; margin: 0;">Adjust your sidebar filters to display data and visualizations.</p>'
+            f"</div>",
             unsafe_allow_html=True,
         )
 
-    st.markdown("---")
-
-    # Check if insights is a string (fallback error) or actual list
-    if isinstance(insights, str):
-        st.warning(
-            "The model provider returned a raw text explanation instead of a parsed JSON array:"
-        )
-        st.text(insights)
-    elif not insights:
-        st.info("No actionable business insights extracted from the review content.")
-    else:
-        # 2. Visualization Charts
-        st.markdown("#### 📈 Key Takeaways Severity Chart")
-        df_insights = pd.DataFrame(insights)
-
-        # Sort for display if 'score' exists
-        if "score" in df_insights.columns:
-            df_insights_sorted = df_insights.sort_values(by="score", ascending=True)
-        else:
-            df_insights_sorted = df_insights.copy()
-            # Ensure the column exists for rendering logic below
-            df_insights_sorted["score"] = 0.0
-
-        if "insight" not in df_insights_sorted.columns:
-            df_insights_sorted["insight"] = "Unknown Insight"
-
-        num_insights = len(df_insights_sorted)
-
-        # Dynamically scale figure height based on the number of insights to prevent overlapping labels
-        fig_height = max(4.5, num_insights * 0.85)
-
-        # Matplotlib Chart Generation
-        fig, ax = plt.subplots(figsize=(10.5, fig_height))
-        fig.patch.set_facecolor("#0e1117")
-        ax.set_facecolor("#1e293b")
-
-        colors = []
-        for _, row in df_insights_sorted.iterrows():
-            status = row.get("status", "Needs attention")
-            if status == "Working well":
-                colors.append("#10b981")  # Green
-            elif status == "Worth watching":
-                colors.append("#f59e0b")  # Amber
-            else:
-                colors.append("#ef4444")  # Red
-
-        bars = ax.barh(
-            df_insights_sorted["insight"].str.wrap(55),
-            df_insights_sorted["score"],
-            color=colors,
-            edgecolor="none",
-            height=0.55,
-        )
-
-        # Add score labels next to the bars for readability
-        max_score = (
-            df_insights_sorted["score"].max() if not df_insights_sorted.empty else 10.0
-        )
-        for bar in bars:
-            width = bar.get_width()
-            ax.text(
-                width + (max_score * 0.015),
-                bar.get_y() + bar.get_height() / 2,
-                f"{width:.1f}",
-                ha="left",
-                va="center",
-                color="#e2e8f0",
-                fontsize=8,
-                fontweight="bold",
-            )
-
-        # Customizing Axes
-        ax.spines["top"].set_visible(False)
-        ax.spines["right"].set_visible(False)
-        ax.spines["left"].set_color("#475569")
-        ax.spines["bottom"].set_color("#475569")
-        ax.tick_params(colors="#94a3b8", labelsize=8)
-        ax.xaxis.grid(True, linestyle="--", alpha=0.1, color="#e2e8f0")
-        ax.set_xlabel("Priority Score", color="#e2e8f0", fontsize=9)
-        ax.set_xlim(0, max_score * 1.12)  # Give padding on the right for text labels
-
-        fig.subplots_adjust(left=0.45, right=0.92, top=0.92, bottom=0.15)
-        st.pyplot(fig)
-
-        st.markdown("---")
-
-        # 3. Insights Cards List
-        st.markdown("#### 💡 Detailed Strategic Insights")
-
-        # Category Filter and Sort Controls
-        col1, col2 = st.columns(2)
-        with col1:
-            all_cats = ["All Categories"] + sorted(
-                list(
-                    set(item.get("category", "other").capitalize() for item in insights)
-                )
-            )
-            selected_category = st.selectbox("Filter by Category", all_cats)
-        with col2:
-            sort_options = {
-                "Biggest issues first": ("score", True),
-                "Most talked about": ("frequency", False),
-            }
-            selected_sort = st.selectbox("Sort by", list(sort_options.keys()))
-
-        # Filter insights
-        filtered_insights = []
-        for item in insights:
-            cat = item.get("category", "other").capitalize()
-            if selected_category == "All Categories" or cat == selected_category:
-                filtered_insights.append(item)
-
-        # Sort insights
-        sort_field, ascending = sort_options[selected_sort]
-        filtered_insights = sorted(
-            filtered_insights,
-            key=lambda x: float(x.get(sort_field, 0.0)),
-            reverse=not ascending,
-        )
-
-        # Render cards in a responsive 2-column grid
-        for i in range(0, len(filtered_insights), 2):
-            cols = st.columns(2)
-            for j in range(2):
-                if i + j < len(filtered_insights):
-                    item = filtered_insights[i + j]
-                    cat = item.get("category", "other").capitalize()
-                    status = item.get("status", "Needs attention")
-                    score = item.get("score", 0.0)
-                    freq = item.get("frequency", 1)
-                    quote = item.get("example_quote", "N/A")
-                    insight = item.get("insight", "")
-
-                    bg_cat, text_cat = get_category_style(cat)
-                    status_style = STATUS_STYLES.get(
-                        status, STATUS_STYLES["Needs attention"]
-                    )
-                    border_color = status_style["text"]
-
-                    with cols[j]:
-                        st.markdown(
-                            f"""
-                        <div title="System Metrics -> Exact Score: {score} | Frequency: {freq}" 
-                             style="background: rgba(30, 41, 59, 0.2); 
-                                    border-left: 4px solid {border_color}; 
-                                    border-radius: 8px; 
-                                    padding: 1.2rem; 
-                                    margin-bottom: 1rem; 
-                                    border-top: 1px solid rgba(255,255,255,0.03); 
-                                    border-right: 1px solid rgba(255,255,255,0.03); 
-                                    border-bottom: 1px solid rgba(255,255,255,0.03);
-                                    height: 100%;
-                                    display: flex;
-                                    flex-direction: column;
-                                    justify-content: space-between;">
-                            <div>
-                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem;">
-                                    <span style="background-color: {bg_cat}; color: {text_cat}; font-size: 0.75rem; font-weight: bold; padding: 0.2rem 0.6rem; border-radius: 20px;">
-                                        📁 {cat}
-                                    </span>
-                                    <span style="background-color: {status_style['bg']}; color: {status_style['text']}; border: 1px solid {status_style['border']}; font-size: 0.75rem; font-weight: bold; padding: 0.2rem 0.6rem; border-radius: 20px;">
-                                        {status}
-                                    </span>
-                                </div>
-                                <div style="font-size: 1rem; font-weight: bold; color: #f8fafc; margin-bottom: 0.6rem; line-height: 1.4;">
-                                    {insight}
-                                </div>
-                            </div>
-                            <div>
-                                <div style="display: flex; align-items: center; gap: 0.4rem; color: #94a3b8; font-size: 0.85rem; margin-bottom: 0.6rem;">
-                                    <span>👥</span>
-                                    <span>{freq} customers brought this up</span>
-                                </div>
-                                <div style="font-style: italic; color: #94a3b8; padding-left: 0.8rem; border-left: 2px solid rgba(255,255,255,0.1); font-size: 0.85rem; line-height: 1.4;">
-                                    "{quote}"
-                                </div>
-                            </div>
-                        </div>
-                        """,
-                            unsafe_allow_html=True,
-                        )
-else:
-    st.info(
-        "Click the 'Analyze Reviews' button to process the feedback and extract strategic business insights."
+    # Full insights list Header
+    st.markdown(
+        f'<h2 style="margin-top:20px; color:#4a6b82; display: flex; align-items: center;">'
+        f"{SVG_LIST}AI Insights List</h2>",
+        unsafe_allow_html=True,
     )
+
+    if not df_filtered.empty:
+        for idx, row in df_filtered.sort_values(by="score", ascending=False).iterrows():
+            score_val = row.get("score", 0)
+            category_name = str(row.get("category", "other")).title()
+
+            st.markdown(
+                f'<div class="neumorphic-card">'
+                f'  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">'
+                f'    <span class="category-badge" style="display: flex; align-items: center;">{SVG_TAG}{category_name}</span>'
+                f'    <span class="score-badge">Impact: {score_val}</span>'
+                f"  </div>"
+                f'  <h3 style="margin: 0 0 10px 0; color: #2d3748; font-size: 1.25rem;">{row.get("insight")}</h3>'
+                f'  <div class="neumorphic-card-inset">'
+                f'    <p style="font-style: italic; color: #4a5568; margin: 0; font-size: 0.95rem;">'
+                f'      “{row.get("example_quote")}”'
+                f"    </p>"
+                f"  </div>"
+                f'  <div style="display: flex; gap: 20px; font-size: 0.85rem; color: #718096; margin-top: 15px; border-top: 1px dashed #cbd5e0; padding-top: 10px;">'
+                f'    <span style="display: flex; align-items: center;">{SVG_REFRESH}<strong>Frequency:</strong> &nbsp;{int(row.get("frequency", 1))}</span>'
+                f'    <span style="display: flex; align-items: center;">{SVG_TARGET}<strong>Confidence:</strong> &nbsp;{row.get("confidence") * 100:.0f}%</span>'
+                f"  </div>"
+                f"</div>",
+                unsafe_allow_html=True,
+            )
+    else:
+        st.markdown(
+            f'<div class="neumorphic-card" style="text-align: center; padding: 25px;">'
+            f'<p style="color: #718096 !important; margin: 0;">Use the filters in the sidebar to populate insights.</p>'
+            f"</div>",
+            unsafe_allow_html=True,
+        )
