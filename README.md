@@ -1,3 +1,5 @@
+#This project is done as a part of internship at litmus7
+
 # 🤖 Product Review Intelligence Platform
 
 > **Divide-and-conquer AI pipeline** that transforms thousands of unstructured product reviews into scored, prioritized business insights — powered by parallel LLM agents.
