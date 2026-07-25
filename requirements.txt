@@ -6,3 +6,6 @@ google-genai >= 2.10.0
 streamlit >= 1.58.0
 matplotlib  >= 3.11.0
 pandas >= 3.0.3
+SQLAlchemy >= 2.0.51
+typing >= 3.7.4.3
+streamlit >= 1.60.0
