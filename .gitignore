@@ -27,8 +27,4 @@ htmlcov/
 # OS metadata
 .DS_Store
 
-#logs
-logs/
 
-#test
-scratch_test.py

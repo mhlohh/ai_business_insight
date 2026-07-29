@@ -1,0 +1,4 @@
+[2026-07-09 19:17:04] [Parallel Analysis] ReviewResearcher_1 successfully processed its review chunk.
+[2026-07-09 19:17:04]    ├─ Generated 2672 characters of text.
+[2026-07-09 19:17:04] ❌ Error communicating with LLM provider (Groq): unhandled errors in a TaskGroup (1 sub-exception)
+[2026-07-09 19:17:04] 👉 Please ensure that your GROQ_API_KEY is correctly set in your .env file.

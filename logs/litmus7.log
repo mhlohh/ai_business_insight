@@ -1,0 +1,813 @@
+2026-07-19 22:13:49 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-19 22:13:49 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-19 22:13:53 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-19 22:13:53 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-19 22:13:54 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-19 22:13:54 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-19 22:13:59 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-19 22:13:59 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-19 22:15:16 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-19 22:15:16 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-19 22:15:30 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-19 22:15:30 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-20 12:10:00 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-20 12:10:00 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-20 12:10:01 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-20 12:10:01 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-20 12:10:21 | DEBUG    | database | DB | Entering clear_cache with args=[] kwargs={}
+2026-07-20 12:10:21 | DEBUG    | database | DB | clear_cache completed successfully
+2026-07-20 12:10:27 | DEBUG    | database | DB | Entering clear_cache with args=[] kwargs={}
+2026-07-20 12:10:27 | DEBUG    | database | DB | clear_cache completed successfully
+2026-07-20 12:10:30 | DEBUG    | database | DB | Entering clear_cache with args=[] kwargs={}
+2026-07-20 12:10:30 | DEBUG    | database | DB | clear_cache completed successfully
+2026-07-20 12:10:33 | DEBUG    | database | DB | Entering clear_cache with args=[] kwargs={}
+2026-07-20 12:10:33 | DEBUG    | database | DB | clear_cache completed successfully
+2026-07-20 12:10:36 | DEBUG    | database | DB | Entering clear_cache with args=[] kwargs={}
+2026-07-20 12:10:36 | DEBUG    | database | DB | clear_cache completed successfully
+2026-07-20 12:10:38 | DEBUG    | database | DB | Entering clear_cache with args=[] kwargs={}
+2026-07-20 12:10:38 | DEBUG    | database | DB | clear_cache completed successfully
+2026-07-20 12:10:41 | DEBUG    | database | DB | Entering clear_cache with args=[] kwargs={}
+2026-07-20 12:10:41 | DEBUG    | database | DB | clear_cache completed successfully
+2026-07-20 12:10:50 | DEBUG    | database | DB | Entering get_cached_analysis with args=[] kwargs={}
+2026-07-20 12:10:50 | DEBUG    | database | DB | get_cached_analysis completed successfully
+2026-07-20 12:10:50 | DEBUG    | database | DB | Entering get_reviews with args=[] kwargs={}
+2026-07-20 12:10:50 | DEBUG    | database | DB | get_reviews completed successfully
+2026-07-20 12:10:53 | INFO     | logger | 🔄 [Agent Event] Author: ReviewResearcher_0 | Node Path: 
+2026-07-20 12:10:53 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "Exceptional processing performance with Snapdragon 8 Elite...
+2026-07-20 12:10:56 | INFO     | logger | 🔄 [Agent Event] Author: AggregatorAgent | Node Path: 
+2026-07-20 12:10:56 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "Exceptional processing performance with Snapdragon 8 Elite...
+2026-07-20 12:10:56 | DEBUG    | database | DB | Entering cache_analysis with args=({'insights': [{'insight': 'Exceptional processing performance with Snapdragon 8 Elite Gen 5', 'confidence': 1.0, 'frequency': 1.0, 'example_quote': 'the new snapdragon 8 elite gen 5 is ridiculously fast. zero lag anywhere.', 'category': 'performance', 'score': 1.0}, {'insight': 'Significant improvement in battery life over previous generation', 'confidence': 0.95, 'frequency': 1.0, 'example_quote': 'battery life is insanely good compared to the older s24 ultra.', 'category': 'performance', 'score': 0.95}, {'insight': 'Camera quality is high, but 200MP sensor shows diminishing returns', 'confidence': 0.9, 'frequency': 1.0, 'example_quote': "the camera is great, but honestly the 200mp shots look similar to last year's model.", 'category': 'quality', 'score': 1.35}, {'insight': 'Positive reception of aesthetic design and lightweight titanium frame', 'confidence': 0.95, 'frequency': 1.0, 'example_quote': 'sky blue color is gorgeous. the titanium frame feels much lighter this year.', 'category': 'design', 'score': 0.95}, {'insight': 'Perceived lack of value for existing S24/S25 Ultra owners', 'confidence': 0.85, 'frequency': 1.0, 'example_quote': "overpriced. the upgrade from s25 ultra isn't worth it.", 'category': 'price', 'score': 0.85}, {'insight': 'High screen brightness improves outdoor usability', 'confidence': 0.95, 'frequency': 1.0, 'example_quote': 'screen is incredibly bright even in direct sunlight. great for outdoor use.', 'category': 'usability', 'score': 1.23}, {'insight': 'AI photo editing features are a key differentiator', 'confidence': 0.9, 'frequency': 1.0, 'example_quote': "samsung's new ai features for photo editing are mind-blowing.", 'category': 'features', 'score': 0.9}, {'insight': 'Thermal management issues during intensive gaming sessions', 'confidence': 0.8, 'frequency': 1.0, 'example_quote': 'phone gets a bit warm when playing heavy 3d games for over an hour.', 'category': 'performance', 'score': 0.8}, {'insight': 'Improved fingerprint sensor reliability and speed', 'confidence': 0.95, 'frequency': 1.0, 'example_quote': 'finally, they improved the fingerprint sensor! much faster and more accurate.', 'category': 'usability', 'score': 1.23}, {'insight': 'Demand for faster charging technology', 'confidence': 0.9, 'frequency': 1.0, 'example_quote': 'solid build quality, but still waiting for faster charging speeds.', 'category': 'features', 'score': 0.9}]},) kwargs={}
+2026-07-20 12:10:56 | DEBUG    | database | DB | cache_analysis completed successfully
+2026-07-20 12:12:10 | DEBUG    | database | DB | Entering get_cached_analysis with args=[] kwargs={}
+2026-07-20 12:12:10 | DEBUG    | database | DB | get_cached_analysis completed successfully
+2026-07-20 12:12:10 | DEBUG    | database | DB | Entering get_reviews with args=[] kwargs={}
+2026-07-20 12:12:10 | DEBUG    | database | DB | get_reviews completed successfully
+2026-07-20 12:12:13 | INFO     | logger | 🔄 [Agent Event] Author: ReviewResearcher_0 | Node Path: 
+2026-07-20 12:12:13 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "High aesthetic appeal of the cosmic orange color",       "...
+2026-07-20 12:12:15 | INFO     | logger | 🔄 [Agent Event] Author: AggregatorAgent | Node Path: 
+2026-07-20 12:12:15 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "High aesthetic appeal of the cosmic orange color",       "...
+2026-07-20 12:12:15 | DEBUG    | database | DB | Entering cache_analysis with args=({'insights': [{'insight': 'High aesthetic appeal of the cosmic orange color', 'confidence': 1.0, 'frequency': 1.0, 'example_quote': 'the cosmic orange color is absolutely stunning in person.', 'category': 'quality', 'score': 1.5}, {'insight': 'A19 Pro chip provides high-performance gaming capabilities', 'confidence': 1.0, 'frequency': 1.0, 'example_quote': 'a19 pro chip handles aaa gaming like a breeze. truly console level.', 'category': 'usability', 'score': 1.3}, {'insight': 'Pro Fusion camera system excels in low-light conditions', 'confidence': 1.0, 'frequency': 1.0, 'example_quote': 'the pro fusion camera system takes low-light photography to a new level.', 'category': 'quality', 'score': 1.5}, {'insight': 'Exceptional battery life lasting up to two days', 'confidence': 1.0, 'frequency': 1.0, 'example_quote': 'battery easily lasts two days of moderate use. best battery on an iphone yet.', 'category': 'quality', 'score': 1.5}, {'insight': 'Under-screen Face ID technology functions seamlessly', 'confidence': 1.0, 'frequency': 1.0, 'example_quote': 'the new invisible face id under the screen works perfectly.', 'category': 'usability', 'score': 1.3}, {'insight': 'Device weight is excessive despite titanium construction', 'confidence': 0.9, 'frequency': 1.0, 'example_quote': "very heavy phone. the titanium doesn't seem to help much with the 1tb model's weight.", 'category': 'quality', 'score': 1.35}, {'insight': 'Desire for increased home screen customization in iOS 20', 'confidence': 0.9, 'frequency': 1.0, 'example_quote': 'ios 20 is smooth, but i wish there was more customization on the home screen.', 'category': 'usability', 'score': 1.17}, {'insight': 'Improved zoom capabilities are competitive with market leaders', 'confidence': 0.9, 'frequency': 1.0, 'example_quote': 'the zoom capabilities are finally catching up to samsung. very impressed.', 'category': 'quality', 'score': 1.35}, {'insight': 'High price point limits value proposition to power users', 'confidence': 0.9, 'frequency': 1.0, 'example_quote': 'extremely expensive. only buy the 1tb if you shoot a lot of prores video.', 'category': 'price', 'score': 0.9}, {'insight': 'Display quality and 120Hz refresh rate are highly satisfactory', 'confidence': 1.0, 'frequency': 1.0, 'example_quote': 'display is flawless, 120hz promotion is smooth as butter.', 'category': 'quality', 'score': 1.5}]},) kwargs={}
+2026-07-20 12:12:15 | DEBUG    | database | DB | cache_analysis completed successfully
+2026-07-20 12:12:34 | DEBUG    | database | DB | Entering get_cached_analysis with args=[] kwargs={}
+2026-07-20 12:12:34 | DEBUG    | database | DB | get_cached_analysis completed successfully
+2026-07-20 12:12:34 | DEBUG    | database | DB | Entering get_reviews with args=[] kwargs={}
+2026-07-20 12:12:34 | DEBUG    | database | DB | get_reviews completed successfully
+2026-07-20 12:12:36 | INFO     | logger | 🔄 [Agent Event] Author: ReviewResearcher_0 | Node Path: 
+2026-07-20 12:12:36 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "High-quality camera performance with 1-inch sensor and Zei...
+2026-07-20 12:12:39 | INFO     | logger | 🔄 [Agent Event] Author: AggregatorAgent | Node Path: 
+2026-07-20 12:12:39 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "High-quality camera performance with 1-inch sensor and Zei...
+2026-07-20 12:12:39 | DEBUG    | database | DB | Entering cache_analysis with args=({'insights': [{'insight': 'High-quality camera performance with 1-inch sensor and Zeiss lenses', 'confidence': 1.0, 'frequency': 3.0, 'example_quote': 'the 1-inch camera sensor with zeiss lenses takes dslr-quality photos.', 'category': 'quality', 'score': 4.5}, {'insight': 'Premium design and build quality with vegan leather', 'confidence': 0.9, 'frequency': 1.0, 'example_quote': 'victory green has a beautiful vegan leather back. feels very premium.', 'category': 'quality', 'score': 1.35}, {'insight': 'Software bloatware issues in Funtouch OS', 'confidence': 0.9, 'frequency': 1.0, 'example_quote': 'performance is top tier with 16gb ram, but funtouch os still has some bloatware.', 'category': 'usability', 'score': 1.17}, {'insight': 'Extremely fast battery charging capabilities', 'confidence': 1.0, 'frequency': 1.0, 'example_quote': 'battery charging is ridiculously fast - 0 to 100 in about 20 minutes!', 'category': 'quality', 'score': 1.5}, {'insight': 'Difficulty finding compatible screen protectors for curved display', 'confidence': 0.9, 'frequency': 1.0, 'example_quote': 'the curved display looks nice but finding a good screen protector is a nightmare.', 'category': 'usability', 'score': 1.17}, {'insight': 'Thermal management issues during high-resolution video recording', 'confidence': 0.9, 'frequency': 1.0, 'example_quote': 'gets quite warm when shooting 4k 120fps video for extended periods.', 'category': 'quality', 'score': 1.35}, {'insight': 'Ergonomic instability due to large camera bump', 'confidence': 0.9, 'frequency': 1.0, 'example_quote': 'camera bump is huge, making it wobble heavily on a table.', 'category': 'usability', 'score': 1.17}]},) kwargs={}
+2026-07-20 12:12:39 | DEBUG    | database | DB | cache_analysis completed successfully
+2026-07-21 09:55:42 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-21 09:55:42 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-21 09:55:43 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-21 09:55:43 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-21 09:56:42 | DEBUG    | database | DB | Entering get_products with args=[] kwargs={}
+2026-07-21 09:56:42 | DEBUG    | database | DB | get_products completed successfully
+2026-07-21 09:57:03 | DEBUG    | database | DB | Entering get_cached_analysis with args=[] kwargs={}
+2026-07-21 09:57:03 | DEBUG    | database | DB | get_cached_analysis completed successfully
+2026-07-21 09:57:19 | DEBUG    | database | DB | Entering clear_cache with args=[] kwargs={}
+2026-07-21 09:57:19 | DEBUG    | database | DB | clear_cache completed successfully
+2026-07-21 09:57:22 | DEBUG    | database | DB | Entering get_cached_analysis with args=[] kwargs={}
+2026-07-21 09:57:22 | DEBUG    | database | DB | get_cached_analysis completed successfully
+2026-07-21 09:57:22 | DEBUG    | database | DB | Entering get_reviews with args=[] kwargs={}
+2026-07-21 09:57:22 | DEBUG    | database | DB | get_reviews completed successfully
+2026-07-21 09:57:25 | INFO     | logger | 🔄 [Agent Event] Author: ReviewResearcher_0 | Node Path: 
+2026-07-21 09:57:25 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "Exceptional processing performance with Snapdragon 8 Elite...
+2026-07-21 09:57:28 | INFO     | logger | 🔄 [Agent Event] Author: AggregatorAgent | Node Path: 
+2026-07-21 09:57:28 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "Exceptional processing performance with Snapdragon 8 Elite...
+2026-07-21 09:57:28 | DEBUG    | database | DB | Entering cache_analysis with args=({'insights': [{'insight': 'Exceptional processing performance with Snapdragon 8 Elite Gen 5', 'confidence': 1.0, 'frequency': 1.0, 'example_quote': 'the new snapdragon 8 elite gen 5 is ridiculously fast. zero lag anywhere.', 'category': 'performance', 'score': 1.0}, {'insight': 'Significant improvement in battery life over previous generation', 'confidence': 0.95, 'frequency': 1.0, 'example_quote': 'battery life is insanely good compared to the older s24 ultra.', 'category': 'performance', 'score': 0.95}, {'insight': 'Camera quality is high, but 200MP sensor shows diminishing returns', 'confidence': 0.9, 'frequency': 1.0, 'example_quote': "the camera is great, but honestly the 200mp shots look similar to last year's model.", 'category': 'quality', 'score': 1.35}, {'insight': 'Positive reception of aesthetic design and lightweight titanium frame', 'confidence': 0.95, 'frequency': 1.0, 'example_quote': 'sky blue color is gorgeous. the titanium frame feels much lighter this year.', 'category': 'design', 'score': 0.95}, {'insight': 'Perceived lack of value for existing S24/S25 Ultra owners', 'confidence': 0.85, 'frequency': 1.0, 'example_quote': "overpriced. the upgrade from s25 ultra isn't worth it.", 'category': 'price', 'score': 0.85}, {'insight': 'High screen brightness improves outdoor usability', 'confidence': 0.95, 'frequency': 1.0, 'example_quote': 'screen is incredibly bright even in direct sunlight. great for outdoor use.', 'category': 'usability', 'score': 1.23}, {'insight': 'AI photo editing features are a key differentiator', 'confidence': 0.9, 'frequency': 1.0, 'example_quote': "samsung's new ai features for photo editing are mind-blowing.", 'category': 'features', 'score': 0.9}, {'insight': 'Thermal management issues during intensive gaming sessions', 'confidence': 0.8, 'frequency': 1.0, 'example_quote': 'phone gets a bit warm when playing heavy 3d games for over an hour.', 'category': 'performance', 'score': 0.8}, {'insight': 'Improved fingerprint sensor reliability and speed', 'confidence': 0.95, 'frequency': 1.0, 'example_quote': 'finally, they improved the fingerprint sensor! much faster and more accurate.', 'category': 'usability', 'score': 1.23}, {'insight': 'Demand for faster charging technology', 'confidence': 0.9, 'frequency': 1.0, 'example_quote': 'solid build quality, but still waiting for faster charging speeds.', 'category': 'features', 'score': 0.9}]},) kwargs={}
+2026-07-21 09:57:28 | DEBUG    | database | DB | cache_analysis completed successfully
+2026-07-21 09:58:09 | DEBUG    | database | DB | Entering clear_cache with args=[] kwargs={}
+2026-07-21 09:58:09 | DEBUG    | database | DB | clear_cache completed successfully
+2026-07-21 09:58:15 | DEBUG    | database | DB | Entering get_cached_analysis with args=[] kwargs={}
+2026-07-21 09:58:15 | DEBUG    | database | DB | get_cached_analysis completed successfully
+2026-07-21 09:58:15 | DEBUG    | database | DB | Entering get_reviews with args=[] kwargs={}
+2026-07-21 09:58:15 | DEBUG    | database | DB | get_reviews completed successfully
+2026-07-21 09:58:15 | INFO     | llm | ⏳ Rate limit safeguard: Cooldown active. Sleeping for 60.00 seconds...
+2026-07-21 09:58:18 | INFO     | logger | 🔄 [Agent Event] Author: ReviewResearcher_5 | Node Path: 
+2026-07-21 09:58:18 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "Excellent value for money and highly competitive pricing."...
+2026-07-21 09:58:18 | INFO     | logger | 🔄 [Agent Event] Author: ReviewResearcher_4 | Node Path: 
+2026-07-21 09:58:18 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "Excellent value for the price point",       "confidence": ...
+2026-07-21 09:58:18 | INFO     | logger | 🔄 [Agent Event] Author: ReviewResearcher_7 | Node Path: 
+2026-07-21 09:58:18 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "Excellent value for money and competitive pricing, especia...
+2026-07-21 09:58:18 | INFO     | logger | 🔄 [Agent Event] Author: ReviewResearcher_6 | Node Path: 
+2026-07-21 09:58:18 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "Excellent value for the price point",       "confidence": ...
+2026-07-21 09:58:18 | INFO     | logger | 🔄 [Agent Event] Author: ReviewResearcher_2 | Node Path: 
+2026-07-21 09:58:18 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "Excellent value for the price point",       "confidence": ...
+2026-07-21 09:58:18 | INFO     | logger | 🔄 [Agent Event] Author: ReviewResearcher_1 | Node Path: 
+2026-07-21 09:58:18 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "Excellent value for money compared to premium tablets like...
+2026-07-21 09:58:18 | INFO     | logger | 🔄 [Agent Event] Author: ReviewResearcher_3 | Node Path: 
+2026-07-21 09:58:18 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "Excellent value for the price point",       "confidence": ...
+2026-07-21 09:58:19 | INFO     | logger | 🔄 [Agent Event] Author: ReviewResearcher_0 | Node Path: 
+2026-07-21 09:58:19 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "Excellent value for money, especially for casual users and...
+2026-07-21 09:59:17 | INFO     | logger | 🔄 [Agent Event] Author: ReviewResearcher_14 | Node Path: 
+2026-07-21 09:59:17 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "High usability and ease of setup",       "confidence": 0.9...
+2026-07-21 09:59:18 | INFO     | logger | 🔄 [Agent Event] Author: ReviewResearcher_13 | Node Path: 
+2026-07-21 09:59:18 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "Excellent value for the price point",       "confidence": ...
+2026-07-21 09:59:18 | INFO     | logger | 🔄 [Agent Event] Author: ReviewResearcher_10 | Node Path: 
+2026-07-21 09:59:18 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "Exceptional value for the price point compared to high-end...
+2026-07-21 09:59:18 | INFO     | logger | 🔄 [Agent Event] Author: ReviewResearcher_9 | Node Path: 
+2026-07-21 09:59:18 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "High value for money and competitive pricing",       "conf...
+2026-07-21 09:59:18 | INFO     | logger | 🔄 [Agent Event] Author: ReviewResearcher_8 | Node Path: 
+2026-07-21 09:59:18 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "Excellent value for the price point, especially during sal...
+2026-07-21 09:59:18 | INFO     | logger | 🔄 [Agent Event] Author: ReviewResearcher_12 | Node Path: 
+2026-07-21 09:59:18 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "High value-for-money proposition compared to premium table...
+2026-07-21 09:59:18 | INFO     | logger | 🔄 [Agent Event] Author: ReviewResearcher_11 | Node Path: 
+2026-07-21 09:59:18 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "High customer dissatisfaction regarding pre-installed adve...
+2026-07-21 09:59:23 | INFO     | logger | 🔄 [Agent Event] Author: AggregatorAgent | Node Path: 
+2026-07-21 09:59:23 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "Excellent value for money and highly competitive pricing, ...
+2026-07-21 09:59:23 | DEBUG    | database | DB | Entering cache_analysis with args=({'insights': [{'insight': 'Excellent value for money and highly competitive pricing, especially for casual users and during sales events.', 'confidence': 0.98, 'frequency': 435.0, 'example_quote': 'for the price i think this tablet is best one out there.', 'category': 'price', 'score': 426.3}, {'insight': 'User-friendly interface, ideal for beginners, children, and seniors.', 'confidence': 0.95, 'frequency': 245.0, 'example_quote': "i'm new to tablets but this one is pretty easy to understand and use.", 'category': 'usability', 'score': 302.57}, {'insight': 'Limited app ecosystem due to reliance on Amazon Appstore instead of Google Play.', 'confidence': 0.92, 'frequency': 155.0, 'example_quote': 'the only con (for those evaluating this as a tablet) is that amazon has their own app store. many apps from googleplay/appstore are simply not available.', 'category': 'usability', 'score': 185.38}, {'insight': 'Mixed feedback on performance: generally good for basic tasks and media consumption, but prone to occasional lag, freezing, or slowness during heavy use.', 'confidence': 0.88, 'frequency': 115.0, 'example_quote': 'tablet is snappy and quick but starts to lag after installing multiple apps.', 'category': 'quality', 'score': 151.8}, {'insight': 'Strong parental controls and child-friendly features are highly valued.', 'confidence': 0.95, 'frequency': 102.0, 'example_quote': 'i like the parental controls feature with the multiple profiles.', 'category': 'usability', 'score': 125.97}, {'insight': 'Presence of intrusive lock-screen advertisements is a significant point of frustration.', 'confidence': 0.9, 'frequency': 74.0, 'example_quote': 'the only annoying things are the amount of advertising the put on this version.', 'category': 'usability', 'score': 86.58}, {'insight': 'Expandable storage via microSD card is a highly appreciated feature.', 'confidence': 0.95, 'frequency': 55.0, 'example_quote': 'love the fact that you can now use a memory card in it...that helps so much when you use it for books...games...music and viedos', 'category': 'quality', 'score': 78.38}, {'insight': 'High-quality display and screen resolution for the price point.', 'confidence': 0.92, 'frequency': 50.0, 'example_quote': 'this has a 1280/800 screen which has some really nice look to it its nice and crisp and very bright', 'category': 'quality', 'score': 69.0}, {'insight': 'Strong integration with Amazon Prime services (books, movies, music, Alexa).', 'confidence': 0.92, 'frequency': 35.0, 'example_quote': 'if you have amazon prime this is the tablet for you as it gives you access to unlimited, music, movies, and tv.', 'category': 'features', 'score': 32.2}, {'insight': 'Hardware quality and durability concerns, including charging port issues and occasional hardware failure.', 'confidence': 0.82, 'frequency': 31.0, 'example_quote': 'i love everything about my new kindle except for the fact that the charging cord is already loose.', 'category': 'quality', 'score': 38.13}, {'insight': 'Subpar camera quality.', 'confidence': 0.89, 'frequency': 18.0, 'example_quote': "the down side is camera which doesn't produce clear pictures.", 'category': 'quality', 'score': 24.03}, {'insight': 'Lack of comprehensive user manuals or setup instructions.', 'confidence': 0.8, 'frequency': 10.0, 'example_quote': "why isn't there a manual or step by step guide on getting the most use out of kindle fire 8.", 'category': 'support', 'score': 9.6}]},) kwargs={}
+2026-07-21 09:59:23 | DEBUG    | database | DB | cache_analysis completed successfully
+2026-07-21 09:59:58 | INFO     | streamlit_app | Streamlit - Fetching products from http://localhost:8000/products/
+2026-07-21 09:59:58 | DEBUG    | database | DB | Entering get_products with args=[] kwargs={}
+2026-07-21 09:59:58 | DEBUG    | database | DB | get_products completed successfully
+2026-07-21 09:59:58 | INFO     | streamlit_app | Streamlit - Successfully fetched 32 products
+2026-07-21 09:59:58 | INFO     | streamlit_app | Streamlit - User active product: Samsung Galaxy S26 Ultra 5G (Sky Blue, 12GB RAM, 512GB Storage) (ID: 1)
+2026-07-21 09:59:58 | INFO     | streamlit_app | Streamlit - Requesting insights for product ID 1
+2026-07-21 09:59:58 | DEBUG    | database | DB | Entering get_cached_analysis with args=[] kwargs={}
+2026-07-21 09:59:58 | DEBUG    | database | DB | get_cached_analysis completed successfully
+2026-07-21 09:59:58 | INFO     | streamlit_app | Streamlit - Successfully fetched insights for product ID 1
+2026-07-21 10:00:10 | INFO     | streamlit_app | Streamlit - User active product: All-New Fire HD 8 Tablet, 8 HD Display, Wi-Fi, 16 GB - Includes Special Offers, Magenta (ID: 4)
+2026-07-21 10:00:10 | INFO     | streamlit_app | Streamlit - Requesting insights for product ID 4
+2026-07-21 10:00:10 | DEBUG    | database | DB | Entering get_cached_analysis with args=[] kwargs={}
+2026-07-21 10:00:10 | DEBUG    | database | DB | get_cached_analysis completed successfully
+2026-07-21 10:00:10 | INFO     | streamlit_app | Streamlit - Successfully fetched insights for product ID 4
+2026-07-21 10:10:52 | INFO     | streamlit_app | Streamlit - Fetching products from http://localhost:8000/products/
+2026-07-21 10:10:52 | DEBUG    | database | DB | Entering get_products with args=[] kwargs={}
+2026-07-21 10:10:52 | DEBUG    | database | DB | get_products completed successfully
+2026-07-21 10:10:52 | INFO     | streamlit_app | Streamlit - Successfully fetched 32 products
+2026-07-21 10:10:52 | INFO     | streamlit_app | Streamlit - User active product: All-New Fire HD 8 Tablet, 8 HD Display, Wi-Fi, 16 GB - Includes Special Offers, Magenta (ID: 4)
+2026-07-21 10:10:52 | INFO     | streamlit_app | Streamlit - Requesting insights for product ID 4
+2026-07-21 10:10:52 | DEBUG    | database | DB | Entering get_cached_analysis with args=[] kwargs={}
+2026-07-21 10:10:52 | DEBUG    | database | DB | get_cached_analysis completed successfully
+2026-07-21 10:10:52 | INFO     | streamlit_app | Streamlit - Successfully fetched insights for product ID 4
+2026-07-21 10:10:55 | INFO     | streamlit_app | Streamlit - User active product: All-New Fire HD 8 Tablet, 8 HD Display, Wi-Fi, 16 GB - Includes Special Offers, Magenta (ID: 4)
+2026-07-21 10:10:55 | INFO     | streamlit_app | Streamlit - Requesting insights for product ID 4
+2026-07-21 10:10:55 | DEBUG    | database | DB | Entering get_cached_analysis with args=[] kwargs={}
+2026-07-21 10:10:55 | DEBUG    | database | DB | get_cached_analysis completed successfully
+2026-07-21 10:10:55 | INFO     | streamlit_app | Streamlit - Successfully fetched insights for product ID 4
+2026-07-21 10:10:56 | INFO     | streamlit_app | Streamlit - User active product: All-New Fire HD 8 Tablet, 8 HD Display, Wi-Fi, 16 GB - Includes Special Offers, Magenta (ID: 4)
+2026-07-21 10:10:56 | INFO     | streamlit_app | Streamlit - Requesting insights for product ID 4
+2026-07-21 10:10:56 | DEBUG    | database | DB | Entering get_cached_analysis with args=[] kwargs={}
+2026-07-21 10:10:56 | DEBUG    | database | DB | get_cached_analysis completed successfully
+2026-07-21 10:10:56 | INFO     | streamlit_app | Streamlit - Successfully fetched insights for product ID 4
+2026-07-21 10:10:58 | INFO     | streamlit_app | Streamlit - User active product: All-New Fire HD 8 Tablet, 8 HD Display, Wi-Fi, 16 GB - Includes Special Offers, Magenta (ID: 4)
+2026-07-21 10:10:58 | INFO     | streamlit_app | Streamlit - Requesting insights for product ID 4
+2026-07-21 10:10:58 | DEBUG    | database | DB | Entering get_cached_analysis with args=[] kwargs={}
+2026-07-21 10:10:58 | DEBUG    | database | DB | get_cached_analysis completed successfully
+2026-07-21 10:10:58 | INFO     | streamlit_app | Streamlit - Successfully fetched insights for product ID 4
+2026-07-21 10:11:07 | INFO     | streamlit_app | Streamlit - User active product: All-New Fire HD 8 Tablet, 8 HD Display, Wi-Fi, 16 GB - Includes Special Offers, Magenta (ID: 4)
+2026-07-21 10:11:07 | INFO     | streamlit_app | Streamlit - Requesting insights for product ID 4
+2026-07-21 10:11:07 | DEBUG    | database | DB | Entering get_cached_analysis with args=[] kwargs={}
+2026-07-21 10:11:07 | DEBUG    | database | DB | get_cached_analysis completed successfully
+2026-07-21 10:11:07 | INFO     | streamlit_app | Streamlit - Successfully fetched insights for product ID 4
+2026-07-21 10:11:08 | INFO     | streamlit_app | Streamlit - User active product: All-New Fire HD 8 Tablet, 8 HD Display, Wi-Fi, 16 GB - Includes Special Offers, Magenta (ID: 4)
+2026-07-21 10:11:08 | INFO     | streamlit_app | Streamlit - Requesting insights for product ID 4
+2026-07-21 10:11:08 | DEBUG    | database | DB | Entering get_cached_analysis with args=[] kwargs={}
+2026-07-21 10:11:08 | DEBUG    | database | DB | get_cached_analysis completed successfully
+2026-07-21 10:11:08 | INFO     | streamlit_app | Streamlit - Successfully fetched insights for product ID 4
+2026-07-21 10:11:09 | INFO     | streamlit_app | Streamlit - User active product: All-New Fire HD 8 Tablet, 8 HD Display, Wi-Fi, 16 GB - Includes Special Offers, Magenta (ID: 4)
+2026-07-21 10:11:09 | INFO     | streamlit_app | Streamlit - Requesting insights for product ID 4
+2026-07-21 10:11:09 | DEBUG    | database | DB | Entering get_cached_analysis with args=[] kwargs={}
+2026-07-21 10:11:09 | DEBUG    | database | DB | get_cached_analysis completed successfully
+2026-07-21 10:11:09 | INFO     | streamlit_app | Streamlit - Successfully fetched insights for product ID 4
+2026-07-21 10:11:10 | INFO     | streamlit_app | Streamlit - User active product: All-New Fire HD 8 Tablet, 8 HD Display, Wi-Fi, 16 GB - Includes Special Offers, Magenta (ID: 4)
+2026-07-21 10:11:10 | INFO     | streamlit_app | Streamlit - Requesting insights for product ID 4
+2026-07-21 10:11:10 | DEBUG    | database | DB | Entering get_cached_analysis with args=[] kwargs={}
+2026-07-21 10:11:10 | DEBUG    | database | DB | get_cached_analysis completed successfully
+2026-07-21 10:11:10 | INFO     | streamlit_app | Streamlit - Successfully fetched insights for product ID 4
+2026-07-21 10:12:09 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-21 10:12:09 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-21 10:12:10 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-21 10:12:10 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-21 10:12:22 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-21 10:12:22 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-21 10:12:34 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-21 10:12:34 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-21 10:12:36 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-21 10:12:36 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-21 10:12:37 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-21 10:12:37 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-21 10:12:42 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-21 10:12:42 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-21 10:12:43 | INFO     | streamlit_app | Streamlit - Fetching products from http://localhost:8000/products/
+2026-07-21 10:12:43 | DEBUG    | database | DB | Entering get_products with args=[] kwargs={}
+2026-07-21 10:12:43 | DEBUG    | database | DB | get_products completed successfully
+2026-07-21 10:12:43 | INFO     | streamlit_app | Streamlit - Successfully fetched 32 products
+2026-07-21 10:12:43 | INFO     | streamlit_app | Streamlit - User active product: Samsung Galaxy S26 Ultra 5G (Sky Blue, 12GB RAM, 512GB Storage) (ID: 1)
+2026-07-21 10:12:43 | INFO     | streamlit_app | Streamlit - Requesting insights for product ID 1
+2026-07-21 10:12:43 | DEBUG    | database | DB | Entering get_cached_analysis with args=[] kwargs={}
+2026-07-21 10:12:43 | DEBUG    | database | DB | get_cached_analysis completed successfully
+2026-07-21 10:12:43 | INFO     | streamlit_app | Streamlit - Successfully fetched insights for product ID 1
+2026-07-21 10:12:52 | INFO     | streamlit_app | Streamlit - User active product: Samsung Galaxy S26 Ultra 5G (Sky Blue, 12GB RAM, 512GB Storage) (ID: 1)
+2026-07-21 10:12:52 | INFO     | streamlit_app | Streamlit - User triggered Cache Clear for product ID 1
+2026-07-21 10:12:52 | DEBUG    | database | DB | Entering clear_cache with args=[] kwargs={}
+2026-07-21 10:12:52 | DEBUG    | database | DB | clear_cache completed successfully
+2026-07-21 10:12:52 | INFO     | streamlit_app | Streamlit - Cache successfully cleared on backend for product ID 1
+2026-07-21 10:12:52 | INFO     | streamlit_app | Streamlit - Requesting insights for product ID 1
+2026-07-21 10:12:52 | DEBUG    | database | DB | Entering get_cached_analysis with args=[] kwargs={}
+2026-07-21 10:12:52 | DEBUG    | database | DB | get_cached_analysis completed successfully
+2026-07-21 10:12:52 | DEBUG    | database | DB | Entering get_reviews with args=[] kwargs={}
+2026-07-21 10:12:52 | DEBUG    | database | DB | get_reviews completed successfully
+2026-07-21 10:12:55 | INFO     | logger | 🔄 [Agent Event] Author: ReviewResearcher_0 | Node Path: 
+2026-07-21 10:12:55 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "Exceptional processing performance with Snapdragon 8 Elite...
+2026-07-21 10:12:58 | INFO     | logger | 🔄 [Agent Event] Author: AggregatorAgent | Node Path: 
+2026-07-21 10:12:58 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "Exceptional processing performance with Snapdragon 8 Elite...
+2026-07-21 10:12:58 | DEBUG    | database | DB | Entering cache_analysis with args=({'insights': [{'insight': 'Exceptional processing performance with Snapdragon 8 Elite Gen 5', 'confidence': 1.0, 'frequency': 1.0, 'example_quote': 'the new snapdragon 8 elite gen 5 is ridiculously fast. zero lag anywhere.', 'category': 'performance', 'score': 1.0}, {'insight': 'Significant improvement in battery life over previous generation', 'confidence': 0.95, 'frequency': 1.0, 'example_quote': 'battery life is insanely good compared to the older s24 ultra.', 'category': 'performance', 'score': 0.95}, {'insight': 'Camera quality is high, but 200MP sensor shows diminishing returns', 'confidence': 0.9, 'frequency': 1.0, 'example_quote': "the camera is great, but honestly the 200mp shots look similar to last year's model.", 'category': 'quality', 'score': 1.35}, {'insight': 'Positive reception of aesthetic design and lightweight titanium frame', 'confidence': 0.95, 'frequency': 1.0, 'example_quote': 'sky blue color is gorgeous. the titanium frame feels much lighter this year.', 'category': 'design', 'score': 0.95}, {'insight': 'Perceived lack of value for existing S24/S25 Ultra owners', 'confidence': 0.85, 'frequency': 1.0, 'example_quote': "overpriced. the upgrade from s25 ultra isn't worth it.", 'category': 'price', 'score': 0.85}, {'insight': 'High screen brightness improves outdoor usability', 'confidence': 0.95, 'frequency': 1.0, 'example_quote': 'screen is incredibly bright even in direct sunlight. great for outdoor use.', 'category': 'usability', 'score': 1.23}, {'insight': 'AI photo editing features are a key differentiator', 'confidence': 0.9, 'frequency': 1.0, 'example_quote': "samsung's new ai features for photo editing are mind-blowing.", 'category': 'features', 'score': 0.9}, {'insight': 'Thermal management issues during intensive gaming sessions', 'confidence': 0.8, 'frequency': 1.0, 'example_quote': 'phone gets a bit warm when playing heavy 3d games for over an hour.', 'category': 'performance', 'score': 0.8}, {'insight': 'Improved fingerprint sensor reliability and speed', 'confidence': 0.95, 'frequency': 1.0, 'example_quote': 'finally, they improved the fingerprint sensor! much faster and more accurate.', 'category': 'usability', 'score': 1.23}, {'insight': 'Demand for faster charging technology', 'confidence': 0.9, 'frequency': 1.0, 'example_quote': 'solid build quality, but still waiting for faster charging speeds.', 'category': 'features', 'score': 0.9}]},) kwargs={}
+2026-07-21 10:12:58 | DEBUG    | database | DB | cache_analysis completed successfully
+2026-07-21 10:12:58 | INFO     | streamlit_app | Streamlit - Successfully fetched insights for product ID 1
+2026-07-21 11:46:18 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-21 11:46:18 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-21 11:46:19 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-21 11:46:19 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-21 11:46:26 | INFO     | streamlit_app | Streamlit - Fetching products from http://localhost:8000/products/
+2026-07-21 11:46:26 | DEBUG    | database | DB | Entering get_products with args=[] kwargs={}
+2026-07-21 11:46:26 | DEBUG    | database | DB | get_products completed successfully
+2026-07-21 11:46:26 | INFO     | streamlit_app | Streamlit - Successfully fetched 32 products
+2026-07-21 11:46:26 | INFO     | streamlit_app | Streamlit - User active product: Samsung Galaxy S26 Ultra 5G (Sky Blue, 12GB RAM, 512GB Storage) (ID: 1)
+2026-07-21 11:46:26 | INFO     | streamlit_app | Streamlit - Requesting insights for product ID 1
+2026-07-21 11:46:26 | DEBUG    | database | DB | Entering get_cached_analysis with args=[] kwargs={}
+2026-07-21 11:46:26 | DEBUG    | database | DB | get_cached_analysis completed successfully
+2026-07-21 11:46:26 | ERROR    | streamlit_app | Streamlit - Exception during fetching insights for product ID 1: Expecting value: line 1 column 1 (char 0)
+2026-07-21 11:46:34 | INFO     | streamlit_app | Streamlit - User active product: Samsung Galaxy S26 Ultra 5G (Sky Blue, 12GB RAM, 512GB Storage) (ID: 1)
+2026-07-21 11:46:34 | INFO     | streamlit_app | Streamlit - Requesting insights for product ID 1
+2026-07-21 11:46:34 | DEBUG    | database | DB | Entering get_cached_analysis with args=[] kwargs={}
+2026-07-21 11:46:34 | DEBUG    | database | DB | get_cached_analysis completed successfully
+2026-07-21 11:46:34 | ERROR    | streamlit_app | Streamlit - Exception during fetching insights for product ID 1: Expecting value: line 1 column 1 (char 0)
+2026-07-21 11:46:36 | INFO     | streamlit_app | Streamlit - User active product: Samsung Galaxy S26 Ultra 5G (Sky Blue, 12GB RAM, 512GB Storage) (ID: 1)
+2026-07-21 11:46:36 | INFO     | streamlit_app | Streamlit - Requesting insights for product ID 1
+2026-07-21 11:46:36 | DEBUG    | database | DB | Entering get_cached_analysis with args=[] kwargs={}
+2026-07-21 11:46:36 | DEBUG    | database | DB | get_cached_analysis completed successfully
+2026-07-21 11:46:36 | ERROR    | streamlit_app | Streamlit - Exception during fetching insights for product ID 1: Expecting value: line 1 column 1 (char 0)
+2026-07-21 11:46:36 | INFO     | streamlit_app | Streamlit - User triggered AI Insight generation for product ID 1
+2026-07-21 11:46:36 | INFO     | streamlit_app | Streamlit - Requesting insights for product ID 1
+2026-07-21 11:46:36 | DEBUG    | database | DB | Entering get_cached_analysis with args=[] kwargs={}
+2026-07-21 11:46:36 | DEBUG    | database | DB | get_cached_analysis completed successfully
+2026-07-21 11:46:36 | ERROR    | streamlit_app | Streamlit - Exception during fetching insights for product ID 1: Expecting value: line 1 column 1 (char 0)
+2026-07-21 11:46:36 | ERROR    | streamlit_app | Streamlit - Generation failed for product ID 1: Expecting value: line 1 column 1 (char 0)
+2026-07-21 11:49:26 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-21 11:49:26 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-21 11:49:43 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-21 11:49:43 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-21 11:50:09 | INFO     | streamlit_app | Streamlit - Fetching products from http://localhost:8000/products/
+2026-07-21 11:50:09 | DEBUG    | database | DB | Entering get_products with args=[] kwargs={}
+2026-07-21 11:50:09 | DEBUG    | database | DB | get_products completed successfully
+2026-07-21 11:50:09 | INFO     | streamlit_app | Streamlit - Successfully fetched 32 products
+2026-07-21 11:50:09 | INFO     | streamlit_app | Streamlit - User active product: Samsung Galaxy S26 Ultra 5G (Sky Blue, 12GB RAM, 512GB Storage) (ID: 1)
+2026-07-21 11:50:09 | INFO     | streamlit_app | Streamlit - User triggered Cache Clear for product ID 1
+2026-07-21 11:50:09 | DEBUG    | database | DB | Entering clear_cache with args=[] kwargs={}
+2026-07-21 11:50:09 | DEBUG    | database | DB | clear_cache completed successfully
+2026-07-21 11:50:09 | INFO     | streamlit_app | Streamlit - Cache successfully cleared on backend for product ID 1
+2026-07-21 11:50:09 | INFO     | streamlit_app | Streamlit - Requesting insights for product ID 1
+2026-07-21 11:50:09 | DEBUG    | database | DB | Entering get_cached_analysis with args=[] kwargs={}
+2026-07-21 11:50:09 | DEBUG    | database | DB | get_cached_analysis completed successfully
+2026-07-21 11:50:09 | DEBUG    | database | DB | Entering get_reviews with args=[] kwargs={}
+2026-07-21 11:50:09 | DEBUG    | database | DB | get_reviews completed successfully
+2026-07-21 11:50:12 | INFO     | logger | 🔄 [Agent Event] Author: ReviewResearcher_0 | Node Path: 
+2026-07-21 11:50:12 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "Exceptional processing performance with Snapdragon 8 Elite...
+2026-07-21 11:50:15 | INFO     | logger | 🔄 [Agent Event] Author: AggregatorAgent | Node Path: 
+2026-07-21 11:50:15 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "Exceptional processing performance with Snapdragon 8 Elite...
+2026-07-21 11:50:15 | DEBUG    | database | DB | Entering cache_analysis with args=({'insights': [{'insight': 'Exceptional processing performance with Snapdragon 8 Elite Gen 5', 'confidence': 1.0, 'frequency': 1.0, 'example_quote': 'the new snapdragon 8 elite gen 5 is ridiculously fast. zero lag anywhere.', 'category': 'performance', 'score': 1.0}, {'insight': 'Significant improvement in battery life over previous generation', 'confidence': 0.95, 'frequency': 1.0, 'example_quote': 'battery life is insanely good compared to the older s24 ultra.', 'category': 'performance', 'score': 0.95}, {'insight': 'Camera quality is high, but 200MP sensor shows diminishing returns', 'confidence': 0.9, 'frequency': 1.0, 'example_quote': "the camera is great, but honestly the 200mp shots look similar to last year's model.", 'category': 'quality', 'score': 1.35}, {'insight': 'Positive reception of aesthetic design and lightweight titanium frame', 'confidence': 0.95, 'frequency': 1.0, 'example_quote': 'sky blue color is gorgeous. the titanium frame feels much lighter this year.', 'category': 'design', 'score': 0.95}, {'insight': 'Perceived lack of value for existing S24/S25 Ultra owners', 'confidence': 0.85, 'frequency': 1.0, 'example_quote': "overpriced. the upgrade from s25 ultra isn't worth it.", 'category': 'price', 'score': 0.85}, {'insight': 'High screen brightness improves outdoor usability', 'confidence': 0.95, 'frequency': 1.0, 'example_quote': 'screen is incredibly bright even in direct sunlight. great for outdoor use.', 'category': 'usability', 'score': 1.23}, {'insight': 'AI photo editing features are a key differentiator', 'confidence': 0.9, 'frequency': 1.0, 'example_quote': "samsung's new ai features for photo editing are mind-blowing.", 'category': 'features', 'score': 0.9}, {'insight': 'Thermal management issues during intensive gaming sessions', 'confidence': 0.8, 'frequency': 1.0, 'example_quote': 'phone gets a bit warm when playing heavy 3d games for over an hour.', 'category': 'performance', 'score': 0.8}, {'insight': 'Improved fingerprint sensor reliability and speed', 'confidence': 0.95, 'frequency': 1.0, 'example_quote': 'finally, they improved the fingerprint sensor! much faster and more accurate.', 'category': 'usability', 'score': 1.23}, {'insight': 'Demand for faster charging technology', 'confidence': 0.9, 'frequency': 1.0, 'example_quote': 'solid build quality, but still waiting for faster charging speeds.', 'category': 'features', 'score': 0.9}]},) kwargs={}
+2026-07-21 11:50:15 | DEBUG    | database | DB | cache_analysis completed successfully
+2026-07-21 11:50:15 | INFO     | streamlit_app | Streamlit - Successfully fetched insights for product ID 1
+2026-07-21 11:50:22 | INFO     | streamlit_app | Streamlit - Fetching products from http://localhost:8000/products/
+2026-07-21 11:50:22 | DEBUG    | database | DB | Entering get_products with args=[] kwargs={}
+2026-07-21 11:50:22 | DEBUG    | database | DB | get_products completed successfully
+2026-07-21 11:50:22 | INFO     | streamlit_app | Streamlit - Successfully fetched 32 products
+2026-07-21 11:50:22 | INFO     | streamlit_app | Streamlit - User active product: Apple iPhone 17 Pro Max (1 TB, Cosmic Orange) (ID: 2)
+2026-07-21 11:50:22 | INFO     | streamlit_app | Streamlit - Requesting insights for product ID 2
+2026-07-21 11:50:22 | DEBUG    | database | DB | Entering get_cached_analysis with args=[] kwargs={}
+2026-07-21 11:50:22 | DEBUG    | database | DB | get_cached_analysis completed successfully
+2026-07-21 11:50:22 | ERROR    | streamlit_app | Streamlit - Exception during fetching insights for product ID 2: Expecting value: line 1 column 1 (char 0)
+2026-07-21 11:50:24 | INFO     | streamlit_app | Streamlit - User active product: Apple iPhone 17 Pro Max (1 TB, Cosmic Orange) (ID: 2)
+2026-07-21 11:50:24 | INFO     | streamlit_app | Streamlit - User triggered Cache Clear for product ID 2
+2026-07-21 11:50:24 | DEBUG    | database | DB | Entering clear_cache with args=[] kwargs={}
+2026-07-21 11:50:24 | DEBUG    | database | DB | clear_cache completed successfully
+2026-07-21 11:50:24 | INFO     | streamlit_app | Streamlit - Cache successfully cleared on backend for product ID 2
+2026-07-21 11:50:24 | INFO     | streamlit_app | Streamlit - Requesting insights for product ID 2
+2026-07-21 11:50:24 | DEBUG    | database | DB | Entering get_cached_analysis with args=[] kwargs={}
+2026-07-21 11:50:24 | DEBUG    | database | DB | get_cached_analysis completed successfully
+2026-07-21 11:50:24 | DEBUG    | database | DB | Entering get_reviews with args=[] kwargs={}
+2026-07-21 11:50:24 | DEBUG    | database | DB | get_reviews completed successfully
+2026-07-21 11:50:26 | INFO     | logger | 🔄 [Agent Event] Author: ReviewResearcher_0 | Node Path: 
+2026-07-21 11:50:26 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "High aesthetic appeal of the cosmic orange color",       "...
+2026-07-21 11:50:28 | INFO     | logger | 🔄 [Agent Event] Author: AggregatorAgent | Node Path: 
+2026-07-21 11:50:28 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "High aesthetic appeal of the cosmic orange color",       "...
+2026-07-21 11:50:28 | DEBUG    | database | DB | Entering cache_analysis with args=({'insights': [{'insight': 'High aesthetic appeal of the cosmic orange color', 'confidence': 1.0, 'frequency': 1.0, 'example_quote': 'the cosmic orange color is absolutely stunning in person.', 'category': 'quality', 'score': 1.5}, {'insight': 'A19 Pro chip provides high-performance gaming capabilities', 'confidence': 1.0, 'frequency': 1.0, 'example_quote': 'a19 pro chip handles aaa gaming like a breeze. truly console level.', 'category': 'usability', 'score': 1.3}, {'insight': 'Pro Fusion camera system excels in low-light conditions', 'confidence': 1.0, 'frequency': 1.0, 'example_quote': 'the pro fusion camera system takes low-light photography to a new level.', 'category': 'quality', 'score': 1.5}, {'insight': 'Exceptional battery life lasting up to two days', 'confidence': 1.0, 'frequency': 1.0, 'example_quote': 'battery easily lasts two days of moderate use. best battery on an iphone yet.', 'category': 'quality', 'score': 1.5}, {'insight': 'Under-screen Face ID technology functions seamlessly', 'confidence': 1.0, 'frequency': 1.0, 'example_quote': 'the new invisible face id under the screen works perfectly.', 'category': 'usability', 'score': 1.3}, {'insight': 'Device weight is excessive despite titanium construction', 'confidence': 0.9, 'frequency': 1.0, 'example_quote': "very heavy phone. the titanium doesn't seem to help much with the 1tb model's weight.", 'category': 'quality', 'score': 1.35}, {'insight': 'Desire for increased home screen customization in iOS 20', 'confidence': 0.9, 'frequency': 1.0, 'example_quote': 'ios 20 is smooth, but i wish there was more customization on the home screen.', 'category': 'usability', 'score': 1.17}, {'insight': 'Improved zoom capabilities are competitive with market leaders', 'confidence': 0.9, 'frequency': 1.0, 'example_quote': 'the zoom capabilities are finally catching up to samsung. very impressed.', 'category': 'quality', 'score': 1.35}, {'insight': 'High price point limits value proposition to power users', 'confidence': 0.9, 'frequency': 1.0, 'example_quote': 'extremely expensive. only buy the 1tb if you shoot a lot of prores video.', 'category': 'price', 'score': 0.9}, {'insight': 'Display quality and 120Hz refresh rate are highly satisfactory', 'confidence': 1.0, 'frequency': 1.0, 'example_quote': 'display is flawless, 120hz promotion is smooth as butter.', 'category': 'quality', 'score': 1.5}]},) kwargs={}
+2026-07-21 11:50:28 | DEBUG    | database | DB | cache_analysis completed successfully
+2026-07-21 11:50:28 | INFO     | streamlit_app | Streamlit - Successfully fetched insights for product ID 2
+2026-07-21 11:50:44 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-21 11:50:44 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-21 11:50:45 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-21 11:50:45 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-21 11:52:21 | INFO     | streamlit_app | Streamlit - Fetching products from http://localhost:8000/products/
+2026-07-21 11:52:21 | DEBUG    | database | DB | Entering get_products with args=[] kwargs={}
+2026-07-21 11:52:21 | DEBUG    | database | DB | get_products completed successfully
+2026-07-21 11:52:21 | INFO     | streamlit_app | Streamlit - Successfully fetched 32 products
+2026-07-21 11:52:21 | INFO     | streamlit_app | Streamlit - User active product: vivo X300 Ultra 5G (Victory Green, 16GB RAM, 512GB Storage) (ID: 3)
+2026-07-21 11:52:21 | INFO     | streamlit_app | Streamlit - Requesting insights for product ID 3
+2026-07-21 11:52:21 | DEBUG    | database | DB | Entering get_cached_analysis with args=[] kwargs={}
+2026-07-21 11:52:21 | DEBUG    | database | DB | get_cached_analysis completed successfully
+2026-07-21 11:52:21 | ERROR    | streamlit_app | Streamlit - Exception during fetching insights for product ID 3: Expecting value: line 1 column 1 (char 0)
+2026-07-21 11:52:24 | INFO     | streamlit_app | Streamlit - User active product: vivo X300 Ultra 5G (Victory Green, 16GB RAM, 512GB Storage) (ID: 3)
+2026-07-21 11:52:24 | INFO     | streamlit_app | Streamlit - User triggered Cache Clear for product ID 3
+2026-07-21 11:52:24 | DEBUG    | database | DB | Entering clear_cache with args=[] kwargs={}
+2026-07-21 11:52:24 | DEBUG    | database | DB | clear_cache completed successfully
+2026-07-21 11:52:24 | INFO     | streamlit_app | Streamlit - Cache successfully cleared on backend for product ID 3
+2026-07-21 11:52:24 | INFO     | streamlit_app | Streamlit - Requesting insights for product ID 3
+2026-07-21 11:52:24 | DEBUG    | database | DB | Entering get_cached_analysis with args=[] kwargs={}
+2026-07-21 11:52:24 | DEBUG    | database | DB | get_cached_analysis completed successfully
+2026-07-21 11:52:24 | DEBUG    | database | DB | Entering get_reviews with args=[] kwargs={}
+2026-07-21 11:52:24 | DEBUG    | database | DB | get_reviews completed successfully
+2026-07-21 11:52:26 | INFO     | logger | 🔄 [Agent Event] Author: ReviewResearcher_0 | Node Path: 
+2026-07-21 11:52:26 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "High-quality camera performance with 1-inch sensor and Zei...
+2026-07-21 11:52:29 | INFO     | logger | 🔄 [Agent Event] Author: AggregatorAgent | Node Path: 
+2026-07-21 11:52:29 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "High-quality camera performance with 1-inch sensor and Zei...
+2026-07-21 11:52:29 | DEBUG    | database | DB | Entering cache_analysis with args=({'insights': [{'insight': 'High-quality camera performance with 1-inch sensor and Zeiss lenses', 'confidence': 1.0, 'frequency': 3.0, 'example_quote': 'the 1-inch camera sensor with zeiss lenses takes dslr-quality photos.', 'category': 'quality', 'score': 4.5}, {'insight': 'Premium design and build quality with vegan leather', 'confidence': 0.9, 'frequency': 1.0, 'example_quote': 'victory green has a beautiful vegan leather back. feels very premium.', 'category': 'quality', 'score': 1.35}, {'insight': 'Software bloatware issues in Funtouch OS', 'confidence': 0.9, 'frequency': 1.0, 'example_quote': 'performance is top tier with 16gb ram, but funtouch os still has some bloatware.', 'category': 'usability', 'score': 1.17}, {'insight': 'Extremely fast battery charging capabilities', 'confidence': 1.0, 'frequency': 1.0, 'example_quote': 'battery charging is ridiculously fast - 0 to 100 in about 20 minutes!', 'category': 'quality', 'score': 1.5}, {'insight': 'Difficulty finding compatible screen protectors for curved display', 'confidence': 0.9, 'frequency': 1.0, 'example_quote': 'the curved display looks nice but finding a good screen protector is a nightmare.', 'category': 'usability', 'score': 1.17}, {'insight': 'Thermal management issues during high-resolution video recording', 'confidence': 0.9, 'frequency': 1.0, 'example_quote': 'gets quite warm when shooting 4k 120fps video for extended periods.', 'category': 'quality', 'score': 1.35}, {'insight': 'Ergonomic instability due to large camera bump', 'confidence': 0.9, 'frequency': 1.0, 'example_quote': 'camera bump is huge, making it wobble heavily on a table.', 'category': 'usability', 'score': 1.17}]},) kwargs={}
+2026-07-21 11:52:29 | DEBUG    | database | DB | cache_analysis completed successfully
+2026-07-21 11:52:29 | INFO     | streamlit_app | Streamlit - Successfully fetched insights for product ID 3
+2026-07-21 11:52:42 | INFO     | streamlit_app | Streamlit - Fetching products from http://localhost:8000/products/
+2026-07-21 11:52:42 | DEBUG    | database | DB | Entering get_products with args=[] kwargs={}
+2026-07-21 11:52:42 | DEBUG    | database | DB | get_products completed successfully
+2026-07-21 11:52:42 | INFO     | streamlit_app | Streamlit - Successfully fetched 32 products
+2026-07-21 11:52:42 | INFO     | streamlit_app | Streamlit - User active product: All-New Fire HD 8 Tablet, 8 HD Display, Wi-Fi, 16 GB - Includes Special Offers, Magenta (ID: 4)
+2026-07-21 11:52:42 | INFO     | streamlit_app | Streamlit - Requesting insights for product ID 4
+2026-07-21 11:52:42 | DEBUG    | database | DB | Entering get_cached_analysis with args=[] kwargs={}
+2026-07-21 11:52:42 | DEBUG    | database | DB | get_cached_analysis completed successfully
+2026-07-21 11:52:42 | ERROR    | streamlit_app | Streamlit - Exception during fetching insights for product ID 4: Expecting value: line 1 column 1 (char 0)
+2026-07-21 11:52:43 | INFO     | streamlit_app | Streamlit - User active product: All-New Fire HD 8 Tablet, 8 HD Display, Wi-Fi, 16 GB - Includes Special Offers, Magenta (ID: 4)
+2026-07-21 11:52:43 | INFO     | streamlit_app | Streamlit - User triggered Cache Clear for product ID 4
+2026-07-21 11:52:43 | DEBUG    | database | DB | Entering clear_cache with args=[] kwargs={}
+2026-07-21 11:52:43 | DEBUG    | database | DB | clear_cache completed successfully
+2026-07-21 11:52:43 | INFO     | streamlit_app | Streamlit - Cache successfully cleared on backend for product ID 4
+2026-07-21 11:52:43 | INFO     | streamlit_app | Streamlit - Requesting insights for product ID 4
+2026-07-21 11:52:43 | DEBUG    | database | DB | Entering get_cached_analysis with args=[] kwargs={}
+2026-07-21 11:52:43 | DEBUG    | database | DB | get_cached_analysis completed successfully
+2026-07-21 11:52:43 | DEBUG    | database | DB | Entering get_reviews with args=[] kwargs={}
+2026-07-21 11:52:43 | DEBUG    | database | DB | get_reviews completed successfully
+2026-07-21 11:52:43 | INFO     | llm | ⏳ Rate limit safeguard: Cooldown active. Sleeping for 60.00 seconds...
+2026-07-21 11:52:46 | INFO     | logger | 🔄 [Agent Event] Author: ReviewResearcher_0 | Node Path: 
+2026-07-21 11:52:46 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "Excellent value for money, especially for casual users and...
+2026-07-21 11:52:46 | INFO     | logger | 🔄 [Agent Event] Author: ReviewResearcher_3 | Node Path: 
+2026-07-21 11:52:46 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "Excellent value for the price point",       "confidence": ...
+2026-07-21 11:52:46 | INFO     | logger | 🔄 [Agent Event] Author: ReviewResearcher_6 | Node Path: 
+2026-07-21 11:52:46 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "Excellent value for the price point",       "confidence": ...
+2026-07-21 11:52:46 | INFO     | logger | 🔄 [Agent Event] Author: ReviewResearcher_1 | Node Path: 
+2026-07-21 11:52:46 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "Excellent value for money compared to premium tablets like...
+2026-07-21 11:52:46 | INFO     | logger | 🔄 [Agent Event] Author: ReviewResearcher_2 | Node Path: 
+2026-07-21 11:52:46 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "Excellent value for the price point",       "confidence": ...
+2026-07-21 11:52:46 | INFO     | logger | 🔄 [Agent Event] Author: ReviewResearcher_7 | Node Path: 
+2026-07-21 11:52:46 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "Excellent value for money and competitive pricing, especia...
+2026-07-21 11:52:46 | INFO     | logger | 🔄 [Agent Event] Author: ReviewResearcher_4 | Node Path: 
+2026-07-21 11:52:46 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "Excellent value for the price point",       "confidence": ...
+2026-07-21 11:52:47 | INFO     | logger | 🔄 [Agent Event] Author: ReviewResearcher_5 | Node Path: 
+2026-07-21 11:52:47 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "Excellent value for money and highly competitive pricing."...
+2026-07-21 11:53:45 | INFO     | logger | 🔄 [Agent Event] Author: ReviewResearcher_14 | Node Path: 
+2026-07-21 11:53:45 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "High usability and ease of setup",       "confidence": 0.9...
+2026-07-21 11:53:46 | INFO     | logger | 🔄 [Agent Event] Author: ReviewResearcher_9 | Node Path: 
+2026-07-21 11:53:46 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "High value for money and competitive pricing",       "conf...
+2026-07-21 11:53:46 | INFO     | logger | 🔄 [Agent Event] Author: ReviewResearcher_8 | Node Path: 
+2026-07-21 11:53:46 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "Excellent value for the price point, especially during sal...
+2026-07-21 11:53:46 | INFO     | logger | 🔄 [Agent Event] Author: ReviewResearcher_13 | Node Path: 
+2026-07-21 11:53:46 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "Excellent value for the price point",       "confidence": ...
+2026-07-21 11:53:46 | INFO     | logger | 🔄 [Agent Event] Author: ReviewResearcher_10 | Node Path: 
+2026-07-21 11:53:46 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "Exceptional value for the price point compared to high-end...
+2026-07-21 11:53:46 | INFO     | logger | 🔄 [Agent Event] Author: ReviewResearcher_12 | Node Path: 
+2026-07-21 11:53:46 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "High value-for-money proposition compared to premium table...
+2026-07-21 11:53:46 | INFO     | logger | 🔄 [Agent Event] Author: ReviewResearcher_11 | Node Path: 
+2026-07-21 11:53:46 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "High customer dissatisfaction regarding pre-installed adve...
+2026-07-21 11:53:50 | INFO     | logger | 🔄 [Agent Event] Author: AggregatorAgent | Node Path: 
+2026-07-21 11:53:50 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "Excellent value for money and highly competitive pricing, ...
+2026-07-21 11:53:50 | DEBUG    | database | DB | Entering cache_analysis with args=({'insights': [{'insight': 'Excellent value for money and highly competitive pricing, especially for Prime members and during sales events.', 'confidence': 0.98, 'frequency': 395.0, 'example_quote': 'for the price i think this tablet is best one out there.', 'category': 'price', 'score': 387.1}, {'insight': 'Highly user-friendly interface, ideal for children, seniors, and beginners.', 'confidence': 0.95, 'frequency': 225.0, 'example_quote': 'it is intuitive, easy to use and she has it in her hands several times every day', 'category': 'usability', 'score': 277.88}, {'insight': 'Limited app ecosystem due to reliance on the Amazon Appstore and lack of native Google Play Store support.', 'confidence': 0.93, 'frequency': 145.0, 'example_quote': 'the biggest negative is that you can only install apps from the amazon store.', 'category': 'quality', 'score': 202.27}, {'insight': 'Strong parental controls and child-friendly features are highly valued.', 'confidence': 0.94, 'frequency': 100.0, 'example_quote': 'i like the ability to monitor control what content they see with ease.', 'category': 'usability', 'score': 122.2}, {'insight': 'Presence of intrusive advertisements on the lock screen is a significant pain point.', 'confidence': 0.89, 'frequency': 62.0, 'example_quote': 'the only criticism is that it should be easier to go right into an application, instead of watching an advertisement', 'category': 'usability', 'score': 71.73}, {'insight': 'Expandable storage via microSD card is a highly appreciated feature.', 'confidence': 0.95, 'frequency': 46.0, 'example_quote': 'love the fact that you can now use a memory card in it...that helps so much when you use it for books...games...music and viedos', 'category': 'quality', 'score': 65.55}, {'insight': 'Mixed feedback on performance: generally good for basic media consumption and reading, but prone to lag or freezing during heavy multitasking.', 'confidence': 0.86, 'frequency': 54.0, 'example_quote': 'the internet was sooooooo slowwwwww that it drove us crazy.', 'category': 'quality', 'score': 69.66}, {'insight': 'Mixed feedback on battery life: generally praised as long-lasting, but some users report slow or inconsistent charging.', 'confidence': 0.88, 'frequency': 47.0, 'example_quote': 'the only downfall is that it is really slow to charge.', 'category': 'quality', 'score': 62.04}, {'insight': 'High portability and ideal size for travel and reading.', 'confidence': 0.91, 'frequency': 36.0, 'example_quote': '8" size was not too big or too small. you can carry it without it being clumsy to drop.', 'category': 'usability', 'score': 42.59}, {'insight': 'Hardware durability concerns, including charging port issues and occasional hardware failure.', 'confidence': 0.82, 'frequency': 31.0, 'example_quote': 'i love everything about my new kindle except for the fact that the charging cord is already loose.', 'category': 'quality', 'score': 38.13}, {'insight': 'Subpar camera quality.', 'confidence': 0.89, 'frequency': 18.0, 'example_quote': 'the only real negative about the tablet is that the cameras are not good.', 'category': 'quality', 'score': 24.03}, {'insight': 'Lack of comprehensive user manuals or setup instructions.', 'confidence': 0.8, 'frequency': 10.0, 'example_quote': "why isn't there a manual or step by step guide on getting the most use out of kindle fire 8.", 'category': 'support', 'score': 9.6}]},) kwargs={}
+2026-07-21 11:53:50 | DEBUG    | database | DB | cache_analysis completed successfully
+2026-07-21 11:53:50 | INFO     | streamlit_app | Streamlit - Successfully fetched insights for product ID 4
+2026-07-21 11:55:11 | INFO     | streamlit_app | Streamlit - Fetching products from http://localhost:8000/products/
+2026-07-21 11:55:11 | DEBUG    | database | DB | Entering get_products with args=[] kwargs={}
+2026-07-21 11:55:11 | DEBUG    | database | DB | get_products completed successfully
+2026-07-21 11:55:11 | INFO     | streamlit_app | Streamlit - Successfully fetched 32 products
+2026-07-21 11:55:11 | INFO     | streamlit_app | Streamlit - User active product: Kindle Oasis E-reader with Leather Charging Cover - Merlot, 6 High-Resolution Display (300 ppi), Wi-Fi - Includes Special Offers (ID: 5)
+2026-07-21 11:55:11 | INFO     | streamlit_app | Streamlit - Requesting insights for product ID 5
+2026-07-21 11:55:11 | DEBUG    | database | DB | Entering get_cached_analysis with args=[] kwargs={}
+2026-07-21 11:55:11 | DEBUG    | database | DB | get_cached_analysis completed successfully
+2026-07-21 11:55:11 | DEBUG    | database | DB | Entering get_reviews with args=[] kwargs={}
+2026-07-21 11:55:11 | DEBUG    | database | DB | get_reviews completed successfully
+2026-07-21 11:55:14 | INFO     | logger | 🔄 [Agent Event] Author: ReviewResearcher_0 | Node Path: 
+2026-07-21 11:55:14 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "The device is exceptionally lightweight and portable, maki...
+2026-07-21 11:55:17 | INFO     | logger | 🔄 [Agent Event] Author: AggregatorAgent | Node Path: 
+2026-07-21 11:55:17 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "The device is exceptionally lightweight and portable, maki...
+2026-07-21 11:55:17 | DEBUG    | database | DB | Entering cache_analysis with args=({'insights': [{'insight': 'The device is exceptionally lightweight and portable, making it ideal for travel and one-handed use.', 'confidence': 1.0, 'frequency': 25.0, 'example_quote': 'very lightweight and portable with excellent battery life.', 'category': 'usability', 'score': 32.5}, {'insight': 'The high price point is a significant barrier for many customers, even if they appreciate the premium features.', 'confidence': 0.95, 'frequency': 15.0, 'example_quote': "the only reason i didn't give it five stars was because of the price.", 'category': 'price', 'score': 14.25}, {'insight': 'The inclusion of physical page-turn buttons is a highly valued feature that improves the reading experience.', 'confidence': 0.98, 'frequency': 10.0, 'example_quote': 'i missed them since they vanished with the kindle keyboard!', 'category': 'usability', 'score': 12.74}, {'insight': 'The magnetic charging cover is a polarizing feature; while it extends battery life, some find it flimsy or poorly designed.', 'confidence': 0.9, 'frequency': 8.0, 'example_quote': 'magnetic connector is poorly designed and grows weak two pieces to keep up with; unsnaps constantly', 'category': 'quality', 'score': 10.8}, {'insight': 'The ergonomic design, specifically the weight distribution and grip, makes it more comfortable than previous models.', 'confidence': 0.95, 'frequency': 12.0, 'example_quote': 'the shape makes for easier holding.', 'category': 'usability', 'score': 14.82}, {'insight': 'Some users report inconsistent screen lighting, such as color tinting or uneven illumination.', 'confidence': 0.85, 'frequency': 4.0, 'example_quote': 'one half of the screen had a white/blue tint and the other half was more of a yellow tint.', 'category': 'quality', 'score': 5.1}, {'insight': 'The device lacks an ambient light sensor, which is a feature present in cheaper models like the Voyage.', 'confidence': 0.95, 'frequency': 3.0, 'example_quote': 'it does not have the ambient light sensor like the cheaper voyage does', 'category': 'usability', 'score': 3.7}, {'insight': 'Wifi connectivity issues are reported by some users, requiring proximity to the router.', 'confidence': 0.8, 'frequency': 2.0, 'example_quote': 'the wifi connectivity is patchy at best.', 'category': 'quality', 'score': 2.4}]},) kwargs={}
+2026-07-21 11:55:17 | DEBUG    | database | DB | cache_analysis completed successfully
+2026-07-21 11:55:17 | INFO     | streamlit_app | Streamlit - Successfully fetched insights for product ID 5
+2026-07-21 11:55:27 | INFO     | streamlit_app | Streamlit - User active product: Amazon Kindle Lighted Leather CoverAmazon Kindle Lighted Leather Cover (ID: 6)
+2026-07-21 11:55:27 | INFO     | streamlit_app | Streamlit - Requesting insights for product ID 6
+2026-07-21 11:55:27 | DEBUG    | database | DB | Entering get_cached_analysis with args=[] kwargs={}
+2026-07-21 11:55:27 | DEBUG    | database | DB | get_cached_analysis completed successfully
+2026-07-21 11:55:27 | DEBUG    | database | DB | Entering get_reviews with args=[] kwargs={}
+2026-07-21 11:55:27 | DEBUG    | database | DB | get_reviews completed successfully
+2026-07-21 11:55:27 | INFO     | llm | ⏳ Rate limit safeguard: Cooldown active. Sleeping for 47.30 seconds...
+2026-07-21 11:56:17 | INFO     | logger | 🔄 [Agent Event] Author: ReviewResearcher_0 | Node Path: 
+2026-07-21 11:56:17 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "The case lacks a closure mechanism, which is a significant...
+2026-07-21 11:56:19 | INFO     | logger | 🔄 [Agent Event] Author: AggregatorAgent | Node Path: 
+2026-07-21 11:56:19 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "The case lacks a closure mechanism, which is a significant...
+2026-07-21 11:56:19 | DEBUG    | database | DB | Entering cache_analysis with args=({'insights': [{'insight': 'The case lacks a closure mechanism, which is a significant design oversight.', 'confidence': 1.0, 'frequency': 3.0, 'example_quote': 'the most stunning oversight is the lack of a closure device.', 'category': 'usability', 'score': 3.9}, {'insight': 'The light provides even, balanced illumination across the screen compared to previous models.', 'confidence': 0.9, 'frequency': 3.0, 'example_quote': 'the light is now centered on the screen, so illumination is more even now.', 'category': 'quality', 'score': 4.05}, {'insight': 'The build quality and durability of the leather and light hinge are perceived as inferior to previous generations.', 'confidence': 0.8, 'frequency': 4.0, 'example_quote': 'the case does feel very cheap, especially with no change in price point.', 'category': 'quality', 'score': 4.8}, {'insight': 'The case is considered expensive relative to its perceived material quality.', 'confidence': 0.9, 'frequency': 3.0, 'example_quote': 'i paid 54 for this case, which is almost as expensive as the kindle itself.', 'category': 'price', 'score': 2.7}, {'insight': 'The form-fit design provides a secure, lightweight, and compact attachment to the device.', 'confidence': 0.9, 'frequency': 3.0, 'example_quote': 'it is no longer hinged only on one edge, but instead it is form fit inside of a rigid rubber shell', 'category': 'usability', 'score': 3.51}, {'insight': 'The leather surface is prone to scratching and marring with normal use.', 'confidence': 0.8, 'frequency': 2.0, 'example_quote': 'the leather on the front cover is extremely thin and you can immediately tell the surface will be easily scratched', 'category': 'quality', 'score': 2.4}]},) kwargs={}
+2026-07-21 11:56:19 | DEBUG    | database | DB | cache_analysis completed successfully
+2026-07-21 11:56:19 | INFO     | streamlit_app | Streamlit - Successfully fetched insights for product ID 6
+2026-07-21 11:56:38 | INFO     | streamlit_app | Streamlit - Fetching products from http://localhost:8000/products/
+2026-07-21 11:56:38 | DEBUG    | database | DB | Entering get_products with args=[] kwargs={}
+2026-07-21 11:56:38 | DEBUG    | database | DB | get_products completed successfully
+2026-07-21 11:56:38 | INFO     | streamlit_app | Streamlit - Successfully fetched 32 products
+2026-07-21 11:56:38 | INFO     | streamlit_app | Streamlit - User active product: Kindle Keyboard (ID: 7)
+2026-07-21 11:56:38 | INFO     | streamlit_app | Streamlit - Requesting insights for product ID 7
+2026-07-21 11:56:38 | DEBUG    | database | DB | Entering get_cached_analysis with args=[] kwargs={}
+2026-07-21 11:56:38 | DEBUG    | database | DB | get_cached_analysis completed successfully
+2026-07-21 11:56:38 | DEBUG    | database | DB | Entering get_reviews with args=[] kwargs={}
+2026-07-21 11:56:38 | DEBUG    | database | DB | get_reviews completed successfully
+2026-07-21 11:56:41 | INFO     | logger | 🔄 [Agent Event] Author: ReviewResearcher_0 | Node Path: 
+2026-07-21 11:56:41 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "The e-ink display provides a superior reading experience w...
+2026-07-21 11:56:43 | INFO     | logger | 🔄 [Agent Event] Author: AggregatorAgent | Node Path: 
+2026-07-21 11:56:43 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "The e-ink display provides a superior reading experience w...
+2026-07-21 11:56:43 | DEBUG    | database | DB | Entering cache_analysis with args=({'insights': [{'insight': 'The e-ink display provides a superior reading experience with high contrast and zero eye strain compared to tablets.', 'confidence': 0.95, 'frequency': 6.0, 'example_quote': 'The e-ink display is amazing... there is zero eye strain in good light.', 'category': 'quality', 'score': 8.55}, {'insight': 'The device is highly portable, lightweight, and ergonomic, making it ideal for extended reading sessions.', 'confidence': 0.9, 'frequency': 5.0, 'example_quote': 'The kindle is incredibly light and thin. I can hold it in one hand easily.', 'category': 'usability', 'score': 5.85}, {'insight': 'Users with vision impairments appreciate the ability to adjust font sizes.', 'confidence': 0.95, 'frequency': 3.0, 'example_quote': 'I use to hate to read but now that i have my kindle and i can change the size of the font so this old lady can see the words better i love to read.', 'category': 'usability', 'score': 3.7}, {'insight': 'The Kindle store interface lacks advanced sorting and categorization features.', 'confidence': 0.85, 'frequency': 2.0, 'example_quote': 'The kindle store could use more categories and sorting options.', 'category': 'usability', 'score': 2.21}, {'insight': 'There are reports of fragile screens cracking without external impact, which is a significant durability concern.', 'confidence': 0.8, 'frequency': 2.0, 'example_quote': 'Yesterday i opened the cover ready to read and discovered the screen had apparently cracked, seemingly for no apparent reason.', 'category': 'quality', 'score': 2.4}, {'insight': 'Battery failure after long periods of inactivity is a reported issue.', 'confidence': 0.75, 'frequency': 1.0, 'example_quote': "There's absolutely no way to revive them once that battery loses power if not charged immediately.", 'category': 'quality', 'score': 1.12}, {'insight': 'Amazon customer support is generally perceived as effective and helpful for technical issues.', 'confidence': 0.85, 'frequency': 1.0, 'example_quote': 'I explained my problem. The amazon american fiddled with a few buttons on his end and my kindle began working correctly.', 'category': 'support', 'score': 1.02}]},) kwargs={}
+2026-07-21 11:56:43 | DEBUG    | database | DB | cache_analysis completed successfully
+2026-07-21 11:56:43 | INFO     | streamlit_app | Streamlit - Successfully fetched insights for product ID 7
+2026-07-21 11:58:25 | INFO     | streamlit_app | Streamlit - Fetching products from http://localhost:8000/products/
+2026-07-21 11:58:25 | DEBUG    | database | DB | Entering get_products with args=[] kwargs={}
+2026-07-21 11:58:25 | DEBUG    | database | DB | get_products completed successfully
+2026-07-21 11:58:25 | INFO     | streamlit_app | Streamlit - Successfully fetched 32 products
+2026-07-21 11:58:25 | INFO     | streamlit_app | Streamlit - User active product: All-New Fire HD 8 Tablet, 8 HD Display, Wi-Fi, 32 GB - Includes Special Offers, Magenta (ID: 8)
+2026-07-21 11:58:25 | INFO     | streamlit_app | Streamlit - Requesting insights for product ID 8
+2026-07-21 11:58:25 | DEBUG    | database | DB | Entering get_cached_analysis with args=[] kwargs={}
+2026-07-21 11:58:25 | DEBUG    | database | DB | get_cached_analysis completed successfully
+2026-07-21 11:58:25 | DEBUG    | database | DB | Entering get_reviews with args=[] kwargs={}
+2026-07-21 11:58:25 | DEBUG    | database | DB | get_reviews completed successfully
+2026-07-21 11:58:28 | INFO     | logger | 🔄 [Agent Event] Author: ReviewResearcher_0 | Node Path: 
+2026-07-21 11:58:28 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "Excellent value for the price point compared to premium ta...
+2026-07-21 11:58:31 | INFO     | logger | 🔄 [Agent Event] Author: AggregatorAgent | Node Path: 
+2026-07-21 11:58:31 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "Excellent value for the price point compared to premium ta...
+2026-07-21 11:58:31 | DEBUG    | database | DB | Entering cache_analysis with args=({'insights': [{'insight': 'Excellent value for the price point compared to premium tablets like the iPad.', 'confidence': 0.95, 'frequency': 15.0, 'example_quote': 'good quality, low cost compare to ipad, i like this.', 'category': 'price', 'score': 14.25}, {'insight': 'Users appreciate the expandable storage via SD card slot.', 'confidence': 0.9, 'frequency': 6.0, 'example_quote': 'much more memory that my prior kindles. luv that i can add a sd card for extra storage', 'category': 'quality', 'score': 8.1}, {'insight': 'The Amazon-specific app store is perceived as limited compared to Google Play.', 'confidence': 0.85, 'frequency': 8.0, 'example_quote': 'i hate amazon app store. nothing good in there.', 'category': 'usability', 'score': 8.84}, {'insight': 'High satisfaction with the device for reading, media consumption, and Amazon Prime integration.', 'confidence': 0.95, 'frequency': 12.0, 'example_quote': "if you're looking for a good, basic tablet, this is a nice option.", 'category': 'usability', 'score': 14.82}, {'insight': 'Some users report technical issues such as random shutdowns or connectivity problems.', 'confidence': 0.8, 'frequency': 7.0, 'example_quote': 'tablet shuts down and i cant get it back on when i play games for long periods of time.', 'category': 'quality', 'score': 8.4}, {'insight': 'The device is highly regarded as a kid-friendly tablet with effective parental controls.', 'confidence': 0.9, 'frequency': 5.0, 'example_quote': 'got this for my 8 year old granddaughter and she loves it. uses it for game play, homework, etc. mom and dad loves the parental controls.', 'category': 'usability', 'score': 5.85}, {'insight': 'Speakers are frequently described as mediocre or lacking volume compared to older models.', 'confidence': 0.75, 'frequency': 4.0, 'example_quote': 'the only negative is the speakers. my first one is louder than this one.', 'category': 'quality', 'score': 4.5}]},) kwargs={}
+2026-07-21 11:58:31 | DEBUG    | database | DB | cache_analysis completed successfully
+2026-07-21 11:58:31 | INFO     | streamlit_app | Streamlit - Successfully fetched insights for product ID 8
+2026-07-21 11:58:39 | INFO     | streamlit_app | Streamlit - User active product: Fire HD 8 Tablet with Alexa, 8 HD Display, 32 GB, Tangerine - with Special Offers (ID: 9)
+2026-07-21 11:58:39 | INFO     | streamlit_app | Streamlit - Requesting insights for product ID 9
+2026-07-21 11:58:39 | DEBUG    | database | DB | Entering get_cached_analysis with args=[] kwargs={}
+2026-07-21 11:58:39 | DEBUG    | database | DB | get_cached_analysis completed successfully
+2026-07-21 11:58:39 | DEBUG    | database | DB | Entering get_reviews with args=[] kwargs={}
+2026-07-21 11:58:39 | DEBUG    | database | DB | get_reviews completed successfully
+2026-07-21 11:58:41 | INFO     | logger | 🔄 [Agent Event] Author: ReviewResearcher_0 | Node Path: 
+2026-07-21 11:58:41 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "High customer loyalty and repeat purchase behavior",      ...
+2026-07-21 11:58:43 | INFO     | logger | 🔄 [Agent Event] Author: AggregatorAgent | Node Path: 
+2026-07-21 11:58:43 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "High customer loyalty and repeat purchase behavior",      ...
+2026-07-21 11:58:43 | DEBUG    | database | DB | Entering cache_analysis with args=({'insights': [{'insight': 'High customer loyalty and repeat purchase behavior', 'confidence': 0.95, 'frequency': 7.0, 'example_quote': 'this is the third fire tablet that we have purchased for our kids.', 'category': 'customer_retention', 'score': 6.65}, {'insight': 'Improved hardware performance including speed and screen quality', 'confidence': 0.9, 'frequency': 4.0, 'example_quote': 'it has such a big screen to see better. it loads games and books very fast!', 'category': 'quality', 'score': 5.4}, {'insight': 'Enhanced audio quality compared to previous models', 'confidence': 0.9, 'frequency': 2.0, 'example_quote': 'the sound volume and quality is much better.', 'category': 'quality', 'score': 2.7}, {'insight': 'Long battery life and fast charging capabilities', 'confidence': 0.85, 'frequency': 3.0, 'example_quote': 'the battery charges very fast and hold a charge for a very long time.', 'category': 'quality', 'score': 3.82}, {'insight': 'User interface is perceived as less intuitive than competitors', 'confidence': 0.8, 'frequency': 1.0, 'example_quote': 'this seems to be less intuitive than the ipad.', 'category': 'usability', 'score': 1.04}, {'insight': 'Concerns regarding app store variety and purchase security settings', 'confidence': 0.75, 'frequency': 1.0, 'example_quote': 'dont have option for password ask you before buying apps once you authorized as allow its done.', 'category': 'usability', 'score': 0.98}]},) kwargs={}
+2026-07-21 11:58:43 | DEBUG    | database | DB | cache_analysis completed successfully
+2026-07-21 11:58:43 | INFO     | streamlit_app | Streamlit - Successfully fetched insights for product ID 9
+2026-07-21 11:59:35 | INFO     | streamlit_app | Streamlit - Fetching products from http://localhost:8000/products/
+2026-07-21 11:59:35 | DEBUG    | database | DB | Entering get_products with args=[] kwargs={}
+2026-07-21 11:59:35 | DEBUG    | database | DB | get_products completed successfully
+2026-07-21 11:59:35 | INFO     | streamlit_app | Streamlit - Successfully fetched 32 products
+2026-07-21 11:59:35 | INFO     | streamlit_app | Streamlit - User active product: Amazon 5W USB Official OEM Charger and Power Adapter for Fire Tablets and Kindle eReadersAmazon 5W USB Official OEM Charger and Power Adapter for Fire Tablets and Kindle eReaders (ID: 10)
+2026-07-21 11:59:35 | INFO     | streamlit_app | Streamlit - Requesting insights for product ID 10
+2026-07-21 11:59:35 | DEBUG    | database | DB | Entering get_cached_analysis with args=[] kwargs={}
+2026-07-21 11:59:35 | DEBUG    | database | DB | get_cached_analysis completed successfully
+2026-07-21 11:59:35 | DEBUG    | database | DB | Entering get_reviews with args=[] kwargs={}
+2026-07-21 11:59:35 | DEBUG    | database | DB | get_reviews completed successfully
+2026-07-21 11:59:35 | INFO     | llm | ⏳ Rate limit safeguard: Cooldown active. Sleeping for 60.00 seconds...
+2026-07-21 11:59:38 | INFO     | logger | 🔄 [Agent Event] Author: ReviewResearcher_0 | Node Path: 
+2026-07-21 11:59:38 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "Customers strongly feel the charging adapter should be inc...
+2026-07-21 11:59:38 | INFO     | logger | 🔄 [Agent Event] Author: ReviewResearcher_1 | Node Path: 
+2026-07-21 11:59:38 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "Customers strongly feel the charger should be included wit...
+2026-07-21 12:00:37 | INFO     | logger | 🔄 [Agent Event] Author: ReviewResearcher_2 | Node Path: 
+2026-07-21 12:00:37 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "Customers perceive the charger as overpriced, especially c...
+2026-07-21 12:00:40 | INFO     | logger | 🔄 [Agent Event] Author: AggregatorAgent | Node Path: 
+2026-07-21 12:00:40 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "Customers strongly feel the charging adapter should be inc...
+2026-07-21 12:00:40 | DEBUG    | database | DB | Entering cache_analysis with args=({'insights': [{'insight': 'Customers strongly feel the charging adapter should be included with the Kindle purchase rather than sold separately.', 'confidence': 0.95, 'frequency': 41.0, 'example_quote': "it's a joke that amazon doesn't just ship a charging plug with the kindle in the first place.", 'category': 'usability', 'score': 50.63}, {'insight': 'The product is perceived as overpriced compared to generic third-party alternatives.', 'confidence': 0.92, 'frequency': 31.0, 'example_quote': "if you actually paid 20 for this adapter, you're out of your mind.", 'category': 'price', 'score': 28.52}, {'insight': 'The charger is generally reliable and effective at charging Kindles quickly.', 'confidence': 0.85, 'frequency': 40.0, 'example_quote': 'works fine! good quality and charges the kindle quickly.', 'category': 'quality', 'score': 51.0}, {'insight': 'Users appreciate the convenience of wall charging over relying on computer USB ports.', 'confidence': 0.95, 'frequency': 12.0, 'example_quote': 'it allows me to charge it without having to plug it to a computer.', 'category': 'usability', 'score': 14.82}, {'insight': 'The compact design is frequently praised as a positive feature.', 'confidence': 0.9, 'frequency': 8.0, 'example_quote': 'small and compact which is nice.', 'category': 'usability', 'score': 9.36}, {'insight': 'There is confusion regarding whether the charger is necessary, as many users already own compatible USB adapters.', 'confidence': 0.85, 'frequency': 8.0, 'example_quote': 'had i known that i could charge my kindle with my tablet and/or phone charging cord i would not have bought it.', 'category': 'usability', 'score': 8.84}, {'insight': 'Some users find the included USB cable length insufficient for comfortable use while charging.', 'confidence': 0.8, 'frequency': 4.0, 'example_quote': 'cord could certainly be longer.', 'category': 'usability', 'score': 4.16}, {'insight': 'Customers prefer the design of folding prongs over the current fixed-prong design.', 'confidence': 0.75, 'frequency': 3.0, 'example_quote': 'i used to be able to find these with fold in prongs wish there was that option.', 'category': 'usability', 'score': 2.93}, {'insight': 'Some customers report receiving incorrect or non-OEM items when ordering the official product.', 'confidence': 0.7, 'frequency': 2.0, 'example_quote': 'i received a charger cord that states lg electronics and verizon accessory.', 'category': 'support', 'score': 1.68}, {'insight': 'A small subset of users reported potential safety issues or device damage when using the charger with other electronics.', 'confidence': 0.7, 'frequency': 2.0, 'example_quote': 'this charger fried my kindle fire, samsung galaxy s6, and samsung galaxy j7.', 'category': 'quality', 'score': 2.1}, {'insight': 'The physical dimensions of the charger are too large to fit within the Kindle product packaging.', 'confidence': 0.9, 'frequency': 1.0, 'example_quote': "it is a pretty large charger though and doesn't fit in the kindle box with the kindle, at all.", 'category': 'usability', 'score': 1.17}]},) kwargs={}
+2026-07-21 12:00:40 | DEBUG    | database | DB | cache_analysis completed successfully
+2026-07-21 12:00:40 | INFO     | streamlit_app | Streamlit - Successfully fetched insights for product ID 10
+2026-07-21 12:04:37 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-21 12:04:37 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-21 12:04:38 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-21 12:04:38 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-21 12:04:41 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-21 12:04:41 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-21 12:04:41 | INFO     | streamlit_app | Streamlit - Fetching products from http://localhost:8000/products/
+2026-07-21 12:04:41 | DEBUG    | database | DB | Entering get_products with args=[] kwargs={}
+2026-07-21 12:04:41 | DEBUG    | database | DB | get_products completed successfully
+2026-07-21 12:04:41 | INFO     | streamlit_app | Streamlit - Successfully fetched 32 products
+2026-07-21 12:04:41 | INFO     | streamlit_app | Streamlit - User active product: Samsung Galaxy S26 Ultra 5G (Sky Blue, 12GB RAM, 512GB Storage) (ID: 1)
+2026-07-21 12:04:41 | INFO     | streamlit_app | Streamlit - Requesting insights for product ID 1
+2026-07-21 12:04:41 | DEBUG    | database | DB | Entering get_cached_analysis with args=[] kwargs={}
+2026-07-21 12:04:41 | DEBUG    | database | DB | get_cached_analysis completed successfully
+2026-07-21 12:04:41 | INFO     | streamlit_app | Streamlit - Successfully fetched insights for product ID 1
+2026-07-21 12:04:50 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-21 12:04:50 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-21 12:04:51 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-21 12:04:51 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-21 12:05:08 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-21 12:05:08 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-21 12:05:09 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-21 12:05:09 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-21 12:05:11 | INFO     | streamlit_app | Streamlit - User active product: Samsung Galaxy S26 Ultra 5G (Sky Blue, 12GB RAM, 512GB Storage) (ID: 1)
+2026-07-21 12:05:11 | INFO     | streamlit_app | Streamlit - Requesting insights for product ID 1
+2026-07-21 12:05:11 | DEBUG    | database | DB | Entering get_cached_analysis with args=[] kwargs={}
+2026-07-21 12:05:11 | DEBUG    | database | DB | get_cached_analysis completed successfully
+2026-07-21 12:05:11 | INFO     | streamlit_app | Streamlit - Successfully fetched insights for product ID 1
+2026-07-21 12:05:24 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-21 12:05:24 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-21 12:05:27 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-21 12:05:27 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-21 23:58:17 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-21 23:58:17 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-21 23:58:19 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-21 23:58:19 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-21 23:58:36 | INFO     | streamlit_app | Streamlit - Fetching products from http://localhost:8000/products/
+2026-07-21 23:58:36 | DEBUG    | database | DB | Entering get_products with args=[] kwargs={}
+2026-07-21 23:58:36 | DEBUG    | database | DB | get_products completed successfully
+2026-07-21 23:58:36 | INFO     | streamlit_app | Streamlit - Successfully fetched 32 products
+2026-07-21 23:58:36 | INFO     | streamlit_app | Streamlit - User active product: Samsung Galaxy S26 Ultra 5G (Sky Blue, 12GB RAM, 512GB Storage) (ID: 1)
+2026-07-21 23:58:36 | INFO     | streamlit_app | Streamlit - Requesting insights for product ID 1
+2026-07-21 23:58:36 | DEBUG    | database | DB | Entering get_cached_analysis with args=[] kwargs={}
+2026-07-21 23:58:36 | DEBUG    | database | DB | get_cached_analysis completed successfully
+2026-07-21 23:58:36 | INFO     | streamlit_app | Streamlit - Successfully fetched insights for product ID 1
+2026-07-21 23:58:39 | INFO     | streamlit_app | Streamlit - User active product: Samsung Galaxy S26 Ultra 5G (Sky Blue, 12GB RAM, 512GB Storage) (ID: 1)
+2026-07-21 23:58:39 | INFO     | streamlit_app | Streamlit - User triggered Cache Clear for product ID 1
+2026-07-21 23:58:39 | DEBUG    | database | DB | Entering clear_cache with args=[] kwargs={}
+2026-07-21 23:58:39 | DEBUG    | database | DB | clear_cache completed successfully
+2026-07-21 23:58:39 | INFO     | streamlit_app | Streamlit - Cache successfully cleared on backend for product ID 1
+2026-07-21 23:58:39 | INFO     | streamlit_app | Streamlit - Requesting insights for product ID 1
+2026-07-21 23:58:39 | DEBUG    | database | DB | Entering get_cached_analysis with args=[] kwargs={}
+2026-07-21 23:58:39 | DEBUG    | database | DB | get_cached_analysis completed successfully
+2026-07-21 23:58:39 | DEBUG    | database | DB | Entering get_reviews with args=[] kwargs={}
+2026-07-21 23:58:39 | DEBUG    | database | DB | get_reviews completed successfully
+2026-07-21 23:58:42 | INFO     | logger | 🔄 [Agent Event] Author: ReviewResearcher_0 | Node Path: 
+2026-07-21 23:58:42 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "Exceptional processing performance with Snapdragon 8 Elite...
+2026-07-21 23:58:45 | INFO     | logger | 🔄 [Agent Event] Author: AggregatorAgent | Node Path: 
+2026-07-21 23:58:45 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "Exceptional processing performance with Snapdragon 8 Elite...
+2026-07-21 23:58:45 | DEBUG    | database | DB | Entering cache_analysis with args=({'insights': [{'insight': 'Exceptional processing performance with Snapdragon 8 Elite Gen 5', 'confidence': 1.0, 'frequency': 1.0, 'example_quote': 'the new snapdragon 8 elite gen 5 is ridiculously fast. zero lag anywhere.', 'category': 'performance', 'score': 1.0}, {'insight': 'Significant improvement in battery life over previous generation', 'confidence': 0.95, 'frequency': 1.0, 'example_quote': 'battery life is insanely good compared to the older s24 ultra.', 'category': 'performance', 'score': 0.95}, {'insight': 'Camera quality is high, but 200MP sensor shows diminishing returns', 'confidence': 0.9, 'frequency': 1.0, 'example_quote': "the camera is great, but honestly the 200mp shots look similar to last year's model.", 'category': 'quality', 'score': 1.35}, {'insight': 'Positive reception of aesthetic design and lightweight titanium frame', 'confidence': 0.95, 'frequency': 1.0, 'example_quote': 'sky blue color is gorgeous. the titanium frame feels much lighter this year.', 'category': 'design', 'score': 0.95}, {'insight': 'Perceived lack of value for existing S24/S25 Ultra owners', 'confidence': 0.85, 'frequency': 1.0, 'example_quote': "overpriced. the upgrade from s25 ultra isn't worth it.", 'category': 'price', 'score': 0.85}, {'insight': 'High screen brightness improves outdoor usability', 'confidence': 0.95, 'frequency': 1.0, 'example_quote': 'screen is incredibly bright even in direct sunlight. great for outdoor use.', 'category': 'usability', 'score': 1.23}, {'insight': 'AI photo editing features are a key differentiator', 'confidence': 0.9, 'frequency': 1.0, 'example_quote': "samsung's new ai features for photo editing are mind-blowing.", 'category': 'features', 'score': 0.9}, {'insight': 'Thermal management issues during intensive gaming sessions', 'confidence': 0.8, 'frequency': 1.0, 'example_quote': 'phone gets a bit warm when playing heavy 3d games for over an hour.', 'category': 'performance', 'score': 0.8}, {'insight': 'Improved fingerprint sensor reliability and speed', 'confidence': 0.95, 'frequency': 1.0, 'example_quote': 'finally, they improved the fingerprint sensor! much faster and more accurate.', 'category': 'usability', 'score': 1.23}, {'insight': 'Demand for faster charging technology', 'confidence': 0.9, 'frequency': 1.0, 'example_quote': 'solid build quality, but still waiting for faster charging speeds.', 'category': 'features', 'score': 0.9}]},) kwargs={}
+2026-07-21 23:58:45 | DEBUG    | database | DB | cache_analysis completed successfully
+2026-07-21 23:58:45 | INFO     | streamlit_app | Streamlit - Successfully fetched insights for product ID 1
+2026-07-21 23:58:51 | INFO     | streamlit_app | Streamlit - Fetching products from http://localhost:8000/products/
+2026-07-21 23:58:51 | DEBUG    | database | DB | Entering get_products with args=[] kwargs={}
+2026-07-21 23:58:51 | DEBUG    | database | DB | get_products completed successfully
+2026-07-21 23:58:51 | INFO     | streamlit_app | Streamlit - Successfully fetched 32 products
+2026-07-21 23:58:51 | INFO     | streamlit_app | Streamlit - User active product: Apple iPhone 17 Pro Max (1 TB, Cosmic Orange) (ID: 2)
+2026-07-21 23:58:51 | INFO     | streamlit_app | Streamlit - Requesting insights for product ID 2
+2026-07-21 23:58:51 | DEBUG    | database | DB | Entering get_cached_analysis with args=[] kwargs={}
+2026-07-21 23:58:51 | DEBUG    | database | DB | get_cached_analysis completed successfully
+2026-07-21 23:58:51 | INFO     | streamlit_app | Streamlit - Successfully fetched insights for product ID 2
+2026-07-21 23:58:55 | INFO     | streamlit_app | Streamlit - User active product: Apple iPhone 17 Pro Max (1 TB, Cosmic Orange) (ID: 2)
+2026-07-21 23:58:55 | INFO     | streamlit_app | Streamlit - User triggered Cache Clear for product ID 2
+2026-07-21 23:58:55 | DEBUG    | database | DB | Entering clear_cache with args=[] kwargs={}
+2026-07-21 23:58:55 | DEBUG    | database | DB | clear_cache completed successfully
+2026-07-21 23:58:55 | INFO     | streamlit_app | Streamlit - Cache successfully cleared on backend for product ID 2
+2026-07-21 23:58:55 | INFO     | streamlit_app | Streamlit - Requesting insights for product ID 2
+2026-07-21 23:58:55 | DEBUG    | database | DB | Entering get_cached_analysis with args=[] kwargs={}
+2026-07-21 23:58:55 | DEBUG    | database | DB | get_cached_analysis completed successfully
+2026-07-21 23:58:55 | DEBUG    | database | DB | Entering get_reviews with args=[] kwargs={}
+2026-07-21 23:58:55 | DEBUG    | database | DB | get_reviews completed successfully
+2026-07-21 23:58:57 | INFO     | logger | 🔄 [Agent Event] Author: ReviewResearcher_0 | Node Path: 
+2026-07-21 23:58:57 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "High aesthetic appeal of the cosmic orange color",       "...
+2026-07-21 23:59:00 | INFO     | logger | 🔄 [Agent Event] Author: AggregatorAgent | Node Path: 
+2026-07-21 23:59:00 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "High aesthetic appeal of the cosmic orange color",       "...
+2026-07-21 23:59:00 | DEBUG    | database | DB | Entering cache_analysis with args=({'insights': [{'insight': 'High aesthetic appeal of the cosmic orange color', 'confidence': 1.0, 'frequency': 1.0, 'example_quote': 'the cosmic orange color is absolutely stunning in person.', 'category': 'quality', 'score': 1.5}, {'insight': 'A19 Pro chip provides high-performance gaming capabilities', 'confidence': 1.0, 'frequency': 1.0, 'example_quote': 'a19 pro chip handles aaa gaming like a breeze. truly console level.', 'category': 'usability', 'score': 1.3}, {'insight': 'Pro Fusion camera system excels in low-light conditions', 'confidence': 1.0, 'frequency': 1.0, 'example_quote': 'the pro fusion camera system takes low-light photography to a new level.', 'category': 'quality', 'score': 1.5}, {'insight': 'Exceptional battery life lasting up to two days', 'confidence': 1.0, 'frequency': 1.0, 'example_quote': 'battery easily lasts two days of moderate use. best battery on an iphone yet.', 'category': 'quality', 'score': 1.5}, {'insight': 'Under-screen Face ID technology functions seamlessly', 'confidence': 1.0, 'frequency': 1.0, 'example_quote': 'the new invisible face id under the screen works perfectly.', 'category': 'usability', 'score': 1.3}, {'insight': 'Device weight is excessive despite titanium construction', 'confidence': 0.9, 'frequency': 1.0, 'example_quote': "very heavy phone. the titanium doesn't seem to help much with the 1tb model's weight.", 'category': 'quality', 'score': 1.35}, {'insight': 'Desire for increased home screen customization in iOS 20', 'confidence': 0.9, 'frequency': 1.0, 'example_quote': 'ios 20 is smooth, but i wish there was more customization on the home screen.', 'category': 'usability', 'score': 1.17}, {'insight': 'Improved zoom capabilities are competitive with market leaders', 'confidence': 0.9, 'frequency': 1.0, 'example_quote': 'the zoom capabilities are finally catching up to samsung. very impressed.', 'category': 'quality', 'score': 1.35}, {'insight': 'High price point limits value proposition to power users', 'confidence': 0.9, 'frequency': 1.0, 'example_quote': 'extremely expensive. only buy the 1tb if you shoot a lot of prores video.', 'category': 'price', 'score': 0.9}, {'insight': 'Display quality and 120Hz refresh rate are highly satisfactory', 'confidence': 1.0, 'frequency': 1.0, 'example_quote': 'display is flawless, 120hz promotion is smooth as butter.', 'category': 'quality', 'score': 1.5}]},) kwargs={}
+2026-07-21 23:59:00 | DEBUG    | database | DB | cache_analysis completed successfully
+2026-07-21 23:59:00 | INFO     | streamlit_app | Streamlit - Successfully fetched insights for product ID 2
+2026-07-21 23:59:39 | DEBUG    | database | DB | Entering clear_cache with args=[] kwargs={}
+2026-07-21 23:59:39 | DEBUG    | database | DB | clear_cache completed successfully
+2026-07-21 23:59:44 | DEBUG    | database | DB | Entering get_cached_analysis with args=[] kwargs={}
+2026-07-21 23:59:44 | DEBUG    | database | DB | get_cached_analysis completed successfully
+2026-07-21 23:59:44 | DEBUG    | database | DB | Entering get_reviews with args=[] kwargs={}
+2026-07-21 23:59:44 | DEBUG    | database | DB | get_reviews completed successfully
+2026-07-21 23:59:47 | INFO     | logger | 🔄 [Agent Event] Author: ReviewResearcher_0 | Node Path: 
+2026-07-21 23:59:47 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "Exceptional processing performance with Snapdragon 8 Elite...
+2026-07-21 23:59:49 | INFO     | logger | 🔄 [Agent Event] Author: AggregatorAgent | Node Path: 
+2026-07-21 23:59:49 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "Exceptional processing performance with Snapdragon 8 Elite...
+2026-07-21 23:59:49 | DEBUG    | database | DB | Entering cache_analysis with args=({'insights': [{'insight': 'Exceptional processing performance with Snapdragon 8 Elite Gen 5', 'confidence': 1.0, 'frequency': 1.0, 'example_quote': 'the new snapdragon 8 elite gen 5 is ridiculously fast. zero lag anywhere.', 'category': 'performance', 'score': 1.0}, {'insight': 'Significant improvement in battery life over previous generation', 'confidence': 0.95, 'frequency': 1.0, 'example_quote': 'battery life is insanely good compared to the older s24 ultra.', 'category': 'performance', 'score': 0.95}, {'insight': 'Camera quality is high, but 200MP sensor shows diminishing returns', 'confidence': 0.9, 'frequency': 1.0, 'example_quote': "the camera is great, but honestly the 200mp shots look similar to last year's model.", 'category': 'quality', 'score': 1.35}, {'insight': 'Positive reception of aesthetic design and lightweight titanium frame', 'confidence': 0.95, 'frequency': 1.0, 'example_quote': 'sky blue color is gorgeous. the titanium frame feels much lighter this year.', 'category': 'design', 'score': 0.95}, {'insight': 'Perceived lack of value for existing S24/S25 Ultra owners', 'confidence': 0.85, 'frequency': 1.0, 'example_quote': "overpriced. the upgrade from s25 ultra isn't worth it.", 'category': 'price', 'score': 0.85}, {'insight': 'High screen brightness improves outdoor usability', 'confidence': 0.95, 'frequency': 1.0, 'example_quote': 'screen is incredibly bright even in direct sunlight. great for outdoor use.', 'category': 'usability', 'score': 1.23}, {'insight': 'AI photo editing features are a key differentiator', 'confidence': 0.9, 'frequency': 1.0, 'example_quote': "samsung's new ai features for photo editing are mind-blowing.", 'category': 'features', 'score': 0.9}, {'insight': 'Thermal management issues during intensive gaming sessions', 'confidence': 0.8, 'frequency': 1.0, 'example_quote': 'phone gets a bit warm when playing heavy 3d games for over an hour.', 'category': 'performance', 'score': 0.8}, {'insight': 'Improved fingerprint sensor reliability and speed', 'confidence': 0.95, 'frequency': 1.0, 'example_quote': 'finally, they improved the fingerprint sensor! much faster and more accurate.', 'category': 'usability', 'score': 1.23}, {'insight': 'Demand for faster charging technology', 'confidence': 0.9, 'frequency': 1.0, 'example_quote': 'solid build quality, but still waiting for faster charging speeds.', 'category': 'features', 'score': 0.9}]},) kwargs={}
+2026-07-21 23:59:50 | DEBUG    | database | DB | cache_analysis completed successfully
+2026-07-22 00:00:00 | INFO     | streamlit_app | Streamlit - Fetching products from http://localhost:8000/products/
+2026-07-22 00:00:00 | DEBUG    | database | DB | Entering get_products with args=[] kwargs={}
+2026-07-22 00:00:00 | DEBUG    | database | DB | get_products completed successfully
+2026-07-22 00:00:00 | INFO     | streamlit_app | Streamlit - Successfully fetched 32 products
+2026-07-22 00:00:00 | INFO     | streamlit_app | Streamlit - User active product: Samsung Galaxy S26 Ultra 5G (Sky Blue, 12GB RAM, 512GB Storage) (ID: 1)
+2026-07-22 00:00:00 | INFO     | streamlit_app | Streamlit - Requesting insights for product ID 1
+2026-07-22 00:00:00 | DEBUG    | database | DB | Entering get_cached_analysis with args=[] kwargs={}
+2026-07-22 00:00:00 | DEBUG    | database | DB | get_cached_analysis completed successfully
+2026-07-22 00:00:00 | INFO     | streamlit_app | Streamlit - Successfully fetched insights for product ID 1
+2026-07-22 00:05:41 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-22 00:05:41 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-22 00:05:47 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-22 00:05:47 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-25 19:58:24 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-25 19:58:24 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-25 19:58:25 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-25 19:58:25 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-25 19:58:43 | INFO     | streamlit_app | Streamlit - Fetching products from http://localhost:8000/products/
+2026-07-25 19:58:43 | DEBUG    | database | DB | Entering get_products with args=[] kwargs={}
+2026-07-25 19:58:43 | DEBUG    | database | DB | get_products completed successfully
+2026-07-25 19:58:43 | INFO     | streamlit_app | Streamlit - Successfully fetched 32 products
+2026-07-25 19:58:43 | INFO     | streamlit_app | Streamlit - User active product: Samsung Galaxy S26 Ultra 5G (Sky Blue, 12GB RAM, 512GB Storage) (ID: 1)
+2026-07-25 19:58:43 | INFO     | streamlit_app | Streamlit - Requesting insights for product ID 1
+2026-07-25 19:58:43 | DEBUG    | database | DB | Entering get_cached_analysis with args=[] kwargs={}
+2026-07-25 19:58:43 | DEBUG    | database | DB | get_cached_analysis completed successfully
+2026-07-25 19:58:43 | INFO     | streamlit_app | Streamlit - Successfully fetched insights for product ID 1
+2026-07-25 20:01:53 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-25 20:01:53 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-25 20:01:54 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-25 20:01:54 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-25 20:17:50 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-25 20:17:50 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-25 20:17:51 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-25 20:17:51 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-25 20:17:52 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-25 20:17:52 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-25 20:17:56 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-25 20:17:56 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-25 20:17:57 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-25 20:17:57 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-25 20:17:58 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-25 20:17:58 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-25 20:17:59 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-25 20:17:59 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-25 20:18:01 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-25 20:18:01 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-25 20:18:02 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-25 20:18:02 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-25 20:18:03 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-25 20:18:03 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-25 20:18:04 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-25 20:18:04 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-25 20:18:05 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-25 20:18:05 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-25 20:18:06 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-25 20:18:06 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-25 20:18:07 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-25 20:18:07 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-25 20:18:09 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-25 20:18:09 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-25 20:18:10 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-25 20:18:10 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-25 20:18:11 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-25 20:18:11 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-25 20:18:12 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-25 20:18:12 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-25 20:18:13 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-25 20:18:13 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-25 20:18:15 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-25 20:18:15 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-25 20:18:16 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-25 20:18:16 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-25 20:18:18 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-25 20:18:18 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-25 20:18:19 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-25 20:18:19 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-25 20:18:20 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-25 20:18:20 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-25 20:18:21 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-25 20:18:21 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-25 20:18:23 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-25 20:18:23 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-25 20:18:31 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-25 20:18:31 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-25 20:18:32 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-25 20:18:32 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-25 20:18:33 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-25 20:18:33 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-25 20:18:35 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-25 20:18:35 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-25 20:18:36 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-25 20:18:36 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-25 20:19:31 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-25 20:19:31 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-25 20:19:35 | DEBUG    | database | DB | Entering get_products with args=[] kwargs={}
+2026-07-25 20:19:35 | DEBUG    | database | DB | get_products completed successfully
+2026-07-25 20:19:35 | DEBUG    | database | DB | Entering get_cached_analysis with args=[] kwargs={}
+2026-07-25 20:19:35 | DEBUG    | database | DB | get_cached_analysis completed successfully
+2026-07-25 20:20:02 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-25 20:20:02 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-25 20:20:09 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-25 20:20:09 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-25 20:20:12 | DEBUG    | database | DB | Entering get_cached_analysis with args=[] kwargs={}
+2026-07-25 20:20:12 | DEBUG    | database | DB | get_cached_analysis completed successfully
+2026-07-25 20:20:20 | DEBUG    | database | DB | Entering get_cached_analysis with args=[] kwargs={}
+2026-07-25 20:20:20 | DEBUG    | database | DB | get_cached_analysis completed successfully
+2026-07-25 20:20:23 | DEBUG    | database | DB | Entering clear_cache with args=[] kwargs={}
+2026-07-25 20:20:23 | DEBUG    | database | DB | clear_cache completed successfully
+2026-07-25 20:20:23 | DEBUG    | database | DB | Entering get_cached_analysis with args=[] kwargs={}
+2026-07-25 20:20:23 | DEBUG    | database | DB | get_cached_analysis completed successfully
+2026-07-25 20:20:23 | DEBUG    | database | DB | Entering get_reviews with args=[] kwargs={}
+2026-07-25 20:20:23 | DEBUG    | database | DB | get_reviews completed successfully
+2026-07-25 20:20:26 | INFO     | logger | 🔄 [Agent Event] Author: ReviewResearcher_0 | Node Path: 
+2026-07-25 20:20:26 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "High aesthetic appeal of the cosmic orange color",       "...
+2026-07-25 20:20:29 | INFO     | logger | 🔄 [Agent Event] Author: AggregatorAgent | Node Path: 
+2026-07-25 20:20:29 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "High aesthetic appeal of the cosmic orange color",       "...
+2026-07-25 20:20:29 | DEBUG    | database | DB | Entering cache_analysis with args=({'insights': [{'insight': 'High aesthetic appeal of the cosmic orange color', 'confidence': 1.0, 'frequency': 1.0, 'example_quote': 'the cosmic orange color is absolutely stunning in person.', 'category': 'quality', 'score': 1.5}, {'insight': 'A19 Pro chip provides high-performance gaming capabilities', 'confidence': 1.0, 'frequency': 1.0, 'example_quote': 'a19 pro chip handles aaa gaming like a breeze. truly console level.', 'category': 'usability', 'score': 1.3}, {'insight': 'Pro Fusion camera system excels in low-light conditions', 'confidence': 1.0, 'frequency': 1.0, 'example_quote': 'the pro fusion camera system takes low-light photography to a new level.', 'category': 'quality', 'score': 1.5}, {'insight': 'Exceptional battery life lasting up to two days', 'confidence': 1.0, 'frequency': 1.0, 'example_quote': 'battery easily lasts two days of moderate use. best battery on an iphone yet.', 'category': 'quality', 'score': 1.5}, {'insight': 'Under-screen Face ID technology functions seamlessly', 'confidence': 1.0, 'frequency': 1.0, 'example_quote': 'the new invisible face id under the screen works perfectly.', 'category': 'usability', 'score': 1.3}, {'insight': 'Device weight is excessive despite titanium construction', 'confidence': 0.9, 'frequency': 1.0, 'example_quote': "very heavy phone. the titanium doesn't seem to help much with the 1tb model's weight.", 'category': 'quality', 'score': 1.35}, {'insight': 'Desire for increased home screen customization in iOS 20', 'confidence': 0.9, 'frequency': 1.0, 'example_quote': 'ios 20 is smooth, but i wish there was more customization on the home screen.', 'category': 'usability', 'score': 1.17}, {'insight': 'Improved zoom capabilities are competitive with market leaders', 'confidence': 0.9, 'frequency': 1.0, 'example_quote': 'the zoom capabilities are finally catching up to samsung. very impressed.', 'category': 'quality', 'score': 1.35}, {'insight': 'High price point limits value proposition to power users', 'confidence': 0.9, 'frequency': 1.0, 'example_quote': 'extremely expensive. only buy the 1tb if you shoot a lot of prores video.', 'category': 'price', 'score': 0.9}, {'insight': 'Display quality and 120Hz refresh rate are highly satisfactory', 'confidence': 1.0, 'frequency': 1.0, 'example_quote': 'display is flawless, 120hz promotion is smooth as butter.', 'category': 'quality', 'score': 1.5}]},) kwargs={}
+2026-07-25 20:20:29 | DEBUG    | database | DB | cache_analysis completed successfully
+2026-07-29 12:26:30 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-29 12:26:30 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-29 12:26:52 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-29 12:26:52 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-29 12:26:52 | DEBUG    | database | DB | Entering get_products with args=[] kwargs={}
+2026-07-29 12:26:52 | DEBUG    | database | DB | get_products completed successfully
+2026-07-29 12:27:04 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-29 12:27:04 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-29 12:27:04 | DEBUG    | database | DB | Entering get_cached_analysis with args=[] kwargs={}
+2026-07-29 12:27:04 | DEBUG    | database | DB | get_cached_analysis completed successfully
+2026-07-29 12:31:14 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-29 12:31:14 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-29 12:31:14 | DEBUG    | database | DB | Entering get_products with args=[] kwargs={}
+2026-07-29 12:31:14 | DEBUG    | database | DB | get_products completed successfully
+2026-07-29 12:31:14 | DEBUG    | database | DB | Entering get_cached_analysis with args=[] kwargs={}
+2026-07-29 12:31:14 | DEBUG    | database | DB | get_cached_analysis completed successfully
+2026-07-29 12:36:23 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-29 12:36:23 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-29 12:36:48 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-29 12:36:48 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-29 12:36:48 | DEBUG    | database | DB | Entering get_products with args=[] kwargs={}
+2026-07-29 12:36:48 | DEBUG    | database | DB | get_products completed successfully
+2026-07-29 12:55:11 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
+2026-07-29 12:55:11 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-07-29 12:55:50 | INFO     | streamlit_app | Streamlit - Fetching products from http://localhost:8000/products/
+2026-07-29 12:55:50 | DEBUG    | database | DB | Entering get_products with args=[] kwargs={}
+2026-07-29 12:55:50 | DEBUG    | database | DB | get_products completed successfully
+2026-07-29 12:55:50 | INFO     | streamlit_app | Streamlit - Successfully fetched 32 products
+2026-07-29 12:55:50 | INFO     | streamlit_app | Streamlit - User active product: Samsung Galaxy S26 Ultra 5G (Sky Blue, 12GB RAM, 512GB Storage) (ID: 1)
+2026-07-29 12:55:50 | INFO     | streamlit_app | Streamlit - Requesting insights for product ID 1
+2026-07-29 12:55:50 | DEBUG    | database | DB | Entering get_cached_analysis with args=[] kwargs={}
+2026-07-29 12:55:50 | DEBUG    | database | DB | get_cached_analysis completed successfully
+2026-07-29 12:55:50 | INFO     | streamlit_app | Streamlit - Successfully fetched insights for product ID 1
+2026-07-29 12:55:55 | INFO     | streamlit_app | Streamlit - User active product: Apple iPhone 17 Pro Max (1 TB, Cosmic Orange) (ID: 2)
+2026-07-29 12:55:55 | INFO     | streamlit_app | Streamlit - Requesting insights for product ID 2
+2026-07-29 12:55:55 | DEBUG    | database | DB | Entering get_cached_analysis with args=[] kwargs={}
+2026-07-29 12:55:55 | DEBUG    | database | DB | get_cached_analysis completed successfully
+2026-07-29 12:55:55 | INFO     | streamlit_app | Streamlit - Successfully fetched insights for product ID 2
+2026-07-29 12:55:57 | INFO     | streamlit_app | Streamlit - User active product: Apple iPhone 17 Pro Max (1 TB, Cosmic Orange) (ID: 2)
+2026-07-29 12:55:57 | INFO     | streamlit_app | Streamlit - User triggered Cache Clear for product ID 2
+2026-07-29 12:55:57 | DEBUG    | database | DB | Entering clear_cache with args=[] kwargs={}
+2026-07-29 12:55:58 | DEBUG    | database | DB | clear_cache completed successfully
+2026-07-29 12:55:58 | INFO     | streamlit_app | Streamlit - Cache successfully cleared on backend for product ID 2
+2026-07-29 12:55:58 | INFO     | streamlit_app | Streamlit - Requesting insights for product ID 2
+2026-07-29 12:55:58 | DEBUG    | database | DB | Entering get_cached_analysis with args=[] kwargs={}
+2026-07-29 12:55:58 | DEBUG    | database | DB | get_cached_analysis completed successfully
+2026-07-29 12:55:58 | DEBUG    | database | DB | Entering get_reviews with args=[] kwargs={}
+2026-07-29 12:55:58 | DEBUG    | database | DB | get_reviews completed successfully
+2026-07-29 12:56:03 | INFO     | logger | 🔄 [Agent Event] Author: ReviewResearcher_0 | Node Path: 
+2026-07-29 12:56:03 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "High aesthetic appeal of the cosmic orange color",       "...
+2026-07-29 12:56:10 | INFO     | logger | 🔄 [Agent Event] Author: AggregatorAgent | Node Path: 
+2026-07-29 12:56:10 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "High aesthetic appeal of the cosmic orange color",       "...
+2026-07-29 12:56:10 | DEBUG    | database | DB | Entering cache_analysis with args=({'insights': [{'insight': 'High aesthetic appeal of the cosmic orange color', 'confidence': 1.0, 'frequency': 1.0, 'example_quote': 'the cosmic orange color is absolutely stunning in person.', 'category': 'quality', 'score': 1.5}, {'insight': 'A19 Pro chip provides high-performance gaming capabilities', 'confidence': 1.0, 'frequency': 1.0, 'example_quote': 'a19 pro chip handles aaa gaming like a breeze. truly console level.', 'category': 'usability', 'score': 1.3}, {'insight': 'Pro Fusion camera system excels in low-light conditions', 'confidence': 1.0, 'frequency': 1.0, 'example_quote': 'the pro fusion camera system takes low-light photography to a new level.', 'category': 'quality', 'score': 1.5}, {'insight': 'Exceptional battery life lasting up to two days', 'confidence': 1.0, 'frequency': 1.0, 'example_quote': 'battery easily lasts two days of moderate use. best battery on an iphone yet.', 'category': 'quality', 'score': 1.5}, {'insight': 'Under-screen Face ID technology functions seamlessly', 'confidence': 1.0, 'frequency': 1.0, 'example_quote': 'the new invisible face id under the screen works perfectly.', 'category': 'usability', 'score': 1.3}, {'insight': 'Device weight is excessive despite titanium construction', 'confidence': 0.9, 'frequency': 1.0, 'example_quote': "very heavy phone. the titanium doesn't seem to help much with the 1tb model's weight.", 'category': 'quality', 'score': 1.35}, {'insight': 'Desire for increased home screen customization in iOS 20', 'confidence': 0.9, 'frequency': 1.0, 'example_quote': 'ios 20 is smooth, but i wish there was more customization on the home screen.', 'category': 'usability', 'score': 1.17}, {'insight': 'Improved zoom capabilities are competitive with market leaders', 'confidence': 0.9, 'frequency': 1.0, 'example_quote': 'the zoom capabilities are finally catching up to samsung. very impressed.', 'category': 'quality', 'score': 1.35}, {'insight': 'High price point limits value proposition to power users', 'confidence': 0.9, 'frequency': 1.0, 'example_quote': 'extremely expensive. only buy the 1tb if you shoot a lot of prores video.', 'category': 'price', 'score': 0.9}, {'insight': 'Display quality and 120Hz refresh rate are highly satisfactory', 'confidence': 1.0, 'frequency': 1.0, 'example_quote': 'display is flawless, 120hz promotion is smooth as butter.', 'category': 'quality', 'score': 1.5}]},) kwargs={}
+2026-07-29 12:56:10 | DEBUG    | database | DB | cache_analysis completed successfully
+2026-07-29 12:56:10 | INFO     | streamlit_app | Streamlit - Successfully fetched insights for product ID 2
+2026-07-29 12:56:35 | INFO     | streamlit_app | Streamlit - Fetching products from http://localhost:8000/products/
+2026-07-29 12:56:35 | DEBUG    | database | DB | Entering get_products with args=[] kwargs={}
+2026-07-29 12:56:35 | DEBUG    | database | DB | get_products completed successfully
+2026-07-29 12:56:35 | INFO     | streamlit_app | Streamlit - Successfully fetched 32 products
+2026-07-29 12:56:35 | INFO     | streamlit_app | Streamlit - User active product: Apple iPhone 17 Pro Max (1 TB, Cosmic Orange) (ID: 2)
+2026-07-29 12:56:35 | INFO     | streamlit_app | Streamlit - User triggered Cache Clear for product ID 2
+2026-07-29 12:56:35 | DEBUG    | database | DB | Entering clear_cache with args=[] kwargs={}
+2026-07-29 12:56:35 | DEBUG    | database | DB | clear_cache completed successfully
+2026-07-29 12:56:35 | INFO     | streamlit_app | Streamlit - Cache successfully cleared on backend for product ID 2
+2026-07-29 12:56:35 | INFO     | streamlit_app | Streamlit - Requesting insights for product ID 2
+2026-07-29 12:56:35 | DEBUG    | database | DB | Entering get_cached_analysis with args=[] kwargs={}
+2026-07-29 12:56:35 | DEBUG    | database | DB | get_cached_analysis completed successfully
+2026-07-29 12:56:35 | DEBUG    | database | DB | Entering get_reviews with args=[] kwargs={}
+2026-07-29 12:56:35 | DEBUG    | database | DB | get_reviews completed successfully
+2026-07-29 12:56:40 | INFO     | logger | 🔄 [Agent Event] Author: ReviewResearcher_0 | Node Path: 
+2026-07-29 12:56:40 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "High aesthetic appeal of the cosmic orange color",       "...
+2026-07-29 12:56:43 | INFO     | logger | 🔄 [Agent Event] Author: AggregatorAgent | Node Path: 
+2026-07-29 12:56:43 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "High aesthetic appeal of the cosmic orange color",       "...
+2026-07-29 12:56:43 | DEBUG    | database | DB | Entering cache_analysis with args=({'insights': [{'insight': 'High aesthetic appeal of the cosmic orange color', 'confidence': 1.0, 'frequency': 1.0, 'example_quote': 'the cosmic orange color is absolutely stunning in person.', 'category': 'quality', 'score': 1.5}, {'insight': 'A19 Pro chip provides high-performance gaming capabilities', 'confidence': 1.0, 'frequency': 1.0, 'example_quote': 'a19 pro chip handles aaa gaming like a breeze. truly console level.', 'category': 'usability', 'score': 1.3}, {'insight': 'Pro Fusion camera system excels in low-light conditions', 'confidence': 1.0, 'frequency': 1.0, 'example_quote': 'the pro fusion camera system takes low-light photography to a new level.', 'category': 'quality', 'score': 1.5}, {'insight': 'Exceptional battery life lasting up to two days', 'confidence': 1.0, 'frequency': 1.0, 'example_quote': 'battery easily lasts two days of moderate use. best battery on an iphone yet.', 'category': 'quality', 'score': 1.5}, {'insight': 'Under-screen Face ID technology functions seamlessly', 'confidence': 1.0, 'frequency': 1.0, 'example_quote': 'the new invisible face id under the screen works perfectly.', 'category': 'usability', 'score': 1.3}, {'insight': 'Device weight is excessive despite titanium construction', 'confidence': 0.9, 'frequency': 1.0, 'example_quote': "very heavy phone. the titanium doesn't seem to help much with the 1tb model's weight.", 'category': 'quality', 'score': 1.35}, {'insight': 'Desire for increased home screen customization in iOS 20', 'confidence': 0.9, 'frequency': 1.0, 'example_quote': 'ios 20 is smooth, but i wish there was more customization on the home screen.', 'category': 'usability', 'score': 1.17}, {'insight': 'Improved zoom capabilities are competitive with market leaders', 'confidence': 0.9, 'frequency': 1.0, 'example_quote': 'the zoom capabilities are finally catching up to samsung. very impressed.', 'category': 'quality', 'score': 1.35}, {'insight': 'High price point limits value proposition to power users', 'confidence': 0.9, 'frequency': 1.0, 'example_quote': 'extremely expensive. only buy the 1tb if you shoot a lot of prores video.', 'category': 'price', 'score': 0.9}, {'insight': 'Display quality and 120Hz refresh rate are highly satisfactory', 'confidence': 1.0, 'frequency': 1.0, 'example_quote': 'display is flawless, 120hz promotion is smooth as butter.', 'category': 'quality', 'score': 1.5}]},) kwargs={}
+2026-07-29 12:56:43 | DEBUG    | database | DB | cache_analysis completed successfully
+2026-07-29 12:56:43 | INFO     | streamlit_app | Streamlit - Successfully fetched insights for product ID 2
+2026-07-29 12:56:56 | INFO     | streamlit_app | Streamlit - Fetching products from http://localhost:8000/products/
+2026-07-29 12:56:56 | DEBUG    | database | DB | Entering get_products with args=[] kwargs={}
+2026-07-29 12:56:56 | DEBUG    | database | DB | get_products completed successfully
+2026-07-29 12:56:56 | INFO     | streamlit_app | Streamlit - Successfully fetched 32 products
+2026-07-29 12:56:56 | INFO     | streamlit_app | Streamlit - User active product: vivo X300 Ultra 5G (Victory Green, 16GB RAM, 512GB Storage) (ID: 3)
+2026-07-29 12:56:56 | INFO     | streamlit_app | Streamlit - Requesting insights for product ID 3
+2026-07-29 12:56:56 | DEBUG    | database | DB | Entering get_cached_analysis with args=[] kwargs={}
+2026-07-29 12:56:56 | DEBUG    | database | DB | get_cached_analysis completed successfully
+2026-07-29 12:56:56 | INFO     | streamlit_app | Streamlit - Successfully fetched insights for product ID 3
+2026-07-29 12:57:00 | INFO     | streamlit_app | Streamlit - User active product: vivo X300 Ultra 5G (Victory Green, 16GB RAM, 512GB Storage) (ID: 3)
+2026-07-29 12:57:00 | INFO     | streamlit_app | Streamlit - User triggered Cache Clear for product ID 3
+2026-07-29 12:57:00 | DEBUG    | database | DB | Entering clear_cache with args=[] kwargs={}
+2026-07-29 12:57:00 | DEBUG    | database | DB | clear_cache completed successfully
+2026-07-29 12:57:00 | INFO     | streamlit_app | Streamlit - Cache successfully cleared on backend for product ID 3
+2026-07-29 12:57:00 | INFO     | streamlit_app | Streamlit - Requesting insights for product ID 3
+2026-07-29 12:57:00 | DEBUG    | database | DB | Entering get_cached_analysis with args=[] kwargs={}
+2026-07-29 12:57:00 | DEBUG    | database | DB | get_cached_analysis completed successfully
+2026-07-29 12:57:00 | DEBUG    | database | DB | Entering get_reviews with args=[] kwargs={}
+2026-07-29 12:57:00 | DEBUG    | database | DB | get_reviews completed successfully
+2026-07-29 12:57:06 | INFO     | logger | 🔄 [Agent Event] Author: ReviewResearcher_0 | Node Path: 
+2026-07-29 12:57:06 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "High-quality camera performance with 1-inch sensor and Zei...
+2026-07-29 12:57:10 | INFO     | logger | 🔄 [Agent Event] Author: AggregatorAgent | Node Path: 
+2026-07-29 12:57:10 | INFO     | logger |    ├─ Output Text: {   "insights": [     {       "insight": "High-quality camera performance with 1-inch sensor and Zei...
+2026-07-29 12:57:10 | DEBUG    | database | DB | Entering cache_analysis with args=({'insights': [{'insight': 'High-quality camera performance with 1-inch sensor and Zeiss lenses', 'confidence': 1.0, 'frequency': 3.0, 'example_quote': 'the 1-inch camera sensor with zeiss lenses takes dslr-quality photos.', 'category': 'quality', 'score': 4.5}, {'insight': 'Premium design and build quality with vegan leather', 'confidence': 0.9, 'frequency': 1.0, 'example_quote': 'victory green has a beautiful vegan leather back. feels very premium.', 'category': 'quality', 'score': 1.35}, {'insight': 'Software bloatware issues in Funtouch OS', 'confidence': 0.9, 'frequency': 1.0, 'example_quote': 'performance is top tier with 16gb ram, but funtouch os still has some bloatware.', 'category': 'usability', 'score': 1.17}, {'insight': 'Extremely fast battery charging capabilities', 'confidence': 1.0, 'frequency': 1.0, 'example_quote': 'battery charging is ridiculously fast - 0 to 100 in about 20 minutes!', 'category': 'quality', 'score': 1.5}, {'insight': 'Difficulty finding compatible screen protectors for curved display', 'confidence': 0.9, 'frequency': 1.0, 'example_quote': 'the curved display looks nice but finding a good screen protector is a nightmare.', 'category': 'usability', 'score': 1.17}, {'insight': 'Thermal management issues during high-resolution video recording', 'confidence': 0.9, 'frequency': 1.0, 'example_quote': 'gets quite warm when shooting 4k 120fps video for extended periods.', 'category': 'quality', 'score': 1.35}, {'insight': 'Ergonomic instability due to large camera bump', 'confidence': 0.9, 'frequency': 1.0, 'example_quote': 'camera bump is huge, making it wobble heavily on a table.', 'category': 'usability', 'score': 1.17}]},) kwargs={}
+2026-07-29 12:57:10 | DEBUG    | database | DB | cache_analysis completed successfully
+2026-07-29 12:57:10 | INFO     | streamlit_app | Streamlit - Successfully fetched insights for product ID 3
+2026-07-29 12:57:44 | INFO     | streamlit_app | Streamlit - Fetching products from http://localhost:8000/products/
+2026-07-29 12:57:44 | DEBUG    | database | DB | Entering get_products with args=[] kwargs={}
+2026-07-29 12:57:44 | DEBUG    | database | DB | get_products completed successfully
+2026-07-29 12:57:44 | INFO     | streamlit_app | Streamlit - Successfully fetched 32 products
+2026-07-29 12:57:44 | INFO     | streamlit_app | Streamlit - User active product: Samsung Galaxy S26 Ultra 5G (Sky Blue, 12GB RAM, 512GB Storage) (ID: 1)
+2026-07-29 12:57:44 | INFO     | streamlit_app | Streamlit - Requesting insights for product ID 1
+2026-07-29 12:57:44 | DEBUG    | database | DB | Entering get_cached_analysis with args=[] kwargs={}
+2026-07-29 12:57:44 | DEBUG    | database | DB | get_cached_analysis completed successfully
+2026-07-29 12:57:44 | INFO     | streamlit_app | Streamlit - Successfully fetched insights for product ID 1
