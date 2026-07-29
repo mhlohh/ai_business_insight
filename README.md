@@ -62,7 +62,7 @@ graph TD
     classDef database fill:#f59e0b,stroke:#d97706,color:#fff
 ```
 
-> **Rate Limit Protection:** All LLM calls pass through a custom Rate Limit Manager — batched processing (4 req/batch), 60s cooldowns, 2s inter-request delays, and intelligent retry parsing via LiteLLM.
+> **Rate Limit Protection:** All LLM calls pass through a custom Rate Limit Manager — batched processing (10 req/batch), 60s cooldowns.
 
 ---
 
@@ -73,7 +73,7 @@ AI_Business_Insights_project/
 ├── app/
 │   ├── main.py                  # FastAPI app & lifespan setup
 │   ├── database.py              # SQLAlchemy DB operations & caching (ORM layer)
-│   ├── llm.py                   # LiteLLM config, rate limit manager
+│   ├── llm.py                   # Gemini model config, rate limit manager
 │   ├── routers/
 │   │   ├── products.py          # /products & /db/products endpoints
 │   │   ├── reviews.py           # /reviews/{id} endpoints
