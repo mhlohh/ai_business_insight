@@ -295,7 +295,20 @@ if st.sidebar.button("Clear Cache"):
         f"Streamlit - User triggered Cache Clear for product ID {selected_product_id}"
     )
     try:
+        loader_placeholder_cache = st.empty()
+        loader_placeholder_cache.markdown("""
+        <div class="neumorphic-card" style="text-align: center; padding: 40px; margin-top: 15px;">
+            <div class="spinner">
+              <div class="bounce1"></div>
+              <div class="bounce2"></div>
+              <div class="bounce3"></div>
+            </div>
+            <h3 style="color: #4a6b82 !important; margin-top: 15px;">Clearing Cache...</h3>
+            <p style="color: #718096 !important;">Please wait while the backend removes old data.</p>
+        </div>
+        """, unsafe_allow_html=True)
         res = requests.delete(f"{backend_url}/insights/products/{selected_product_id}")
+        loader_placeholder_cache.empty()
         if res.status_code == 200:
             logger.info(
                 f"Streamlit - Cache successfully cleared on backend for product ID {selected_product_id}"
@@ -372,7 +385,21 @@ def get_insights(api_url, product_id):
         return None, str(e)
 
 
+loader_placeholder_insights = st.empty()
+loader_placeholder_insights.markdown("""
+<div class="neumorphic-card" style="text-align: center; padding: 40px; margin-top: 15px;">
+    <div class="spinner">
+      <div class="bounce1"></div>
+      <div class="bounce2"></div>
+      <div class="bounce3"></div>
+    </div>
+    <h3 style="color: #4a6b82 !important; margin-top: 15px;">Fetching Insights...</h3>
+    <p style="color: #718096 !important;">Retrieving AI analysis from the server.</p>
+</div>
+""", unsafe_allow_html=True)
+
 insights_data, error = get_insights(backend_url, selected_product_id)
+loader_placeholder_insights.empty()
 
 if error:
     st.markdown(

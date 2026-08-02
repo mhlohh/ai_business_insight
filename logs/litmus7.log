@@ -931,3 +931,33 @@
 2026-08-03 00:03:29 | INFO     | streamlit_app | Streamlit - Fetching products from https://ai-business-insight.onrender.com/products/
 2026-08-03 00:08:45 | INFO     | llm | ✅ Aggregator Model: gemini-3.1-flash-lite
 2026-08-03 00:08:45 | INFO     | llm | ✅ Parallel Model: gemini-3.1-flash-lite
+2026-08-03 00:13:07 | INFO     | streamlit_app | Streamlit - Fetching products from https://ai-business-insight.onrender.com/products/
+2026-08-03 00:13:08 | INFO     | streamlit_app | Streamlit - Successfully fetched 32 products
+2026-08-03 00:13:08 | INFO     | streamlit_app | Streamlit - User active product: Samsung Galaxy S26 Ultra 5G (Sky Blue, 12GB RAM, 512GB Storage) (ID: 1)
+2026-08-03 00:13:08 | INFO     | streamlit_app | Streamlit - Requesting insights for product ID 1
+2026-08-03 00:13:08 | INFO     | streamlit_app | Streamlit - Successfully fetched insights for product ID 1
+2026-08-03 00:13:25 | INFO     | streamlit_app | Streamlit - User active product: Apple iPhone 17 Pro Max (1 TB, Cosmic Orange) (ID: 2)
+2026-08-03 00:13:25 | INFO     | streamlit_app | Streamlit - Requesting insights for product ID 2
+2026-08-03 00:13:26 | INFO     | streamlit_app | Streamlit - Successfully fetched insights for product ID 2
+2026-08-03 00:13:30 | INFO     | streamlit_app | Streamlit - User active product: Apple iPhone 17 Pro Max (1 TB, Cosmic Orange) (ID: 2)
+2026-08-03 00:13:30 | INFO     | streamlit_app | Streamlit - User triggered Cache Clear for product ID 2
+2026-08-03 00:13:30 | INFO     | streamlit_app | Streamlit - Cache successfully cleared on backend for product ID 2
+2026-08-03 00:13:30 | INFO     | streamlit_app | Streamlit - Requesting insights for product ID 2
+2026-08-03 00:13:37 | INFO     | streamlit_app | Streamlit - Successfully fetched insights for product ID 2
+2026-08-03 00:14:36 | INFO     | streamlit_app | Streamlit - Fetching products from https://ai-business-insight.onrender.com/products/
+2026-08-03 00:14:36 | INFO     | streamlit_app | Streamlit - Successfully fetched 32 products
+2026-08-03 00:14:36 | INFO     | streamlit_app | Streamlit - User active product: Apple iPhone 17 Pro Max (1 TB, Cosmic Orange) (ID: 2)
+2026-08-03 00:14:36 | INFO     | streamlit_app | Streamlit - User triggered Cache Clear for product ID 2
+2026-08-03 00:14:36 | INFO     | streamlit_app | Streamlit - Cache successfully cleared on backend for product ID 2
+2026-08-03 00:14:36 | INFO     | streamlit_app | Streamlit - Requesting insights for product ID 2
+2026-08-03 00:14:41 | INFO     | streamlit_app | Streamlit - Successfully fetched insights for product ID 2
+2026-08-03 00:19:46 | INFO     | streamlit_app | Streamlit - Fetching products from https://ai-business-insight.onrender.com/products/
+2026-08-03 00:19:47 | INFO     | streamlit_app | Streamlit - Successfully fetched 32 products
+2026-08-03 00:19:47 | INFO     | streamlit_app | Streamlit - User active product: Samsung Galaxy S26 Ultra 5G (Sky Blue, 12GB RAM, 512GB Storage) (ID: 1)
+2026-08-03 00:19:47 | INFO     | streamlit_app | Streamlit - Requesting insights for product ID 1
+2026-08-03 00:19:47 | INFO     | streamlit_app | Streamlit - Successfully fetched insights for product ID 1
+2026-08-03 00:19:49 | INFO     | streamlit_app | Streamlit - User active product: Samsung Galaxy S26 Ultra 5G (Sky Blue, 12GB RAM, 512GB Storage) (ID: 1)
+2026-08-03 00:19:49 | INFO     | streamlit_app | Streamlit - User triggered Cache Clear for product ID 1
+2026-08-03 00:19:50 | INFO     | streamlit_app | Streamlit - Cache successfully cleared on backend for product ID 1
+2026-08-03 00:19:50 | INFO     | streamlit_app | Streamlit - Requesting insights for product ID 1
+2026-08-03 00:19:57 | INFO     | streamlit_app | Streamlit - Successfully fetched insights for product ID 1
