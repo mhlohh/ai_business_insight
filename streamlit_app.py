@@ -182,6 +182,43 @@ neumorphic_css = """
         background-color: transparent !important;
         border: none !important;
     }
+
+    /* Bouncing Dots Loader */
+    .spinner {
+      margin: 40px auto;
+      width: 80px;
+      text-align: center;
+    }
+    .spinner > div {
+      width: 18px;
+      height: 18px;
+      background-color: #4a6b82;
+      border-radius: 100%;
+      display: inline-block;
+      -webkit-animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+      animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+    }
+    .spinner .bounce1 {
+      -webkit-animation-delay: -0.32s;
+      animation-delay: -0.32s;
+    }
+    .spinner .bounce2 {
+      -webkit-animation-delay: -0.16s;
+      animation-delay: -0.16s;
+    }
+    @-webkit-keyframes sk-bouncedelay {
+      0%, 80%, 100% { -webkit-transform: scale(0) }
+      40% { -webkit-transform: scale(1.0) }
+    }
+    @keyframes sk-bouncedelay {
+      0%, 80%, 100% { 
+        -webkit-transform: scale(0);
+        transform: scale(0);
+      } 40% { 
+        -webkit-transform: scale(1.0);
+        transform: scale(1.0);
+      }
+    }
 </style>
 """
 st.markdown(neumorphic_css, unsafe_allow_html=True)
@@ -195,7 +232,7 @@ st.sidebar.markdown(
     unsafe_allow_html=True,
 )
 
-backend_url = os.getenv("BACKEND_URL", "http://localhost:8000")
+backend_url = os.getenv("BACKEND_URL", "https://ai-business-insight.onrender.com")
 
 
 # Fetch products
@@ -214,7 +251,22 @@ def fetch_products(api_url):
     return []
 
 
+# Custom Loading Animation for waking up the slow Render server
+loader_placeholder = st.empty()
+loader_placeholder.markdown("""
+<div class="neumorphic-card" style="text-align: center; padding: 40px;">
+    <div class="spinner">
+      <div class="bounce1"></div>
+      <div class="bounce2"></div>
+      <div class="bounce3"></div>
+    </div>
+    <h3 style="color: #4a6b82 !important; margin-top: 15px;">Waking up the server...</h3>
+    <p style="color: #718096 !important;">The backend is hosted on a free tier and might take up to 50 seconds to start.</p>
+</div>
+""", unsafe_allow_html=True)
+
 products = fetch_products(backend_url)
+loader_placeholder.empty()
 
 if not products:
     st.markdown(
@@ -335,26 +387,39 @@ if error:
         logger.info(
             f"Streamlit - User triggered AI Insight generation for product ID {selected_product_id}"
         )
-        with st.spinner("Processing reviews with parallel LLM agents... Please wait."):
-            # Re-fetch which triggers generation
-            insights_data, error = get_insights(backend_url, selected_product_id)
-            if error:
-                logger.error(
-                    f"Streamlit - Generation failed for product ID {selected_product_id}: {error}"
-                )
-                st.markdown(
-                    f'<div class="neumorphic-card" style="border-left: 5px solid #b85c5c; padding: 20px; margin-top: 15px;">'
-                    f'<h4 style="color: #b85c5c !important; margin: 0;">Analysis Failed</h4>'
-                    f'<p style="color: #718096 !important; margin: 5px 0 0 0;">{error}</p>'
-                    f"</div>",
-                    unsafe_allow_html=True,
-                )
-            else:
-                logger.info(
-                    f"Streamlit - Generation succeeded and cache loaded for product ID {selected_product_id}"
-                )
-                st.success("Successfully generated new insights!")
-                st.rerun()
+        loader_placeholder2 = st.empty()
+        loader_placeholder2.markdown("""
+        <div class="neumorphic-card" style="text-align: center; padding: 40px; margin-top: 15px;">
+            <div class="spinner">
+              <div class="bounce1"></div>
+              <div class="bounce2"></div>
+              <div class="bounce3"></div>
+            </div>
+            <h3 style="color: #4a6b82 !important; margin-top: 15px;">Processing reviews with parallel LLM agents...</h3>
+            <p style="color: #718096 !important;">This involves multiple AI models working together and takes a few moments.</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # Re-fetch which triggers generation
+        insights_data, error = get_insights(backend_url, selected_product_id)
+        loader_placeholder2.empty()
+        if error:
+            logger.error(
+                f"Streamlit - Generation failed for product ID {selected_product_id}: {error}"
+            )
+            st.markdown(
+                f'<div class="neumorphic-card" style="border-left: 5px solid #b85c5c; padding: 20px; margin-top: 15px;">'
+                f'<h4 style="color: #b85c5c !important; margin: 0;">Analysis Failed</h4>'
+                f'<p style="color: #718096 !important; margin: 5px 0 0 0;">{error}</p>'
+                f"</div>",
+                unsafe_allow_html=True,
+            )
+        else:
+            logger.info(
+                f"Streamlit - Generation succeeded and cache loaded for product ID {selected_product_id}"
+            )
+            st.success("Successfully generated new insights!")
+            st.rerun()
 else:
     # Render Insights
     insights = (
