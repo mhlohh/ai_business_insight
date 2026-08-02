@@ -27,4 +27,12 @@ htmlcov/
 # OS metadata
 .DS_Store
 
+# Streamlit local secrets
+.streamlit/secrets.toml
 
+# Vercel deployment metadata and cache
+.vercel/
+
+# Runtime Logs
+*.log
+logs/

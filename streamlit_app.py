@@ -3,6 +3,7 @@ import requests
 import pandas as pd
 import matplotlib.pyplot as plt
 import re
+import os
 from logger import logger
 
 # Page config
@@ -194,7 +195,7 @@ st.sidebar.markdown(
     unsafe_allow_html=True,
 )
 
-backend_url = "http://localhost:8000"
+backend_url = os.getenv("BACKEND_URL", "http://localhost:8000")
 
 
 # Fetch products
