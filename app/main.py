@@ -9,5 +9,7 @@ app.include_router(products.router)
 app.include_router(insights.router)
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 8000))
+    # Render provides the PORT environment variable (default 10000).
+    # We bind to 0.0.0.0 as required by Render's web services.
+    port = int(os.environ.get("PORT", 10000))
     uvicorn.run(app, host="0.0.0.0", port=port)
