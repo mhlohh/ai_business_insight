@@ -54,9 +54,14 @@ neumorphic_css = """
     }
     
     /* Typography */
-    h1, h2, h3, h4, h5, h6, p, label, span, div {
+    h1, h2, h3, h4, h5, h6, p, label {
         color: #4a5568 !important;
         font-family: 'Outfit', 'Inter', -apple-system, sans-serif !important;
+    }
+    
+    /* Ensure icons maintain their font */
+    span.material-symbols-rounded, i.material-symbols-rounded {
+        font-family: 'Material Symbols Rounded' !important;
     }
     
     /* Title Styling */
@@ -182,6 +187,19 @@ neumorphic_css = """
         background-color: transparent !important;
         border: none !important;
     }
+    
+    /* Ensure text in selectbox and dropdown menu is visible */
+    div[data-baseweb="select"] * {
+        color: #4a5568 !important;
+    }
+    
+    ul[data-baseweb="menu"] {
+        background-color: #e0e5ec !important;
+    }
+    
+    ul[data-baseweb="menu"] li, ul[data-baseweb="menu"] li span, ul[data-baseweb="menu"] div {
+        color: #4a5568 !important;
+    }
 
     /* Bouncing Dots Loader */
     .spinner {
@@ -223,15 +241,6 @@ neumorphic_css = """
 """
 st.markdown(neumorphic_css, unsafe_allow_html=True)
 
-# Sidebar Configuration
-st.sidebar.markdown(
-    f'<div class="neumorphic-card" style="padding: 15px;">'
-    f'<h3 style="margin-top:0; text-align:center; display:flex; align-items:center; justify-content:center;">'
-    f"{SVG_GEAR}Configuration</h3>"
-    f"</div>",
-    unsafe_allow_html=True,
-)
-
 backend_url = os.getenv("BACKEND_URL", "https://ai-business-insight.onrender.com")
 
 
@@ -253,7 +262,8 @@ def fetch_products(api_url):
 
 # Custom Loading Animation for waking up the slow Render server
 loader_placeholder = st.empty()
-loader_placeholder.markdown("""
+loader_placeholder.markdown(
+    """
 <div class="neumorphic-card" style="text-align: center; padding: 40px;">
     <div class="spinner">
       <div class="bounce1"></div>
@@ -263,7 +273,9 @@ loader_placeholder.markdown("""
     <h3 style="color: #4a6b82 !important; margin-top: 15px;">Waking up the server...</h3>
     <p style="color: #718096 !important;">The backend is hosted on a free tier and might take up to 50 seconds to start.</p>
 </div>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True,
+)
 
 products = fetch_products(backend_url)
 loader_placeholder.empty()
@@ -296,7 +308,8 @@ if st.sidebar.button("Clear Cache"):
     )
     try:
         loader_placeholder_cache = st.empty()
-        loader_placeholder_cache.markdown("""
+        loader_placeholder_cache.markdown(
+            """
         <div class="neumorphic-card" style="text-align: center; padding: 40px; margin-top: 15px;">
             <div class="spinner">
               <div class="bounce1"></div>
@@ -306,7 +319,9 @@ if st.sidebar.button("Clear Cache"):
             <h3 style="color: #4a6b82 !important; margin-top: 15px;">Clearing Cache...</h3>
             <p style="color: #718096 !important;">Please wait while the backend removes old data.</p>
         </div>
-        """, unsafe_allow_html=True)
+        """,
+            unsafe_allow_html=True,
+        )
         res = requests.delete(f"{backend_url}/insights/products/{selected_product_id}")
         loader_placeholder_cache.empty()
         if res.status_code == 200:
@@ -386,7 +401,8 @@ def get_insights(api_url, product_id):
 
 
 loader_placeholder_insights = st.empty()
-loader_placeholder_insights.markdown("""
+loader_placeholder_insights.markdown(
+    """
 <div class="neumorphic-card" style="text-align: center; padding: 40px; margin-top: 15px;">
     <div class="spinner">
       <div class="bounce1"></div>
@@ -396,7 +412,9 @@ loader_placeholder_insights.markdown("""
     <h3 style="color: #4a6b82 !important; margin-top: 15px;">Fetching Insights...</h3>
     <p style="color: #718096 !important;">Retrieving AI analysis from the server.</p>
 </div>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True,
+)
 
 insights_data, error = get_insights(backend_url, selected_product_id)
 loader_placeholder_insights.empty()
@@ -415,7 +433,8 @@ if error:
             f"Streamlit - User triggered AI Insight generation for product ID {selected_product_id}"
         )
         loader_placeholder2 = st.empty()
-        loader_placeholder2.markdown("""
+        loader_placeholder2.markdown(
+            """
         <div class="neumorphic-card" style="text-align: center; padding: 40px; margin-top: 15px;">
             <div class="spinner">
               <div class="bounce1"></div>
@@ -425,8 +444,10 @@ if error:
             <h3 style="color: #4a6b82 !important; margin-top: 15px;">Processing reviews with parallel LLM agents...</h3>
             <p style="color: #718096 !important;">This involves multiple AI models working together and takes a few moments.</p>
         </div>
-        """, unsafe_allow_html=True)
-        
+        """,
+            unsafe_allow_html=True,
+        )
+
         # Re-fetch which triggers generation
         insights_data, error = get_insights(backend_url, selected_product_id)
         loader_placeholder2.empty()
